@@ -58,8 +58,8 @@ public:
 	void displayPercentage(bool bPerc)	{ m_bDispPercentage = bPerc; }
 	void setValuePrintFormat(const std::string& format)	{ m_valuePrintFormat = format; }
 
-	virtual void frameUpdate();
-	virtual void frameRender();
+	virtual void onUpdate();
+	virtual void onRender();
 
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);

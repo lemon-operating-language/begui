@@ -71,7 +71,7 @@ void RegionSelectGizmo::setLimits(int minX, int minY, int maxX, int maxY)
 	m_limMaxY = maxY;
 }
 
-void RegionSelectGizmo::frameUpdate()
+void RegionSelectGizmo::onUpdate()
 {
 	// preserve limits
 	if (m_limMinX != m_limMaxX)
@@ -90,7 +90,7 @@ void RegionSelectGizmo::frameUpdate()
 	}
 }
 
-void RegionSelectGizmo::frameRender()
+void RegionSelectGizmo::onRender()
 {
 	glEnable(GL_BLEND);
 

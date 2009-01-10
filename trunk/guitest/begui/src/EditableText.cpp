@@ -13,6 +13,8 @@ EditableText::EditableText() : m_bMultiLine(true), m_cursorX(0), m_cursorY(0),
 	m_selectionColor(1.0f, 0.7f, 0.2f), m_selectionAlpha(0.7f),
 	m_cursorColor(0,0,0)
 {
+	m_text = "";
+
 	m_cursorAlpha.push_back(0, 0);
 	m_cursorAlpha.push_back(0, 0.2);
 	m_cursorAlpha.push_back(0.8f, 0.4);
@@ -31,11 +33,20 @@ void EditableText::create(int x, int y, int lineWidth, bool bMultiLine, bool bEd
 	m_bMultiLine = bMultiLine;
 	m_bEditable = bEditable;
 	m_bTextSelectable = bTextSelectable;
-	m_text.clear();
+	((std::string)m_text).clear();
 	m_charPos.clear();
 	m_selectStart = m_selectEnd = 0;
 	m_cursorPos = 0;
 	m_cursorX = m_cursorY = m_cursorH = 0;
+	m_text = "";
+}
+
+void EditableText::update()
+{
+	if (m_text.livevar_is_dirty()) {
+		setText(m_text);
+		m_text.livevar_set_dirty(false);
+	}
 }
 
 void EditableText::setText(const std::string &text)
@@ -88,7 +99,7 @@ void EditableText::renderString()
 		FontManager::getCurFont()->renderString(m_x, m_y+lineHeight, m_text, &m_charPos, true);
 
 	// render the cursor
-	if (m_bRenderCursor)
+	if (m_bEditable && m_bRenderCursor)
 	{
 		glColor4f(m_cursorColor.r, m_cursorColor.g, m_cursorColor.b, m_cursorAlpha);
 		glBegin(GL_LINES);
@@ -175,7 +186,7 @@ void EditableText::onKeyDown(int key)
 				setCursorPos( (m_selectStart < m_selectEnd) ? m_selectStart : m_selectEnd );
 				m_selectEnd = m_selectStart = m_cursorPos;
 			}
-			else if (m_cursorPos < m_text.size()) {
+			else if (m_cursorPos < ((std::string)m_text).size()) {
 				std::string text = m_text;
 				text.erase(m_cursorPos, 1);
 				setText(text);
@@ -214,7 +225,7 @@ void EditableText::onKeyDown(int key)
 		break;
 	case KEY_END:
 		if (input::isKeyDown(KEY_LCTRL) || input::isKeyDown(KEY_RCTRL))
-			setCursorPos(m_text.length());
+			setCursorPos(((std::string)m_text).length());
 		else
 			setCursorPos(getLineEnd(m_cursorPos));
 		m_selectEnd = m_cursorPos;
@@ -269,9 +280,6 @@ void EditableText::getStringPos(int x, int y, int *cursorX, int *cursorY, int *c
 	ASSERT(char_pos);
 	*cursorX = *cursorY = *cursorH = *char_pos = 0;
 
-	x += m_x;
-	y += m_y;
-
 	for (size_t i=0; i<m_charPos.size(); ++i)
 	{
 		int cw = m_charPos[i].getWidth();
@@ -281,7 +289,8 @@ void EditableText::getStringPos(int x, int y, int *cursorX, int *cursorY, int *c
 		int dy2 = m_charPos[i].top;
 
 		// check if this character contains the given pt
-		if (m_charPos[i].contains(x,y)) {
+		//if (m_charPos[i].contains(x,y)) {
+		if (m_charPos[i].bottom >= y && m_charPos[i].left <= x && m_charPos[i].right >= x) {
 			if (x < m_charPos[i].left + cw/2) {
 				*cursorX = m_charPos[i].left;
 				*cursorY = m_charPos[i].bottom;
@@ -307,7 +316,7 @@ void EditableText::getStringPos(int x, int y, int *cursorX, int *cursorY, int *c
 		}
 
 		// else, if we are on the correct line
-		if (y >= m_charPos[i].top && y <= m_charPos[i].bottom)
+		if (/*y >= m_charPos[i].top &&*/ y <= m_charPos[i].bottom)
 		{
 			if (x < m_charPos[i].left) {
 				// check if this character is the first in this line
@@ -342,7 +351,7 @@ void EditableText::getStringPos(int x, int y, int *cursorX, int *cursorY, int *c
 			*cursorY = m_charPos[0].bottom;
 			*cursorH = m_charPos[0].getHeight();
 			*char_pos = 0;
-			return;
+			//return;
 		}
 		else if (y > m_charPos[i].bottom && i==m_charPos.size()-1) {
 			// put the cursor beyond the end of the last line
@@ -500,8 +509,8 @@ int EditableText::getLineEnd(int cursorPos) const
 std::string	EditableText::getSelectedText() const
 {
 	if (m_selectStart < m_selectEnd)
-		return m_text.substr(m_selectStart, m_selectEnd-m_selectStart);
+		return ((std::string)m_text).substr(m_selectStart, m_selectEnd-m_selectStart);
 	else if (m_selectStart > m_selectEnd)
-		return m_text.substr(m_selectEnd, m_selectStart-m_selectEnd);
+		return ((std::string)m_text).substr(m_selectEnd, m_selectStart-m_selectEnd);
 	return std::string();
 }

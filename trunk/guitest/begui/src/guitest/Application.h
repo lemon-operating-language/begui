@@ -11,6 +11,8 @@ private:
 	Group m_group;
 	Slider m_slider;
 	TextBox m_textbox;
+	ListBox m_listbox;
+	ComboBox m_combobox;
 
 	// example: a live variable
 	double m_sliderPos;

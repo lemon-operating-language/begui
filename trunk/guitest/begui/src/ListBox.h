@@ -24,40 +24,79 @@
 #include "common.h"
 #include "Component.h"
 #include "ScrollBar.h"
+#include "EditableText.h"
+#include "callback.h"
 
 namespace begui {
 
 class ListBox : public Component
 {
-protected:
-	std::vector<std::string> m_items;
-	int						m_curItem;
-	bool					m_bSelectMultiple;
-	int						m_selStart, m_selEnd;
+	class Item {
+	public:
+		EditableText	m_text;
+		bool			m_bSelected;
+		bool			m_bEnabled;
+		Rect<int>		m_rect;
 
-	ScrollBar				m_scroller;
+		Item() : m_bSelected(false), m_bEnabled(true) { }
+		Item(const std::string &str) : m_bSelected(false), m_bEnabled(true) { m_text.setText(str); }
+	};
+
+public:
+	enum Style {
+		STYLE_FLAT,
+		STYLE_STRIPES,
+		STYLE_BUTTONS
+	};
+	enum SelectionMode {
+		SINGLE_SELECT,
+		MULTI_SELECT,		// multiple selection with ctrl
+		MULTI_SELECT_SINGLECLICK	// multiple selection with single click (click again to deselect)
+	};
+
+protected:
+	std::vector<Item>	m_items;
+	Style				m_style;
+	int					m_curItem, m_prevItem;
+	SelectionMode		m_selectMode;
+	ScrollBar			m_scroller;
+	bool				m_bEditable;	// text in the list items is editable
+	bool				m_bHighlightMouseOver;	// highlights the item that is under the mouse cursor
+	int					m_mouseOverItem;	// item under the current position of the mouse cursor
+
+	Functor1<int>		m_onItemClick;	// arg1: the id of the clicked item
 
 public:
 	ListBox();
+	virtual ~ListBox();
 
-	virtual void create(int x, int y, int width, int height, bool bSelectMultiple = false);
+	virtual void create(int x, int y, int width, int height, SelectionMode selMode, Style style=STYLE_FLAT);
 
-	virtual void frameUpdate();
-	virtual void frameRender();
-	
+	virtual void onUpdate();
+	virtual void onRender();
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 
-	void		addItem(const std::string &item)	{ m_items.push_back(item); }
-	std::string& itemAt(int pos)					{ return m_items[pos]; }
+	void		addItem(const std::string &item)	{ m_items.push_back(Item(item)); }
 	int			itemsNum() const					{ return (int)m_items.size(); }
-	void		remItem(int pos)					{ m_items.erase(m_items.begin()+pos); }
+	std::string	itemText(size_t i) const			{ return m_items[i].m_text.getText(); }
+	bool		itemEnabled(size_t i) const			{ return m_items[i].m_bEnabled; }
+	bool		itemSelected(size_t i) const		{ return m_items[i].m_bSelected; }
+	void		remItem(size_t pos)					{ m_items.erase(m_items.begin()+pos); }
+	void		remAllItems()						{ m_items.clear(); m_curItem = 0; m_prevItem = -1; }
 	int			getCurrent() const					{ return m_curItem; }
-	int			getSelStart() const					{ return m_selStart; }
-	int			getSelEnd() const					{ return m_selEnd; }
+	void		enableItem(size_t i)				{ m_items[i].m_bEnabled = true; }
+	void		disableItem(size_t i)				{ m_items[i].m_bEnabled = false; }
+	void		setHighlightOnMouseOver(bool b)		{ m_bHighlightMouseOver = b; }
+
+	void	handleOnItemClick(Functor1<int> &f)		{ m_onItemClick = f; }
+
+private:
+	void selectRange(size_t start, size_t end);
+	void deselectAll();
 };
 
 };

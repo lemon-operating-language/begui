@@ -46,11 +46,11 @@ void RadioButton::create(int x, int y, const std::string &title, int id, void (*
 	m_bIsRadio = bIsRadio;
 }
 
-void RadioButton::frameUpdate()
+void RadioButton::onUpdate()
 {
 }
 
-void RadioButton::frameRender()
+void RadioButton::onRender()
 {
 	// set the texture of a window
 	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
@@ -76,10 +76,10 @@ void RadioButton::frameRender()
 	if (m_bHover && m_state != RadioButton::INACTIVE)
 		glColor4f(1,1,1,0.8);
 	glBegin(GL_QUADS);
-		glTexCoord2f(tL/512.0, tT/512.0);	glVertex3f(m_left, m_top, 0);
-		glTexCoord2f(tR/512.0, tT/512.0);	glVertex3f(m_left+18, m_top, 0);
-		glTexCoord2f(tR/512.0, tB/512.0);	glVertex3f(m_left+18, m_bottom, 0);
-		glTexCoord2f(tL/512.0, tB/512.0);	glVertex3f(m_left, m_bottom, 0);
+		glTexCoord2f(tL/512.0, tT/512.0);	glVertex3f(0, 0, 0);
+		glTexCoord2f(tR/512.0, tT/512.0);	glVertex3f(18, 0, 0);
+		glTexCoord2f(tR/512.0, tB/512.0);	glVertex3f(18, 18, 0);
+		glTexCoord2f(tL/512.0, tB/512.0);	glVertex3f(0, 18, 0);
 	glEnd();
 		
 	glDisable(GL_BLEND);
@@ -89,7 +89,7 @@ void RadioButton::frameRender()
 	glColor3f(0.3,0.3,0.3);
 	if (m_state == RadioButton::INACTIVE)
 		glColor3f(0.6, 0.6, 0.6);
-	Font::renderString(m_left + 23, m_bottom-5, m_title);
+	Font::renderString(23, getHeight()-5, m_title);
 }
 
 void RadioButton::onMouseDown(int x, int y, int button)

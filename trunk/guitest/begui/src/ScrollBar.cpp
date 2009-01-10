@@ -60,7 +60,7 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 	m_curPos = minPos;
 }
 
-void ScrollBar::frameUpdate()
+void ScrollBar::onUpdate()
 {
 	int w = SCROLL_WIDTH-2;
 	int h = SCROLL_WIDTH-2;
@@ -79,8 +79,11 @@ void ScrollBar::frameUpdate()
 		m_sliderLen = (runArea > 20) ? 20 : 0.8*runArea;
 }
 
-void ScrollBar::frameRender()
+void ScrollBar::onRender()
 {
+	int cw = getWidth();
+	int ch = getHeight();
+
 	int w = SCROLL_WIDTH-2;
 	int h = SCROLL_WIDTH-2;
 	float tX = 332.0/512;
@@ -91,10 +94,10 @@ void ScrollBar::frameRender()
 	// render the background
 	glColor4f(0,0.05,0.1,0.3);
 	glBegin(GL_QUADS);
-		glVertex2f(m_left, m_top);
-		glVertex2f(m_right, m_top);
-		glVertex2f(m_right, m_bottom);
-		glVertex2f(m_left, m_bottom);
+		glVertex2f(0, 0);
+		glVertex2f(cw, 0);
+		glVertex2f(cw, ch);
+		glVertex2f(0, ch);
 	glEnd();
 	
 	// set the texture of a window
@@ -110,17 +113,17 @@ void ScrollBar::frameRender()
 		
 		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
 		{
-			glTexCoord2f(tX, tY2); glVertex2f(m_left+1, m_top+1);
-			glTexCoord2f(tX2, tY2); glVertex2f(m_left+1+w, m_top+1);
-			glTexCoord2f(tX2, tY); glVertex2f(m_left+1+w, m_top+1+h);
-			glTexCoord2f(tX, tY); glVertex2f(m_left+1, m_top+1+h);
+			glTexCoord2f(tX, tY2);  glVertex2f(1, 1);
+			glTexCoord2f(tX2, tY2); glVertex2f(1+w, 1);
+			glTexCoord2f(tX2, tY);  glVertex2f(1+w, 1+h);
+			glTexCoord2f(tX, tY);	glVertex2f(1, 1+h);
 		}
 		else
 		{
-			glTexCoord2f(tX, tY2); glVertex2f(m_left+1, m_top+1);
-			glTexCoord2f(tX, tY); glVertex2f(m_left+1+w, m_top+1);
-			glTexCoord2f(tX2, tY); glVertex2f(m_left+1+w, m_top+1+h);
-			glTexCoord2f(tX2, tY2); glVertex2f(m_left+1, m_top+1+h);
+			glTexCoord2f(tX, tY2);	glVertex2f(1, 1);
+			glTexCoord2f(tX, tY);	glVertex2f(1+w, 1);
+			glTexCoord2f(tX2, tY);	glVertex2f(1+w, 1+h);
+			glTexCoord2f(tX2, tY2); glVertex2f(1, 1+h);
 		}
 		
 		if (m_curPos < m_maxPos)
@@ -130,17 +133,17 @@ void ScrollBar::frameRender()
 		
 		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
 		{
-			glTexCoord2f(tX, tY); glVertex2f(m_left+1, m_bottom-h-1);
-			glTexCoord2f(tX2, tY); glVertex2f(m_left+1+w, m_bottom-h-1);
-			glTexCoord2f(tX2, tY2); glVertex2f(m_left+1+w, m_bottom-1);
-			glTexCoord2f(tX, tY2); glVertex2f(m_left+1, m_bottom-1);
+			glTexCoord2f(tX, tY);	glVertex2f(1, ch-h-1);
+			glTexCoord2f(tX2, tY);	glVertex2f(1+w, ch-h-1);
+			glTexCoord2f(tX2, tY2); glVertex2f(1+w, ch-1);
+			glTexCoord2f(tX, tY2);	glVertex2f(1, ch-1);
 		}
 		else
 		{
-			glTexCoord2f(tX2, tY); glVertex2f(m_right-w-1, m_top+1);
-			glTexCoord2f(tX2, tY2); glVertex2f(m_right-1, m_top+1);
-			glTexCoord2f(tX, tY2); glVertex2f(m_right-1, m_top+h+1);
-			glTexCoord2f(tX, tY); glVertex2f(m_right-w-1, m_top+h+1);
+			glTexCoord2f(tX2, tY);	glVertex2f(cw-w-1, 1);
+			glTexCoord2f(tX2, tY2); glVertex2f(cw-1, 1);
+			glTexCoord2f(tX, tY2);	glVertex2f(cw-1, h+1);
+			glTexCoord2f(tX, tY);	glVertex2f(cw-w-1, h+1);
 		}
 	glEnd();
 
@@ -157,17 +160,17 @@ void ScrollBar::frameRender()
 	glBegin(GL_QUADS);
 		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
 		{
-			glTexCoord2f(sX, sY2); glVertex2f(m_left+1, m_top+h+2 + (getHeight()-2*h-4-m_sliderLen)*sliderPos);
-			glTexCoord2f(sX2, sY2); glVertex2f(m_left+1+w, m_top+h+2 + (getHeight()-2*h-4-m_sliderLen)*sliderPos);
-			glTexCoord2f(sX2, sY); glVertex2f(m_left+1+w, m_top+h+2 + (getHeight()-2*h-4-m_sliderLen)*sliderPos + m_sliderLen);
-			glTexCoord2f(sX, sY); glVertex2f(m_left+1, m_top+h+2 + (getHeight()-2*h-4-m_sliderLen)*sliderPos + m_sliderLen);
+			glTexCoord2f(sX, sY2); glVertex2f(1, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos);
+			glTexCoord2f(sX2, sY2); glVertex2f(1+w, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos);
+			glTexCoord2f(sX2, sY); glVertex2f(1+w, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos + m_sliderLen);
+			glTexCoord2f(sX, sY); glVertex2f(1, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos + m_sliderLen);
 		}
 		else
 		{
-			glTexCoord2f(sX, sY2); glVertex2f(m_left+w+2 + (getWidth()-2*w-4-m_sliderLen)*sliderPos, m_top+1);
-			glTexCoord2f(sX2, sY2); glVertex2f(m_left+w+2 + (getWidth()-2*w-4-m_sliderLen)*sliderPos, m_top+h+1);
-			glTexCoord2f(sX2, sY); glVertex2f(m_left+w+2 + (getWidth()-2*w-4-m_sliderLen)*sliderPos + m_sliderLen, m_top+h+1);
-			glTexCoord2f(sX, sY); glVertex2f(m_left+w+2 + (getWidth()-2*w-4-m_sliderLen)*sliderPos + m_sliderLen, m_top+1);
+			glTexCoord2f(sX, sY2); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos, 1);
+			glTexCoord2f(sX2, sY2); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos, h+1);
+			glTexCoord2f(sX2, sY); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos + m_sliderLen, h+1);
+			glTexCoord2f(sX, sY); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos + m_sliderLen, 1);
 		}
 	glEnd();
 	
@@ -372,4 +375,13 @@ bool ScrollBar::isPtInside(int x, int y)
 	if (y < m_top || y > m_bottom)
 		return false;
 	return true;
+}
+
+void ScrollBar::setBounds(double minPos, double maxPos, double percVisible)
+{
+	if (m_curPos < minPos) m_curPos = minPos;
+	if (m_curPos > maxPos) m_curPos = maxPos;
+	m_minPos = minPos;
+	m_maxPos = maxPos;
+	m_percVisible = percVisible;
 }

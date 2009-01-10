@@ -6,13 +6,13 @@ Application *Application::m_pInst = NULL;
 void ChildWnd1::onCreate()
 {
 	// create a simple push button
-	m_button1.create(150, 150, "Button", 1, 0);
+	m_button1.create(260, 40, "Button", 1, 0);
 	addComponent(&m_button1);
 
 	// create a group of radio buttons
-	m_radio1.create(80, 20, "Radio Button 1", 2);
-	m_radio2.create(80, 40, "Radio Button 2", 3);
-	m_group.create(20, 20, 200, 80, "Radio group");
+	m_radio1.create(20, 20, "Radio Button 1", 2);
+	m_radio2.create(20, 40, "Radio Button 2", 3);
+	m_group.create(40, 30, 200, 80, "Radio group");
 	m_group.addComponent(&m_radio1);
 	m_group.addComponent(&m_radio2);
 	addComponent(&m_group);
@@ -25,8 +25,28 @@ void ChildWnd1::onCreate()
 	addComponent(&m_slider);
 
 	// create a textbox
-	m_textbox.create(40, 150, 300, 150, true, true);
+	m_textbox.create(250, 170, 130, 180, true, true);
 	addComponent(&m_textbox);
+	
+	m_listbox.create(40, 150, 200, 200, ListBox::MULTI_SELECT_SINGLECLICK);
+	m_listbox.addItem("item 1");
+	m_listbox.addItem("disabled item 2");
+	m_listbox.addItem("item 3");
+	m_listbox.addItem("item 4");
+	m_listbox.addItem("item 5");
+	for (size_t i=0; i<20; ++i)
+		m_listbox.addItem("item");
+	m_listbox.addItem("last item");
+	m_listbox.disableItem(1);
+	addComponent(&m_listbox);
+
+	m_combobox.create(250, 150, 80, 200);
+	m_combobox.addItem("item 1");
+	m_combobox.addItem("item 2");
+	m_combobox.addItem("item 3");
+	m_combobox.addItem("item 4");
+	m_combobox.disableItem(2);
+	addComponent(&m_combobox);
 }
 
 bool Application::initialize()
@@ -56,7 +76,7 @@ bool Application::initialize()
 	pMenu2->addMenuItem("Item 2", 202, Application::onMenuCB);
 
 	// create a child window
-	m_wnd1.create(30, 50, 400, 400, "test");
+	m_wnd1.create(30, 50, 420, 400, "test");
 	FrameWindow::inst()->addComponent(&m_wnd1);
 
 	return true;

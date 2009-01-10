@@ -37,14 +37,14 @@ void Label::create(int x, int y, const std::string& text)
 	m_bottom = y+10;
 }
 
-void Label::frameUpdate()
+void Label::onUpdate()
 {
 }
 
-void Label::frameRender()
+void Label::onRender()
 {	
 	glColor4f(0.3, 0.3, 0.3, 0.8);
-	Font::renderString(m_left, m_bottom, m_text);
+	Font::renderString(0, getHeight(), m_text);
 }
 
 void Label::onMouseDown(int x, int y, int button)

@@ -50,9 +50,8 @@ public:
 	Matrix4&	getViewMatrix()				{ return m_viewMat; }
 	Vector2		getLastClickPos() const		{ return m_lastClickPos; }
 
-	virtual void frameUpdate();
-	virtual void frameRender();
-
+	virtual void onUpdate();
+	virtual void onRender();
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);

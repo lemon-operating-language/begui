@@ -110,11 +110,11 @@ Menu* Menu::addMenuItem(const std::string &title, int id, void (*callback)(int),
 	return m_menuItems[m_menuItems.size()-1];
 }
 
-void Menu::frameUpdate()
+void Menu::onUpdate()
 {
 }
 
-void Menu::frameRender()
+void Menu::onRender()
 {
 	int w = display::getWidth();
 	int h = 25;

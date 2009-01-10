@@ -32,7 +32,7 @@ class ImageBox : public Component
 protected:
 	Image	*m_pImage;
 	Texture	m_texture;
-	bool	m_bResizeImg;
+	bool	m_bResizeImg;	// stretch image to fill the ImageBox area
 
 	std::vector<Vector2> m_selLine;
 	bool	m_bSelectable;
@@ -44,9 +44,8 @@ public:
 
 	virtual void setImage(Image *pImg);
 
-	virtual void frameUpdate();
-	virtual void frameRender();
-	
+	virtual void onUpdate();
+	virtual void onRender();	
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);

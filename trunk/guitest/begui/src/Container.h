@@ -41,9 +41,9 @@ public:
 	void		addComponent(Component *pC);
 	int			getChildrenNum() const	{ return (int)m_children.size(); }
 	Component*	getChild(int pos)		{ return m_children[pos]; }
+	void		remComponent(Component *pC);
 
 	// overridables
-	virtual void onRender() = 0;
 	virtual void onMouseDownEx(int x, int y) { };
 	virtual void onMouseMoveEx(int x, int y, int prevx, int prevy) { };
 	virtual void onMouseUpEx(int x, int y) { };

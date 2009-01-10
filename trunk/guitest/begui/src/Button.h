@@ -46,8 +46,8 @@ public:
 
 	void create(int x, int y, const std::string &title, int id=0, void (*callback)(int) = 0);
 
-	virtual void frameUpdate();
-	virtual void frameRender();
+	virtual void onUpdate();
+	virtual void onRender();
 
 	void setState(State state)	{ m_status = state; }
 	State getState() const		{ return m_status; }

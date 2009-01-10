@@ -177,6 +177,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\ComboBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Component.cpp"
 				>
 			</File>
@@ -300,6 +304,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\CheckBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\ComboBox.h"
 				>
 			</File>
 			<File

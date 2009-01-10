@@ -30,37 +30,16 @@ namespace begui {
 class TextBox : public Component
 {
 private:
-	//std::string	m_text;
 	EditableText m_text;
-	//bool		m_bEditable;
-	//bool		m_bMultiline;
 	bool		m_bTextSelectable;
-	//int			m_selStart, m_selEnd;
-	//int			m_cursorPos;
-
-	//std::vector<Vector2> m_charPos;
-	/*class Line
-	{
-	public:
-		int x, y;
-		int lineHeight;
-		std::vector<int> charOffs;
-		std::vector<char> chars;
-		std::vector<int> charW;
-		int	startTextPos;
-		int startCursorPos;
-	};
-	std::vector<Line> m_lines;
-	int m_cursorSteps;*/
 
 public:
 	TextBox();
 
 	virtual void create(int x, int y, int width, int height, bool bEditable=true, bool bMultiline=true);
 
-	virtual void frameUpdate();
-	virtual void frameRender();
-	
+	virtual void onUpdate();
+	virtual void onRender();	
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
@@ -68,14 +47,10 @@ public:
 	virtual void onKeyUp(int key);
 	virtual bool isPtInside(int x, int y);
 
-	//std::string	getText() const						{ return m_text; }
-	//void		setText(const std::string& text)	{ m_text = text; m_cursorPos = (int)m_text.length(); }
-	bool		isEditable() const					{ return true; }//m_bEditable; }
-	bool		isMultiline() const					{ return true; }//m_bMultiline; }
+	bool		isEditable() const					{ return m_text.isEditable(); }
+	bool		isMultiline() const					{ return m_text.isMultiLine(); }
 	std::string	getSelectedText() const;
 
-private:
-	//int			getCharPosAt(int x, int y);
 };
 
 };

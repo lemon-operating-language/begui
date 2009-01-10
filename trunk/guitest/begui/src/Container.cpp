@@ -33,6 +33,8 @@ Container::~Container()
 
 void Container::frameUpdate()
 {
+	onUpdate();
+
 	// update children too
 	for (size_t i=0; i<m_children.size(); ++i)
 		m_children[i]->frameUpdate();
@@ -260,4 +262,16 @@ void Container::addComponent(Component *pC)
 		m_children.insert(m_children.begin()+(i+1), pC);
 	}
 	pC->setParent(this);
+}
+
+void Container::remComponent(Component *pC)
+{
+	ASSERT(pC);
+
+	for (size_t i=0; i<m_children.size(); ++i) {
+		if (m_children[i] == pC) {
+			m_children.erase(m_children.begin() + i);
+			return;
+		}
+	}
 }

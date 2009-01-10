@@ -42,21 +42,25 @@ void TextBox::create(int x, int y, int width, int height, bool bEditable, bool b
 	//m_bEditable = bEditable;
 	//m_bMultiline = bMultiline;
 
-	m_text.create(x,y,width, bMultiline, bEditable);
+	m_text.create(2,0,width, bMultiline, bEditable);
 	m_text.setText("aa aaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
 }
 
-void TextBox::frameUpdate()
+void TextBox::onUpdate()
 {
+	m_text.update();
 }
 
-void TextBox::frameRender()
+void TextBox::onRender()
 {
 	Vector2 wpos = Component::localToWorld(Vector2(0, 0));
-	display::maskRect(wpos.x, wpos.y, getWidth()+1, getHeight()+1);
+	display::maskRect(wpos.x-1, wpos.y, getWidth()+1, getHeight()+1);
 
 	Font *pFont = FontManager::getCurFont();
 	ASSERT(pFont);
+
+	int w = getWidth();
+	int h = getHeight();
 
 	// render the textbox background
 	glBegin(GL_QUADS);
@@ -72,29 +76,32 @@ void TextBox::frameRender()
 			else
 				glColor4f(0,0,0,0.1);
 			
-			int bottom = m_top + (ln+1)*pFont->getLineHeight();
-			if (bottom > m_bottom)
-				bottom = m_bottom;
-			glVertex3f(m_left, m_top + ln*pFont->getLineHeight(), 0);
-			glVertex3f(m_right, m_top + ln*pFont->getLineHeight(), 0);
-			glVertex3f(m_right, bottom, 0);
-			glVertex3f(m_left, bottom, 0);
+			int bottom = (ln+1)*pFont->getLineHeight();
+			if (bottom > h)
+				bottom = h;
+			glVertex3f(0, ln*pFont->getLineHeight(), 0);
+			glVertex3f(w, ln*pFont->getLineHeight(), 0);
+			glVertex3f(w, bottom, 0);
+			glVertex3f(0, bottom, 0);
 		}
 	glEnd();
+	
+	glColor4f(0.2, 0.2, 0.2, 0.5);
+	glBegin(GL_LINES);
+		glVertex2f(0, 0);
+		glVertex2f(w, 0);
+		glVertex2f(w, 0);
+		glVertex2f(w, h);
+		glVertex2f(w, h);
+		glVertex2f(0, h);
+		glVertex2f(0, h);
+		glVertex2f(0, 0);
+	glEnd();
+
 	if (m_text.isEditable())
 		glColor4f(0,0,0,0.5);
 	else
 		glColor4f(0,0,0,0.2);
-	glBegin(GL_LINES);
-		glVertex2f(m_left, m_top);
-		glVertex2f(m_right, m_top);
-		glVertex2f(m_right, m_top);
-		glVertex2f(m_right, m_bottom);
-		glVertex2f(m_right, m_bottom);
-		glVertex2f(m_left, m_bottom);
-		glVertex2f(m_left, m_bottom);
-		glVertex2f(m_left, m_top);
-	glEnd();
 
 	m_text.renderString();
 

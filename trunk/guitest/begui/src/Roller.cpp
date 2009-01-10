@@ -65,20 +65,23 @@ void Roller::bindValue(double *val)
 	m_pBoundValue = val;
 }
 
-void Roller::frameUpdate()
+void Roller::onUpdate()
 {
 	if (m_pBoundValue && !m_bDragging)
 		m_curValue = *m_pBoundValue;
 }
 
-void Roller::frameRender()
+void Roller::onRender()
 {
+	int w = getWidth();
+	int h = getHeight();
+
 	// position of the marker
 	double f = (m_curValue - m_min)/(m_max - m_min);
 	// sanitize
 	if (f > 1) f = 1;
 	if (f < 0) f = 0;
-	int spos = (1-f)*m_left + f*m_right;
+	int spos = f*w;
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -89,37 +92,36 @@ void Roller::frameRender()
 	else
 		glColor4f(1,1,1,1);
 	
-	int l = (int)(m_left*0.7 + m_right*0.3);
-	int r = (int)(m_left*0.3 + m_right*0.7);
+	int l = (int)(w*0.3);
+	int r = (int)(w*0.7);
 
 	glBegin(GL_QUADS);
-		glColor3f(0.35, 0.35, 0.37);		glVertex3f(m_left, m_top, 0);
-		glColor3f(1, 1,1);	glVertex3f(l, m_top, 0);
-		glColor3f(1, 1,1);	glVertex3f(l, m_bottom, 0);
-		glColor3f(0.35, 0.35, 0.37);		glVertex3f(m_left, m_bottom, 0);
+		glColor3f(0.35, 0.35, 0.37);	glVertex3f(0, 0, 0);
+		glColor3f(1, 1,1);				glVertex3f(l, 0, 0);
+		glColor3f(1, 1,1);				glVertex3f(l, h, 0);
+		glColor3f(0.35, 0.35, 0.37);	glVertex3f(0, h, 0);
 	
-		glColor3f(1, 1, 1);	glVertex3f(l, m_top, 0);
-		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, m_top, 0);
-		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, m_bottom, 0);
-		glColor3f(1, 1, 1);	glVertex3f(l, m_bottom, 0);
+		glColor3f(1, 1, 1);				glVertex3f(l, 0, 0);
+		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, 0, 0);
+		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, h, 0);
+		glColor3f(1, 1, 1);				glVertex3f(l, h, 0);
 	
-		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, m_top, 0);
-		glColor3f(0.3, 0.3, 0.3);		glVertex3f(m_right, m_top, 0);
-		glColor3f(0.3, 0.3, 0.3);		glVertex3f(m_right, m_bottom, 0);
-		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, m_bottom, 0);
+		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, 0, 0);
+		glColor3f(0.3, 0.3, 0.3);		glVertex3f(w, 0, 0);
+		glColor3f(0.3, 0.3, 0.3);		glVertex3f(w, h, 0);
+		glColor3f(0.78, 0.78, 0.74);	glVertex3f(r, h, 0);
 	glEnd();
 
 	glColor4f(0.3, 0.3, 0.3, 0.6);
 	glBegin(GL_LINES);
-		glVertex3f(m_left, m_top, 0);
-		glVertex3f(m_right, m_top, 0);
-		glVertex3f(m_right, m_top, 0);
-		glVertex3f(m_right, m_bottom, 0);
-		glVertex3f(m_right, m_bottom, 0);
-		glVertex3f(m_left, m_bottom, 0);
-		glVertex3f(m_left, m_bottom, 0);
-		glVertex3f(m_left, m_top, 0);
-		
+		glVertex3f(0, 0, 0);
+		glVertex3f(w, 0, 0);
+		glVertex3f(w, 0, 0);
+		glVertex3f(w, h, 0);
+		glVertex3f(w, h, 0);
+		glVertex3f(0, h, 0);
+		glVertex3f(0, h, 0);
+		glVertex3f(0, 0, 0);
 	glEnd();
 
 	// if using steps, draw them
@@ -132,11 +134,11 @@ void Roller::frameRender()
 			steps = 50;
 		for (int i=0; i<steps; ++i)
 		{
-			int lx = m_left + i*(m_right-m_left)/steps;
-			int offs = spos % ((m_right-m_left)/steps);
+			int lx = i*w/steps;
+			int offs = spos % (w/steps);
 			lx += offs;
-			glVertex3f(lx, m_top+1, 0);
-			glVertex3f(lx, m_bottom-2, 0);
+			glVertex3f(lx, 1, 0);
+			glVertex3f(lx, h-2, 0);
 		}
 		glEnd();
 	}
@@ -147,16 +149,16 @@ void Roller::frameRender()
 	if (m_bDispPercentage)
 	{
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_min*100);
-		Font::renderString(m_left + 5, m_bottom-3, valStr);
+		Font::renderString(5, h-3, valStr);
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_max*100);
-		Font::renderString(m_right - Font::stringLength(valStr)-5, m_bottom-3, valStr);
+		Font::renderString(w - Font::stringLength(valStr)-5, h-3, valStr);
 	}
 	else
 	{
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_min);
-		Font::renderString(m_left + 5, m_bottom-3, valStr);
+		Font::renderString(5, h-3, valStr);
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_max);
-		Font::renderString(m_right - Font::stringLength(valStr)-5, m_bottom-3, valStr);
+		Font::renderString(w - Font::stringLength(valStr)-5, h-3, valStr);
 	}
 	
 	// render the current value next to the slider
@@ -164,7 +166,7 @@ void Roller::frameRender()
 	{
 		glColor4f(0.3, 0.3, 0.3, 0.8);
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_curValue);
-		Font::renderString(m_right+5, m_bottom-3, valStr);
+		Font::renderString(w+5, h-3, valStr);
 	}
 }
 

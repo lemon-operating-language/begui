@@ -46,45 +46,45 @@ void ImageBox::setImage(Image *pImg)
 	m_selLine.clear();
 }
 
-void ImageBox::frameUpdate()
+void ImageBox::onUpdate()
 {
 }
 
-void ImageBox::frameRender()
+void ImageBox::onRender()
 {
+	int w = getWidth();
+	int h = getHeight();
+
 	glColor4f(0,0,0,0.5f);
 	glBegin(GL_QUADS);
-		glVertex2f(getLeft(), getTop());
-		glVertex2f(getRight(), getTop());
-		glVertex2f(getRight(), getBottom());
-		glVertex2f(getLeft(), getBottom());
+		glVertex2f(0, 0);
+		glVertex2f(w, 0);
+		glVertex2f(w, h);
+		glVertex2f(0, h);
 	glEnd();
 
 	// Render the image
 	if (m_texture.isLoaded())
 	{
-		int w = getWidth();
-		int h = getHeight();
-		float u = 1;
-		float v = 1;
+		int left = 0;	// change if centering the image..
+		int top = 0;
+
+		float u = 1.0f, v = 1.0f;
+		int iw = w, ih=h;
 		if (!m_bResizeImg)
 		{
-			w = (getWidth() > m_pImage->getWidth()) ? m_pImage->getWidth() : getWidth();
-			h = (getHeight() > m_pImage->getHeight()) ? m_pImage->getHeight() : getHeight();
-			u = (float)m_pImage->getWidth()/m_texture.getWidth();
-			v = (float)m_pImage->getHeight()/m_texture.getHeight();
-			if (getWidth() < m_pImage->getWidth())
-				u = (float)getWidth()/m_texture.getWidth();
-			if (getHeight() < m_pImage->getHeight())
-				v = (float)getHeight()/m_texture.getHeight();
+			iw = (w > m_pImage->getWidth()) ? m_pImage->getWidth() : w;
+			ih = (h > m_pImage->getHeight()) ? m_pImage->getHeight() : h;
+			u = (float)iw/m_texture.getWidth();
+			v = (float)ih/m_texture.getHeight();
 		}
 		m_texture.set();
 		glColor4f(1,1,1,1);
 		glBegin(GL_QUADS);
-			glTexCoord2f(0,0); glVertex2f(getLeft(), getTop());
-			glTexCoord2f(u,0); glVertex2f(getLeft()+w, getTop());
-			glTexCoord2f(u,v); glVertex2f(getLeft()+w, getTop()+h);
-			glTexCoord2f(0,v); glVertex2f(getLeft(), getTop()+h);
+			glTexCoord2f(0,0); glVertex2f(left, top);
+			glTexCoord2f(u,0); glVertex2f(left+iw, top);
+			glTexCoord2f(u,v); glVertex2f(left+iw, top+ih);
+			glTexCoord2f(0,v); glVertex2f(left, top+ih);
 		glEnd();
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -94,12 +94,12 @@ void ImageBox::frameRender()
 	{
 		glColor4f(1,0,0,1);
 		glBegin(GL_LINES);
-			glVertex2f(m_selLine[0].x + getLeft(), m_selLine[0].y + getTop());
+			glVertex2f(m_selLine[0].x, m_selLine[0].y);
 			for (size_t i=1; i<m_selLine.size(); ++i) {
-				glVertex2f(m_selLine[i].x + getLeft(), m_selLine[i].y + getTop());
-				glVertex2f(m_selLine[i].x + getLeft(), m_selLine[i].y + getTop());
+				glVertex2f(m_selLine[i].x, m_selLine[i].y);
+				glVertex2f(m_selLine[i].x, m_selLine[i].y);
 			}
-			glVertex2f(m_selLine[0].x + getLeft(), m_selLine[0].y + getTop());
+			glVertex2f(m_selLine[0].x, m_selLine[0].y);
 		glEnd();
 	}
 }

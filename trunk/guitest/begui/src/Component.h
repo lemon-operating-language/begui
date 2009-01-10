@@ -73,9 +73,13 @@ public:
 	void setAlwaysOnTop(bool ontop)	{ m_bAlwaysOnTop = ontop; }
 	void setVisible(bool visible)	{ m_bVisible = visible; }
 
-	virtual void frameUpdate() = 0;
-	virtual void frameRender() = 0;
+	virtual void frameUpdate();
+	virtual void frameRender();
 	
+	// event handlers. Override these methods to define how your
+	// component behaves
+	virtual void onUpdate() { };
+	virtual void onRender() = 0;
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
