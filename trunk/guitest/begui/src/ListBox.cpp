@@ -67,7 +67,7 @@ void ListBox::onRender()
 	}
 	
 	Vector2 wpos = Component::localToWorld(Vector2(0, 0));
-	display::maskRect(wpos.x-1, wpos.y, getWidth()+1-((bNeedsScrolling)? ScrollBar::SCROLL_WIDTH : 0), getHeight()+1);
+	display::maskRect(wpos.x-1, wpos.y, getWidth()+2-((bNeedsScrolling)? ScrollBar::SCROLL_WIDTH : 0), getHeight()+1);
 
 	glEnable(GL_BLEND);
 
