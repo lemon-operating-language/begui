@@ -22,43 +22,49 @@
 #pragma once
 
 #include "common.h"
-#include "Component.h"
+#include "ListBox.h"
+#include "Container.h"
 
 namespace begui {
 
-class RadioButton : public Component
+class ComboBox : public Container
 {
-public:
-	enum State {
-		SELECTED,
-		NOT_SELECTED,
-		INACTIVE
-	};
+protected:
+	ListBox				m_listbox;
+	int					m_curItem;
+	EditableText		m_text;
+	bool				m_bEditable;	// text in the text area is editable
 
-private:
-	State		m_state;
-	std::string m_title;
-	int			m_id;
-	bool		m_bIsRadio;
-	void		(*m_pCallback)(int);
-	bool		m_bHover;
+	bool				m_bIsOpen;	// true if the list is open
+	int					m_btnW, m_btnH;	// dimensions of the button to extend the list
 
 public:
-	RadioButton();
+	ComboBox();
+	virtual ~ComboBox();
 
-	void create(int x, int y, const std::string &title, int id=0, void (*callback)(int) = 0, bool bIsRadio = true);
-	void setState(State state)	{ m_state = state; }
-	State getState() const		{ return m_state; }
-	void setCaption(const std::string& title)	{ m_title = title; }
+	virtual void create(int x, int y, int width, int list_height);
 
 	virtual void onUpdate();
 	virtual void onRender();
+	
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
+
 	virtual bool isPtInside(int x, int y);
+
+	void		addItem(const std::string &item)	{ m_listbox.addItem(item); }
+	int			itemsNum() const					{ return m_listbox.itemsNum(); }
+	bool		itemEnabled(size_t i) const			{ return m_listbox.itemEnabled(i); }
+	void		remItem(int pos)					{ m_listbox.remItem(pos); }
+	void		remAllItems()						{ m_listbox.remAllItems(); }
+	int			getCurrent() const					{ return m_curItem; }
+	void		enableItem(size_t i)				{ m_listbox.enableItem(i); }
+	void		disableItem(size_t i)				{ m_listbox.disableItem(i); }
+
+	void	onItemClick(int i);
 };
 
 };

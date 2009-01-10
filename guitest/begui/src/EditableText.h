@@ -3,6 +3,7 @@
 #include "common.h"
 #include "../../b3d_lib/src/Rect.h"
 #include "timeseries.h"
+#include "LiveVar.h"
 
 namespace begui {
 
@@ -13,6 +14,7 @@ public:
 
 	void create(int x, int y, int lineWidth, bool bMultiLine = true, bool bEditable = true,
 				bool bTextSelectable = true);
+	void update();
 	void renderString();
 	void setText(const std::string &text);
 	void setCursorVisible(bool bVisible)			{ m_bRenderCursor = bVisible; }
@@ -30,6 +32,9 @@ public:
 	bool isEditable() const							{ return m_bEditable; }
 	bool isMultiLine() const						{ return m_bMultiLine; }
 
+	// live variable access
+	LiveVar<std::string>&	text()	{ return m_text; }
+
 	void onMouseDown(int x, int y, int button);	// WC means world coordinates
 	void onMouseMove(int x, int y, int prevx, int prevy);
 	void onMouseUp(int x, int y, int button);
@@ -37,7 +42,7 @@ public:
 	void onKeyUp(int key);
 
 private:
-	std::string m_text;
+	LiveVar<std::string> m_text;
 	int		m_x, m_y;
 	int		m_lineWidth;
 	std::vector< Rect<int> > m_charPos;		// character positions

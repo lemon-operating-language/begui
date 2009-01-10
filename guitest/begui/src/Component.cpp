@@ -191,3 +191,23 @@ bool Component::isPtInside(int x, int y)
 		return false;
 	return true;
 }
+
+void Component::frameRender()
+{
+	// transform the parent coordinate system to the local one
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glTranslatef(m_left, m_top, 0);
+	
+	// Render the component
+	onRender();
+
+	// Reset the coordinate system
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}
+
+void Component::frameUpdate()
+{
+	onUpdate();
+}

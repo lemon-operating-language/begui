@@ -54,8 +54,8 @@ public:
 	void bindValue(bool *val);	// create a 'live' variable for the slider's current value
 									// 0 accepted, to remove current bound variable.
 
-	virtual void frameUpdate();
-	virtual void frameRender();
+	virtual void onUpdate();
+	virtual void onRender();
 
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);

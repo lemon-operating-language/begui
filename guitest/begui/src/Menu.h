@@ -54,9 +54,8 @@ public:
 	void close();
 	void clear();
 
-	virtual void frameUpdate();
-	virtual void frameRender();
-
+	virtual void onUpdate();
+	virtual void onRender();
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);

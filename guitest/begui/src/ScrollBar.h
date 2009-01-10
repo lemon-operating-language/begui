@@ -56,10 +56,10 @@ public:
 			void	setPos(double pos);
 			double	getPos() const				{ return m_curPos; }
 			void	setPercVisible(double perc)	{ ASSERT(perc >= 0 && perc <= 1.0); m_percVisible = perc; }
-			
-	virtual void frameUpdate();
-	virtual void frameRender();
-	
+			void	setBounds(double minPos, double maxPos, double percVisible);
+
+	virtual void onUpdate();
+	virtual void onRender();	
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);

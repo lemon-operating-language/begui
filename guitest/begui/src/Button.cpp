@@ -50,11 +50,11 @@ void Button::create(int x, int y, const std::string &title, int id, void (*callb
 	m_bottom = y+26;
 }
 
-void Button::frameUpdate()
+void Button::onUpdate()
 {
 }
 
-void Button::frameRender()
+void Button::onRender()
 {
 	// set the texture of a window
 	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
@@ -62,6 +62,9 @@ void Button::frameRender()
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	int w = getWidth();
+	int h = getHeight();
 
 	// render the icon
 	if (m_status == Button::INACTIVE)
@@ -71,8 +74,8 @@ void Button::frameRender()
 	else
 		glColor4f(1,1,1,1);
 	int offs = (m_status == Button::DOWN)?1:0;
-	Component::drawBorderedQuad(m_left+offs, m_top+offs, m_right-offs, m_bottom-offs,
-							m_left+13, m_top+13, m_right-13, m_bottom-13,
+	Component::drawBorderedQuad(offs, offs, w-offs, h-offs,
+							13, 13, w-13, h-13,
 							410/512.0, 423/512.0, 505/512.0 , 492/512.0,
 							32/512.0, 45/512.0, 58/512.0, 45/512.0);
 		
@@ -80,12 +83,12 @@ void Button::frameRender()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render the text
-	int center = m_left + getWidth()/2;
+	int center = getWidth()/2;
 	if (m_status == Button::INACTIVE)
 		glColor3f(0.3, 0.3, 0.3);
 	else
 		glColor3f(1,1,1);
-	Font::renderString(center - Font::stringLength(m_title)/2, m_bottom-9, m_title);
+	Font::renderString(center - Font::stringLength(m_title)/2, h-9, m_title);
 }
 
 void Button::onMouseDown(int x, int y, int button)

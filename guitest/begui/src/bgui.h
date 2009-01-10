@@ -42,5 +42,7 @@
 #include "TextBox.h"
 #include "ScrollBar.h"
 #include "ImageBox.h"
+#include "ListBox.h"
+#include "ComboBox.h"
 
 using namespace begui;

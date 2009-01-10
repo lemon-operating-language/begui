@@ -50,7 +50,7 @@ void CheckBox::bindValue(bool *val)
 	m_pBoundVal = val;
 }
 
-void CheckBox::frameUpdate()
+void CheckBox::onUpdate()
 {
 	if (m_pBoundVal)
 	{
@@ -59,7 +59,7 @@ void CheckBox::frameUpdate()
 	}
 }
 
-void CheckBox::frameRender()
+void CheckBox::onRender()
 {
 	// set the texture of a window
 	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
@@ -67,6 +67,9 @@ void CheckBox::frameRender()
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int w = getWidth();
+	int h = getHeight();
 
 	// find the position
 	int tL=388;
@@ -81,10 +84,10 @@ void CheckBox::frameRender()
 	else if (m_state == CheckBox::INACTIVE)
 		glColor4f(1,1,1,0.5);
 	glBegin(GL_QUADS);
-		glTexCoord2f(tL/512.0, tT/512.0);	glVertex3f(m_left, m_top, 0);
-		glTexCoord2f(tR/512.0, tT/512.0);	glVertex3f(m_left+12, m_top, 0);
-		glTexCoord2f(tR/512.0, tB/512.0);	glVertex3f(m_left+12, m_bottom, 0);
-		glTexCoord2f(tL/512.0, tB/512.0);	glVertex3f(m_left, m_bottom, 0);
+		glTexCoord2f(tL/512.0, tT/512.0);	glVertex3f(0, 0, 0);
+		glTexCoord2f(tR/512.0, tT/512.0);	glVertex3f(12, 0, 0);
+		glTexCoord2f(tR/512.0, tB/512.0);	glVertex3f(12, 12, 0);
+		glTexCoord2f(tL/512.0, tB/512.0);	glVertex3f(0, 12, 0);
 		
 		// render the check mark
 		if (m_state == CheckBox::CHECKED)
@@ -95,10 +98,10 @@ void CheckBox::frameRender()
 			// pos in the texture file.
 			int chU = 405;
 			int chV = 4;
-			glTexCoord2f(chU/512.0, chV/512.0);			glVertex3f(m_left+2, m_top-2, 0);
-			glTexCoord2f((chU+chW)/512.0, chV/512.0);	glVertex3f(m_left+11, m_top-2, 0);
-			glTexCoord2f((chU+chW)/512.0, (chV+chH)/512.0);	glVertex3f(m_left+11, m_bottom-1, 0);
-			glTexCoord2f(chU/512.0, (chV+chH)/512.0);	glVertex3f(m_left+2, m_bottom-1, 0);
+			glTexCoord2f(chU/512.0, chV/512.0);			glVertex3f(2, -2, 0);
+			glTexCoord2f((chU+chW)/512.0, chV/512.0);	glVertex3f(11, -2, 0);
+			glTexCoord2f((chU+chW)/512.0, (chV+chH)/512.0);	glVertex3f(11, h-1, 0);
+			glTexCoord2f(chU/512.0, (chV+chH)/512.0);	glVertex3f(2, h-1, 0);
 		}
 	glEnd();
 		
@@ -109,7 +112,7 @@ void CheckBox::frameRender()
 	glColor3f(0.3,0.3,0.3);
 	if (m_state == CheckBox::INACTIVE)
 		glColor3f(0.6, 0.6, 0.6);
-	Font::renderString(m_left + 18, m_bottom-2, m_title);
+	Font::renderString(18, h-2, m_title);
 }
 
 void CheckBox::onMouseDown(int x, int y, int button)

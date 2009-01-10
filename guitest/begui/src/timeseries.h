@@ -129,7 +129,7 @@ void TimeSeries<T>::clear() {
 
 template <class T>
 TimeSeries<T>& TimeSeries<T>::operator = (const TimeSeries<T> &ts) {
-	m_values = ts.values;
+	m_values = ts.m_values;
 	m_timestamps = ts.m_timestamps;
 	m_interpolation = ts.m_interpolation;
 	m_bLoop = ts.m_bLoop;
