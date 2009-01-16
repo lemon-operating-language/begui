@@ -21,7 +21,7 @@
 		if (!BaseApp_Win::initialize())
 			return false;
 
-		// Get a pointer to the menu of the main window
+		// Get a reference to the menu of the main window
 		Menu &menu = FrameWindow::inst()->getMenu();
 
 		// Create a new drop down menu
