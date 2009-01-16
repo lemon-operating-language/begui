@@ -1,4 +1,5 @@
 #summary A Getting Started guide for a Windows app using beGUI
+#labels Phase-Deploy,Featured
 
 = Creating a new application using BeGUI =
 
