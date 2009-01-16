@@ -27,7 +27,6 @@
 using namespace begui;
 
 Menu::Menu() : m_id(-1),
-	m_pCallback(0),
 	m_itemOpen(false),
 	m_activeItem(-1),
 	m_isMainMenu(false),
@@ -70,14 +69,14 @@ void Menu::close()
 	m_itemOpen = false;
 }
 
-Menu* Menu::addMenuItem(const std::string &title, int id, void (*callback)(int), bool isSeparator)
+Menu* Menu::addMenuItem(const std::string &title, int id, Functor1<int> &callback)
 {
 	Menu *menu = new Menu();
 	menu->m_title = title;
 	menu->m_id = id;
 	menu->m_pParent = this;
-	menu->m_bSeparator = isSeparator;
-	menu->m_pCallback = callback;
+	menu->m_bSeparator = false;
+	menu->m_onItemClick = callback;
 
 	// set the region covered by the contracted menu
 	if (m_isMainMenu)
@@ -108,6 +107,31 @@ Menu* Menu::addMenuItem(const std::string &title, int id, void (*callback)(int),
 	m_menuItems.push_back(menu);
 	
 	return m_menuItems[m_menuItems.size()-1];
+}
+
+
+void Menu::addSeparator()
+{
+	Menu *menu = new Menu();
+	menu->m_title = "------------";
+	menu->m_id = -1;
+	menu->m_pParent = this;
+	menu->m_bSeparator = true;
+	menu->setEnabled(false);
+
+	// set the region covered by the contracted menu
+	int w = Font::stringLength(menu->m_title);
+	menu->m_left = m_left+5;
+	menu->m_right = menu->m_left + w + 10;
+	menu->m_top = 5 + m_bottom + (int)m_menuItems.size()*16;
+	menu->m_bottom = menu->m_top + 13;
+
+	w += 55;
+	m_contentWidth = (w>m_contentWidth)?w:m_contentWidth;
+	m_contentHeight += 16;
+
+	// add the menu item
+	m_menuItems.push_back(menu);
 }
 
 void Menu::onUpdate()
@@ -195,7 +219,7 @@ void Menu::onRender()
 		// render the menu item text
 		if (m_menuItems[i]->m_bSeparator)
 			glColor3f(0.6,0.6,0.6);
-		else if (m_menuItems[i]->m_pCallback == 0 || !m_menuItems[i]->isEnabled())
+		else if (!m_menuItems[i]->isEnabled())
 			glColor3f(0.5, 0.5, 0.5);
 		else if (i == m_activeItem)
 			glColor3f(1,1,1);
@@ -223,7 +247,7 @@ void Menu::onRender()
 			int chU = 405;
 			int chV = 4;
 
-			if (m_menuItems[i]->m_pCallback == 0 || !m_menuItems[i]->isEnabled())
+			if (!m_menuItems[i]->isEnabled())
 				glColor4f(0, 0, 0, 0.25f);
 			else
 				glColor4f(0,0,0, 0.8f);
@@ -273,8 +297,8 @@ void Menu::onMouseDown(int x, int y, int button)
 
 				// call the callback associated with this item
 				// to perform the associated action
-				if (m_menuItems[i]->m_pCallback && m_menuItems[i]->isEnabled())
-					m_menuItems[i]->m_pCallback(m_menuItems[i]->m_id);
+				if (m_menuItems[i]->isEnabled())
+					m_menuItems[i]->m_onItemClick(m_menuItems[i]->m_id);
 			}
 			return;
 		}

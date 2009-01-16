@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "Component.h"
+#include "callback.h"
 
 namespace begui {
 
@@ -37,7 +38,8 @@ private:
 
 	std::string	m_title;
 	int			m_id;
-	void		(*m_pCallback)(int);
+	//void		(*m_pCallback)(int);
+	Functor1<int>		m_onItemClick;	// arg1: the id of the clicked item
 	bool		m_bSeparator;	// this menu item is a seperator
 	bool		m_bChecked;		// a check mark is displayed next to the menu item
 
@@ -65,12 +67,14 @@ public:
 			bool isPtInsideSubmenu(int x, int y);
 	virtual void onDeactivate();
 
-	Menu*	addMenuItem(const std::string &title, int id, void (*callback)(int), bool isSeparator = false);
+	Menu*	addMenuItem(const std::string &title, int id, Functor1<int>& callback);
+	void	addSeparator();
 	Menu*	getMenuItem(const std::string &title);
 	Menu*	getMenuItem(int id);
 	void	removeMenuItem(Menu*);
 
 	void	setChecked(bool bChecked)	{ m_bChecked = bChecked; }
+	void	setEnabled(bool bEnabled)	{ m_bEnabled = bEnabled; }
 	bool	isChecked() const			{ return m_bChecked; }
 	void	setTitle(const std::string& title);
 };

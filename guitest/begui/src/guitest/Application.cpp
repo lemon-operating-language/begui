@@ -59,21 +59,21 @@ bool Application::initialize()
 	Menu &menu = FrameWindow::inst()->getMenu();
 
 	// Create a new drop down menu
-	Menu *pFileMenu = menu.addMenuItem("File", 1, Application::onMenuCB);
+	Menu *pFileMenu = menu.addMenuItem("File", 1, makeFunctor(*this, &Application::onMenu));
 
 	// Add menu items to this menu.
-	pFileMenu->addMenuItem("Open image", 101, Application::onMenuCB);
-	pFileMenu->addMenuItem("Save image", 102, Application::onMenuCB);
-	pFileMenu->addMenuItem("Save image as..", 103, Application::onMenuCB);
-	pFileMenu->addMenuItem("------------", -1, 0, true);
-	pFileMenu->addMenuItem("Page Setup", 104, Application::onMenuCB);
-	pFileMenu->addMenuItem("Print Preview", 105, Application::onMenuCB);
-	pFileMenu->addMenuItem("------------", -1, 0, true);
-	pFileMenu->addMenuItem("Exit", 106, Application::onMenuCB);
+	pFileMenu->addMenuItem("Open image", 101, makeFunctor(*this, &Application::onMenu));
+	pFileMenu->addMenuItem("Save image", 102, makeFunctor(*this, &Application::onMenu));
+	pFileMenu->addMenuItem("Save image as..", 103, makeFunctor(*this, &Application::onMenu));
+	pFileMenu->addSeparator();
+	pFileMenu->addMenuItem("Page Setup", 104, makeFunctor(*this, &Application::onMenu));
+	pFileMenu->addMenuItem("Print Preview", 105, makeFunctor(*this, &Application::onMenu));
+	pFileMenu->addSeparator();
+	pFileMenu->addMenuItem("Exit", 106, makeFunctor(*this, &Application::onMenu));
 	
-	Menu *pMenu2 = menu.addMenuItem("Menu 02", 2, Application::onMenuCB);
-	pMenu2->addMenuItem("Item 1", 201, Application::onMenuCB);
-	pMenu2->addMenuItem("Item 2", 202, Application::onMenuCB);
+	Menu *pMenu2 = menu.addMenuItem("Menu 02", 2, makeFunctor(*this, &Application::onMenu));
+	pMenu2->addMenuItem("Item 1", 201, makeFunctor(*this, &Application::onMenu));
+	pMenu2->addMenuItem("Item 2", 202, makeFunctor(*this, &Application::onMenu));
 
 	// create a child window
 	m_wnd1.create(30, 50, 420, 400, "test");
@@ -91,11 +91,6 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	Console::create();
 
 	return Application::inst()->run("beGUI test", 800, 600);
-}
-
-void Application::onMenuCB(int id)
-{
-	Application::inst()->onMenu(id);
 }
 
 void Application::onMenu(int id)

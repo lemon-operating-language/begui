@@ -34,7 +34,4 @@ public:
 	void onMenu(int id);
 
 	static Application* inst()	{ if (!m_pInst) m_pInst = new Application(); return m_pInst; }
-
-private:
-	static void onMenuCB(int id);
 };
