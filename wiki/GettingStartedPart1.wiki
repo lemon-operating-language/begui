@@ -11,7 +11,7 @@
 		<li>Give a name to the project and press OK</li>
 		<li>In Application Settings, check "Empty Project" and press Finish</li>
 	</ul>
-	<p>Now we have our new, empty project. We start by creating a <code>WinMain</code> function as the entry point for our program. Create a new file, named main.cpp, and write the following in it:</p>
+	<p>Now we have our new, empty project. We start by creating a <em>WinMain</em> function as the entry point for our program. Create a new file, named main.cpp, and write the following in it:</p>
 	<code>
 	int WINAPI WinMain(HINSTANCE	hInstance,		// Instance
 			HINSTANCE	hPrevInstance,		// Previous Instance
@@ -22,7 +22,7 @@
 	}
 </code>
 	<p>We just made the simplest possible Windows program. Now, we need to create our main window, initialize OpenGL and beGUI and get rendering. For this tutorial, we will use the base Win32 application class provided by beGUI. Notice that this is not necessary, you can pretty much grab beGUI controls and throw them into any OpenGL application.</p>
-	<p>The base application class provided by beGUI for Win32 platforms (the only one right now :P) is <code>BaseApp_Win</code>. We will derive a new class from this one. Let's name it with the imaginative name <code>Application</code>.Create a new file and name it <code>Application.h</code>.</p>
+	<p>The base application class provided by beGUI for Win32 platforms (the only one right now :P) is <em>BaseApp_Win</em>. We will derive a new class from this one. Let's name it with the imaginative name <em>Application</em>.Create a new file and name it <em>Application.h</em>.</p>
 	<p>First, we will include the beGUI header files:</p>
 	<code>
 	#pragma once
@@ -49,6 +49,6 @@
 	}
 	</code>
 	<h3>Building</h3>
-	<p>Ok. One more step is missing. BeGUI is using the FreeType library. So, go and download FreeType (2.3.5 used with beGUI, newer versions will probably work fine as well) from <a href="http://www.freetype.org/">here</a>. Make sure that you set up the include and library directories in Visual Studio correctly, and then link with <code>freetype235.lib</code>. Also, link to <code>glaux.lib</code>. Good. A final step to build the project that might be necessary, is to set the linker to ignore LIBC.lib (LIBCD.lib for the debug build) - FreeType already includes it, causing a conflict. Let's compile and run this simple program, shall we? Before you run it, make sure that the OpenGL and FreeType dlls are reachable (e.g. in the application folder). If everything went well, you should see the following after the program loads:</p>
+	<p>Ok. One more step is missing. BeGUI is using the FreeType library. So, go and download FreeType (2.3.5 used with beGUI, newer versions will probably work fine as well) from <a href="http://www.freetype.org/">here</a>. Make sure that you set up the include and library directories in Visual Studio correctly, and then link with <em>freetype235.lib</em>. Also, link to <em>glaux.lib</em>. Good. A final step to build the project that might be necessary, is to set the linker to ignore LIBC.lib (LIBCD.lib for the debug build) - FreeType already includes it, causing a conflict. Let's compile and run this simple program, shall we? Before you run it, make sure that the OpenGL and FreeType dlls are reachable (e.g. in the application folder). If everything went well, you should see the following after the program loads:</p>
 	<img src="" />
 	<p>Yay! You just made your first application based on beGUI. Doesn't look all that exciting though, does it? We should add some things to it. Let's say, a menu, a couple of windows and a bunch of controls.</p>
