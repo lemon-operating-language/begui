@@ -56,4 +56,4 @@
 	<img src="" />
 	<p>Yay! You just made your first application based on beGUI. Doesn't look all that exciting though, does it? We should add some things to it. Let's say, a menu, a couple of windows and a bunch of controls.</p>
 
-<a href="">continue to Part 2</a>
+<a href="http://code.google.com/p/begui/wiki/GettingStartedPart2">continue to Part 2</a>
