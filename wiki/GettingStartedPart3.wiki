@@ -1,0 +1,46 @@
+#summary A Getting Started guide for a Windows app using beGUI
+
+= Creating a new application using BeGUI =
+
+<h2>Part 3: Creating a child window</h2>
+<p>Creating a new child window inside the frame window can be pretty simple. For a generic window, you could just write:</p>
+{{{
+	Window wnd;
+	...
+	wnd.create(left, top, width, height, "title");
+	FrameWindow::inst()->addComponent(&wnd);
+}}}
+
+<p>(Of course, make sure that the window object is not going to be destroyed, as might not be so obvious in the example above, after the call to `addComponent()`)</p>
+
+<p>However, in most cases we might want to have a derived class for a window in our application. In that case, just derive the base `begui::Window` class, and override methods (like `initialize()`) to change the window behavior. Let's see an example:</p>
+
+{{{
+	// header file:
+	class MyWindow : public Window
+	{
+	private:
+		// components:
+		Button m_btn;
+		...
+	public:
+		...
+		virtual void initialize();
+		...
+	};
+	...
+	// cpp file:
+	...
+	void MyWindow::initialize()
+	{
+		// create the button here
+		m_btn.create(10, 10, "OK");
+
+		// add this button as a child of the window. This is
+		// necessary for the button to be displayed and function.
+		addComponent(&m_btn);
+		...
+	}
+}}}
+
+<p>We would use the derived class just like the base `Window` class in the first example.</p>
