@@ -4,17 +4,18 @@
 = Creating a new application using BeGUI =
 
 <h2>Part 2: Creating a menu</h2>
-	<p>The menu will be created during the initialization of our application. To do that, we should override the method `initialize()` of `BaseApp_Win`:</p>
-	{{{
+<p>The menu will be created during the initialization of our application. To do that, we should override the method `initialize()` of `BaseApp_Win`:</p>
+{{{
 	class Application : public BaseApp_Win {
 		...
 	public:
 		virtual bool initialize();
 		...
 	};
-	}}}
-	<p>In the `Application.cpp` file, we create the menu by making `initialize()` look as following:</p>
-	{{{
+}}}
+
+<p>In the `Application.cpp` file, we create the menu by making `initialize()` look as following:</p>
+{{{
 	bool Application::initialize()
 	{
 		if (!BaseApp_Win::initialize())
@@ -27,31 +28,35 @@
 		Menu *pFileMenu = menu.addMenuItem("File", 1, Application::onMenu);
 
 		// Add menu items to this menu.
-		pFileMenu->addMenuItem("Open", 11, Application::onMenu);
-		pFileMenu->addMenuItem("Save", 12, Application::onMenu);
-		pFileMenu->addMenuItem("------------", -1, 0, true);
-		pFileMenu->addMenuItem("Exit", 13, Application::onMenu);
+		pFileMenu->addMenuItem("Open", 101, makeFunctor(*this, &Application::onMenu));
+		pFileMenu->addMenuItem("Save", 102, makeFunctor(*this, &Application::onMenu));
+		pFileMenu->addSeparator();
+		pFileMenu->addMenuItem("Exit", 103, makeFunctor(*this, &Application::onMenu));
 
 		// Create a second drop down menu
-		Menu *pSecondMenu = menu.addMenuItem("Another menu", 6, Application::onMenu);
-		pSecondMenu->addMenuItem("Choice one", 62, Application::onMenu);
-		pSecondMenu->addMenuItem("Choice two", 63, Application::onMenu);
+		Menu *pSecondMenu = menu.addMenuItem("Another menu", 2, Application::onMenu);
+		pSecondMenu->addMenuItem("Choice one", 201, makeFunctor(*this, &Application::onMenu));
+		pSecondMenu->addMenuItem("Choice two", 201, makeFunctor(*this, &Application::onMenu));
 
 		return true;
 	}
-	}}}
-	<p>Here, `Application::onMenu(int)` is the method that will handle all menu-related events. It's a callback, so we will implement it as a static method of `Application`. It takes one argument, the id of the menu or menuitem clicked. Notice that this menuitem id is the second argument in `addMenuItem(...)`. Also, notice that to create a submenu, we just add menu items to a menu item.</p>
-	<p>The callback for the menu is defined like this:</p>
-	{{{
+}}}
+
+<p>Here, `Application::onMenu(int)` is the method that will handle all menu-related events. It takes one argument, the id of the menu or menuitem clicked. Notice that this menu item id is the second argument in `addMenuItem(...)`. Also, notice that to create a submenu, we just add menu items to a menu item. Method `addSeparator()` creates a small horizontal line in the corresponding position in the menu, separating the menu items.</p>
+
+<p>To use `Application::onMenu` as a callback, we provide a functor object, created using `makeFunctor`. The first argument of `makeFunctor` is the instance of the class to which the callback method belongs, and the second argument is the name of the callback method. The method `addMenuItem` accepts a functor of type `Functor1<int>`, which means a functor to a method that accepts one argument of type `int`, and returns `void`. Functor classes are defined in `callback.h` for the curious.</p>
+
+<p>The callback for the menu is defined like this:</p>
+{{{
 	class Application : public BaseApp_Win {
 		...
 	private:
-		static void onMenu(int id);
+		void onMenu(int id);
 		...
 	};
 	}}}
-	<p>and in Application.cpp:</p>
-	{{{
+<p>and in Application.cpp:</p>
+{{{
 	void Application::onMenu(int id)
 	{
 		switch (id)
@@ -61,4 +66,5 @@
 		}
 	}
 }}}
-	<p>Compile and run. Voila, a menu!</p>
+
+<p>Compile and run. Voila, a menu!</p>
