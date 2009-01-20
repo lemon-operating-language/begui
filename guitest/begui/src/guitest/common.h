@@ -1,1 +1,5 @@
-#include "../bgui.h"
+#pragma once
+
+#include "../../include/bgui.h"
+
+using namespace begui;
