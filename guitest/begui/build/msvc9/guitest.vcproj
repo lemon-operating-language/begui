@@ -70,8 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="freetype235.lib"
+				AdditionalDependencies="freetype235MT.lib"
 				OutputFile="$(OutDir)/guitest.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBCD"
@@ -151,11 +150,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
-				AdditionalDependencies="freetype235.lib"
+				AdditionalDependencies="freetype235MT.lib"
 				OutputFile="$(OutDir)/guitest.exe"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="LIBC"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
