@@ -429,6 +429,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\COPYING"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\COPYING.LESSER"
+				>
+			</File>
+			<File
 				RelativePath="..\..\resources\tahoma.ttf"
 				>
 			</File>
