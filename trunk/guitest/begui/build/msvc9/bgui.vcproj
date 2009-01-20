@@ -303,6 +303,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\callback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\CheckBox.h"
 				>
 			</File>
@@ -352,6 +356,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ListBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\LiveVar.h"
 				>
 			</File>
 			<File
