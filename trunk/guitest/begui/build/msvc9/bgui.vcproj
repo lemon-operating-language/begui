@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/bgui.lib"
+				OutputFile="$(OutDir)/../../../lib/bgui_D.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/bgui.lib"
+				OutputFile="$(OutDir)/../../../lib/bgui.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -295,7 +295,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bgui.h"
+				RelativePath="..\..\include\bgui.h"
 				>
 			</File>
 			<File
