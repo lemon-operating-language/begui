@@ -55,10 +55,14 @@ bool BaseApp_Win::coreInitialize()
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 
+	// Get windows directory
+	char win_dir[MAX_PATH+1];
+	GetWindowsDirectory(win_dir, MAX_PATH);
+
 	// Initialize font subsystem
 	if (!FontManager::initialize())
 		return false;
-	if (!FontManager::setFont(WindowResourceManager::inst()->getResourceDir() + "tahoma.ttf", 11))
+	if (!FontManager::setFont(strcat(win_dir, "\\Fonts\\tahoma.ttf"), 11))
 		return false;
 	
 	// Initialize the window manager and load resources
