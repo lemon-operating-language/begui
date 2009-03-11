@@ -34,17 +34,18 @@ public:
 		UP,
 		INACTIVE
 	};
+
 private:
-	std::string m_title;
-	int			m_id;
-	void		(*m_pCallback)(int);
-	bool		m_bHover;
-	State		m_status;
+	std::string		m_title;
+	int				m_id;
+	Functor1<int>	m_onClick;	// arg1: the id of the button
+	bool			m_bHover;
+	State			m_status;
 
 public:
 	Button();
 
-	void create(int x, int y, const std::string &title, int id=0, void (*callback)(int) = 0);
+	void create(int x, int y, const std::string &title, int id, Functor1<int> &callback = Functor1<int>());
 
 	virtual void onUpdate();
 	virtual void onRender();

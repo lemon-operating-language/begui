@@ -22,6 +22,7 @@
 #pragma once
 
 #include "common.h"
+#include "../../b3d_lib/src/RenderPass.h"
 
 namespace begui {
 
@@ -29,6 +30,11 @@ class BaseApp_Win
 {
 private:
 	static BaseApp_Win	*m_pInst;
+
+	bool	m_bLayeredWindow;
+	bool	m_bOffscreenRendering;
+	bool	m_bSyncRendering;
+	RenderPass m_frameRenderPass;
 
 public:
 	int run(const std::string &title, size_t width, size_t height);
@@ -38,17 +44,21 @@ public:
 	LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	BaseApp_Win() { };
+	BaseApp_Win();
 	virtual ~BaseApp_Win();
 
 	bool coreInitialize();
 	bool createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag);
 	void killGLWindow();
+	void setSynchronousRendering(bool bSyncRendering)	{ m_bSyncRendering = bSyncRendering; }
+	void setLayeredWindow(bool bLayered)				{ m_bLayeredWindow = bLayered; }
 	
 	virtual bool initialize();
 	virtual void resize(int width, int height);
 	virtual void updateFrame();
 	virtual void renderFrame();
+
+	bool setupOffscreenPass(int width, int height);
 };
 
 };

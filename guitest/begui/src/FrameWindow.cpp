@@ -27,7 +27,7 @@ using namespace begui;
 // Singleton instance
 FrameWindow *FrameWindow::m_pInstance;
 
-FrameWindow::FrameWindow() : m_pMenu(0), m_pModalDialog(0)
+FrameWindow::FrameWindow() : m_pMenu(0), m_pModalDialog(0), m_bShowBackground(true)
 {
 }
 
@@ -102,27 +102,29 @@ void FrameWindow::frameRender()
 
 void FrameWindow::onRender()
 {
-	// set the texture of the bg
-	Texture *pTex = WindowResourceManager::inst()->getMainWindowBg();
-	pTex->set();
-//	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-
 	// render the window background
-	glDisable(GL_BLEND);
-	glColor4f(1,1,1,1);
-	glBegin(GL_QUADS);
-		glTexCoord2f((double)m_left/pTex->getWidth(), (double)m_top/pTex->getHeight());
-		glVertex3f(m_left, m_top, 0);
-		glTexCoord2f((double)m_right/pTex->getWidth(), (double)m_top/pTex->getHeight());
-		glVertex3f(m_right, m_top, 0);
-		glTexCoord2f((double)m_right/pTex->getWidth(), (double)m_bottom/pTex->getHeight());
-		glVertex3f(m_right, m_bottom, 0);
-		glTexCoord2f((double)m_left/pTex->getWidth(), (double)m_bottom/pTex->getHeight());
-		glVertex3f(m_left, m_bottom, 0);
-	glEnd();
-	
-	// reset texture
-	glDisable(GL_TEXTURE_2D);
+	if (m_bShowBackground)
+	{
+		// set the texture of the bg
+		Texture *pTex = WindowResourceManager::inst()->getMainWindowBg();
+		pTex->set();
+
+		glDisable(GL_BLEND);
+		glColor4f(1,1,1,1);
+		glBegin(GL_QUADS);
+			glTexCoord2f((double)m_left/pTex->getWidth(), (double)m_top/pTex->getHeight());
+			glVertex3f(m_left, m_top, 0);
+			glTexCoord2f((double)m_right/pTex->getWidth(), (double)m_top/pTex->getHeight());
+			glVertex3f(m_right, m_top, 0);
+			glTexCoord2f((double)m_right/pTex->getWidth(), (double)m_bottom/pTex->getHeight());
+			glVertex3f(m_right, m_bottom, 0);
+			glTexCoord2f((double)m_left/pTex->getWidth(), (double)m_bottom/pTex->getHeight());
+			glVertex3f(m_left, m_bottom, 0);
+		glEnd();
+		
+		// reset texture
+		glDisable(GL_TEXTURE_2D);
+	}
 }
 
 

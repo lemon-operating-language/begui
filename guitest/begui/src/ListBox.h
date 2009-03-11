@@ -97,6 +97,8 @@ public:
 private:
 	void selectRange(size_t start, size_t end);
 	void deselectAll();
+
+	int	getItemHeight() const;
 };
 
 };

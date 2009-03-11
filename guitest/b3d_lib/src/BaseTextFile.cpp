@@ -90,7 +90,8 @@ BaseTextFile& BaseTextFile::operator >> (std::string& str)
 		while (!eof() && isspace(ch)) {
 			if (ch == '\n') {
 				m_nLines++;
-				return *this;
+				if (str.length() > 0)
+					return *this;
 			}
 			ch = fgetc(m_fp);
 		}
@@ -99,6 +100,16 @@ BaseTextFile& BaseTextFile::operator >> (std::string& str)
 		while (!eof() && !isspace(ch)) {
 			str += ch;
 			ch = fgetc(m_fp);
+			
+			// check if we found a character that indicates a word break
+			bool bWordBreak = false;
+			for (size_t i=0; i<m_wordBreakChars.size(); ++i)
+				if (ch == m_wordBreakChars[i]) {
+					bWordBreak = true;
+					ungetc(ch, m_fp);
+					break;
+				}
+			if (bWordBreak) break;
 		}
 
 		// check if this is a comment.
@@ -133,7 +144,9 @@ BaseTextFile& BaseTextFile::operator >> (std::string& str)
 			break;
 		}
 	}
-	m_nLines++;
+	if (ch == '\n')
+		m_nLines++;
+
 	return *this;
 }
 

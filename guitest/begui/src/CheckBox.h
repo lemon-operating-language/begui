@@ -39,7 +39,7 @@ private:
 	State		m_state;
 	std::string m_title;
 	int			m_id;
-	void		(*m_pCallback)(int);
+	Functor1<int>	m_onClick;	// arg1: the id of the checkbutton
 	bool		m_bHover;
 
 	bool		*m_pBoundVal;
@@ -47,7 +47,7 @@ private:
 public:
 	CheckBox();
 
-	void create(int x, int y, const std::string &title, int id=0, void (*callback)(int) = 0);
+	void create(int x, int y, const std::string &title, int id, Functor1<int> &callback = Functor1<int>());
 	void setState(State state)	{ m_state = state; }
 	State getState() const		{ return m_state; }
 	

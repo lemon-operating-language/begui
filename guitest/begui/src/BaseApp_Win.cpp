@@ -42,7 +42,17 @@ bool	fullscreen=false;	// Fullscreen Flag Set To Fullscreen Mode By Default
 int lastMousePosX = 0;
 int lastMousePosY = 0;
 
+//more:
+HDC hMemDC = 0;
+
 LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaration For WndProc
+
+BaseApp_Win::BaseApp_Win() : 
+	m_bLayeredWindow(true), 
+	m_bOffscreenRendering(false),
+	m_bSyncRendering(true)
+{
+}
 
 BaseApp_Win::~BaseApp_Win()
 {
@@ -51,9 +61,11 @@ BaseApp_Win::~BaseApp_Win()
 bool BaseApp_Win::coreInitialize()
 {
 	// set some OpenGL states
-	glClearColor(0.2, 0.3, 0.5, 0);
+	glClearColor(0, 0, 0, 0);
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
+
+	glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 
 	// Get windows directory
 	char win_dir[MAX_PATH+1];
@@ -93,11 +105,54 @@ void BaseApp_Win::updateFrame()
 
 void BaseApp_Win::renderFrame()
 {
+	if (m_bOffscreenRendering)
+		m_frameRenderPass.beginPass();
+
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// render the main window
 	FrameWindow::inst()->frameRender();
+	
+	if (m_bOffscreenRendering) {
+		static std::vector<unsigned char> data(display::getWidth()*display::getHeight()*4);
+		static std::vector<unsigned char> data2(display::getWidth()*display::getHeight()*4);
+
+		glReadPixels(0, 0, display::getWidth(), display::getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
+
+		m_frameRenderPass.endPass();
+
+		// convert the data for windows
+		int w = display::getWidth();
+		int h = display::getHeight();
+		for (int j=0; j<h; ++j) {
+			int j2 = h-j-1;
+			unsigned char *p1 = &data[0] + 4*j2*w;
+			unsigned char *p2 = &data2[0] + 4*j*w;
+			for (int i=0; i<w; ++i)
+			{
+				*p2 = *(p1+2);
+				*(p2+1) = *(p1+1);
+				*(p2+2) = *p1;
+				*(p2+3) = *(p1+3);
+				p1 += 4;
+				p2 += 4;
+			}
+		}
+
+		// copy the image data to the window
+		HDC dc = GetDC(0);
+		HBITMAP hBMP = CreateBitmap(800,600,1,32,&data2[0]);
+		HBITMAP bmpold = (HBITMAP)SelectObject(hMemDC, hBMP);
+		SIZE sz = {800,600};
+		POINT ptSrc = {0,0};
+		BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+		if (!UpdateLayeredWindow(hWnd, dc, 0, &sz, hMemDC, &ptSrc, 0, &blend, ULW_ALPHA))
+			Console::error("UpdateLayeredWindow failed\n");
+		SelectObject(hMemDC, bmpold);
+		DeleteObject(hBMP);
+		ReleaseDC(0, dc);
+	}
 }
 
 /*	This Code Creates Our OpenGL Window.  Parameters Are:					*
@@ -109,6 +164,13 @@ void BaseApp_Win::renderFrame()
  
 bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag)
 {
+	ASSERT(!(fullscreenflag && m_bLayeredWindow));	// sanity check: cant have layered fullscreen-mode windows
+	
+	if (m_bLayeredWindow)
+		m_bOffscreenRendering = true;
+	else
+		m_bOffscreenRendering = false;
+
 	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
 	WNDCLASS	wc;						// Windows Class Structure
 	DWORD		dwExStyle;				// Window Extended Style
@@ -174,8 +236,15 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 	}
 	else
 	{
-		dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;			// Window Extended Style
-		dwStyle=WS_OVERLAPPEDWINDOW;							// Windows Style
+		if (m_bLayeredWindow) {
+			// make a window without caption and border if we are going to render everything ourselves
+			dwExStyle=WS_EX_APPWINDOW;
+			dwStyle=WS_POPUP;
+		}
+		else {
+			dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+			dwStyle=WS_OVERLAPPEDWINDOW;
+		}
 	}
 
 	AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);		// Adjust Window To True Requested Size
@@ -256,11 +325,51 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 		MessageBox(NULL,"Can't Activate The GL Rendering Context.","ERROR",MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;								// Return FALSE
 	}
+	
+	// Initialize GLEW for extensions
+	GLenum err = glewInit();
+	if (err != GLEW_OK)
+	{
+		Console::error("GLEW initialization error: %s\n", glewGetErrorString(err));
+		return FALSE;
+	}
+	Console::print("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+
+	// Create a layered window?
+	if (m_bLayeredWindow)
+	{
+		SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+
+		HDC dc = GetDC(0);
+		hMemDC = CreateCompatibleDC(0);
+		if (!hMemDC)
+			Console::error("failed to create dc\n");
+		std::vector<unsigned char> data(800*600*4, 0);
+		HBITMAP hBMP = CreateBitmap(800,600,1,32,&data[0]);
+		if (!hBMP)
+			Console::error("failed to create DIB bitmap\n");
+		HBITMAP bmpold = (HBITMAP)SelectObject(hMemDC, hBMP);
+		SIZE sz = {800,600};
+		POINT ptSrc = {0,0};
+		BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+		if (!UpdateLayeredWindow(hWnd, dc, 0, &sz, hMemDC, &ptSrc, 0, &blend, ULW_ALPHA))
+			Console::error("UpdateLayeredWindow failed\n");
+		SelectObject(hMemDC, bmpold);
+		DeleteObject(hBMP);
+	}
+
+	// Create an offscreen rendering surface
+	if (m_bOffscreenRendering) {
+		if (!setupOffscreenPass(width, height))
+			return FALSE;
+	}
 
 	ShowWindow(hWnd,SW_SHOW);						// Show The Window
 	SetForegroundWindow(hWnd);						// Slightly Higher Priority
 	SetFocus(hWnd);									// Sets Keyboard Focus To The Window
 	
+	if (m_bLayeredWindow)
+		FrameWindow::inst()->showBackground(false);
 	FrameWindow::inst()->create(width, height);
 	resize(width, height);
 
@@ -352,6 +461,16 @@ LRESULT BaseApp_Win::wndProc(	HWND	hWnd,			// Handle For This Window
 		{
 			PostQuitMessage(0);						// Send A Quit Message
 			return 0;								// Jump Back
+		}
+
+		case WM_PAINT:
+		{
+			if (!m_bSyncRendering) {
+				renderFrame();
+				if (!m_bOffscreenRendering)
+					SwapBuffers(hDC);
+			}
+			return 0;
 		}
 
 		case WM_KEYDOWN:							// Is A Key Being Held Down?
@@ -502,8 +621,11 @@ int BaseApp_Win::run(const std::string &title, size_t width, size_t height)
 			if (active)								// Program Active?
 			{
 				updateFrame();
-				renderFrame();
-				SwapBuffers(hDC);				// Swap Buffers (Double Buffering)
+				if (m_bSyncRendering) {
+					renderFrame();
+					if (!m_bOffscreenRendering)
+						SwapBuffers(hDC);				// Swap Buffers (Double Buffering)
+				}
 			}
 		}
 	}
@@ -512,4 +634,24 @@ int BaseApp_Win::run(const std::string &title, size_t width, size_t height)
 	killGLWindow();
 
 	return (msg.wParam);							// Exit The Program
+}
+
+bool BaseApp_Win::setupOffscreenPass(int width, int height)
+{
+	/*if (GLEW_EXT_framebuffer_object)
+		;
+	else {
+		Console::error("shit\n");
+		return false;
+	}*/
+
+	// create the render pass
+	if (!m_frameRenderPass.setup(RenderPass::PIXEL_RGBA8, width, height, 0, false)) {
+		Console::error("failed to create render pass for offscreen rendering\n");
+		return false;
+	}
+
+	Console::print("created offscreen rendering surface (%d x %d)\n", width, height);
+
+	return true;
 }

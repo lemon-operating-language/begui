@@ -34,6 +34,7 @@ class FrameWindow : public Container
 private:
 	Menu					*m_pMenu;
 	Dialog					*m_pModalDialog;
+	bool					m_bShowBackground;
 
 	static FrameWindow	*m_pInstance;
 	FrameWindow();
@@ -44,6 +45,7 @@ public:
 	bool create(int width, int height);
 	void resize(int width, int height);
 	void resetViewport();
+	void showBackground(bool bShow)		{ m_bShowBackground = bShow; }
 
 	void showModalDialog(Dialog* dlg);
 	void closeModalDialog();
