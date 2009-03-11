@@ -16,24 +16,35 @@ public:
 
 private:
 	Texture		*m_pFrameTexture;
+	Texture		*m_pDepthTex;
 	bool		m_bOwnsTexture;
 	int			m_width;
 	int			m_height;
 	PixelFormat	m_format;
-	PBuffer		m_pbuffer;
+	bool		m_bGenMipmaps;
 
+	bool		m_bUsePBuffer;
+	
+	GLuint		m_FBO;			// frame buffer object for rendering
+	GLuint		m_FBODepthBuffer;
+
+	PBuffer		m_pbuffer;	// pbuffer for rendering
 	HDC			m_last_hdc;
 	HGLRC		m_last_hglrc;
-
-	Texture *m_pDepthTex;
 
 public:
 	RenderPass();
 	~RenderPass();
-	bool setup(PixelFormat pixelFormat, int frameW, int frameH, Texture *pTarget = 0, bool bAddDepthTex=false);
+
+	void setMipmapAutoGen(bool bGenMipmaps)		{ m_bGenMipmaps; }	// should be called BEFORE creating the renderpass!!!
+	bool setup(PixelFormat pixelFormat, int frameW, int frameH, Texture *pTarget = 0, bool bDepthBuffer=false);
 	void free();
 	void beginPass();
 	void endPass();
-	void makePBufferCurrent();
+	
 	Texture* getFrameData()		{ return m_pFrameTexture; }
+	Texture* getDepthData()		{ return m_pDepthTex; }
+
+private:
+	void makePBufferCurrent();
 };

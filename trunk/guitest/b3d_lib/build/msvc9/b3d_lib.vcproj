@@ -280,6 +280,10 @@
 					RelativePath="..\..\src\3dio\OBJLoader.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\src\3dio\VRMLLoader.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="RNL"
@@ -484,6 +488,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\3dio\OBJLoader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\3dio\VRMLLoader.h"
 					>
 				</File>
 			</Filter>

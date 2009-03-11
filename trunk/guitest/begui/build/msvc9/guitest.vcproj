@@ -70,7 +70,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="freetype235MT.lib"
+				AdditionalDependencies="freetype235MT.lib glew32.lib glu32.lib opengl32.lib"
 				OutputFile="$(OutDir)/guitest.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBCD"
@@ -150,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="freetype235MT.lib"
+				AdditionalDependencies="freetype235MT.lib glew32.lib glu32.lib opengl32.lib"
 				OutputFile="$(OutDir)/guitest.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames=""

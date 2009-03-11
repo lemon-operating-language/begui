@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "timeseries.h"
+#include "callback.h"
 
 namespace begui {
 

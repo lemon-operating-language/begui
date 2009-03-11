@@ -50,15 +50,21 @@ void ListBox::onUpdate()
 	m_scroller.frameUpdate();
 }
 
-void ListBox::onRender()
+int ListBox::getItemHeight() const
 {
 	Font *pFont = FontManager::getCurFont();
 	ASSERT(pFont);
 	int lineHeight = pFont->getLineHeight()+2;
 	if (m_style == STYLE_BUTTONS)
-		int lineHeight = pFont->getLineHeight()+4;
+		lineHeight = pFont->getLineHeight()+4;
+	return lineHeight;
+}
+
+void ListBox::onRender()
+{
+	int lineHeight = getItemHeight();
 	
-	int content_height = m_items.size()*lineHeight;
+	int content_height = (int)m_items.size()*lineHeight;
 	bool bNeedsScrolling = (content_height > getHeight());
 	int content_y_offs = 0;
 	if (bNeedsScrolling) {
@@ -229,38 +235,38 @@ void ListBox::onMouseDown(int x, int y, int button)
 
 				if (m_selectMode == MULTI_SELECT_SINGLECLICK) {
 					m_items[i].m_bSelected = !m_items[i].m_bSelected;
-					m_prevItem = i;
+					m_prevItem = (int)i;
 				}
 				else if (m_selectMode == SINGLE_SELECT)
 				{
 					deselectAll();
 					m_items[i].m_bSelected = true;
-					m_prevItem = i;
+					m_prevItem = (int)i;
 				}
 				else if (m_selectMode == MULTI_SELECT)
 				{
 					if (input::isKeyDown(KEY_LCTRL) || input::isKeyDown(KEY_RCTRL)) {
 						m_items[i].m_bSelected = !m_items[i].m_bSelected;
-						m_prevItem = i;
+						m_prevItem = (int)i;
 					}
 					else if (input::isKeyDown(KEY_LSHIFT) || input::isKeyDown(KEY_RSHIFT))
 					{
 						if (m_prevItem == -1)
-							m_prevItem = i;
+							m_prevItem = (int)i;
 						selectRange(m_prevItem, i);
 					}
 					else {
 						deselectAll();
 						if (m_items[i].m_bEnabled)
 							m_items[i].m_bSelected = true;
-						m_prevItem = i;
+						m_prevItem = (int)i;
 					}
 				}
 
-				m_curItem = i;
+				m_curItem = (int)i;
 
 				// call the event handler for item click
-				m_onItemClick(i);
+				m_onItemClick((int)i);
 				
 				return;
 			}
@@ -286,7 +292,7 @@ void ListBox::onMouseMove(int x, int y, int prevx, int prevy)
 			if (m_items[i].m_bEnabled && m_items[i].m_rect.contains(x,y))
 			{
 				// item i clicked
-				m_mouseOverItem = i;
+				m_mouseOverItem = (int)i;
 				break;
 			}
 		}
@@ -325,7 +331,7 @@ void ListBox::onKeyDown(int key)
 			}
 			break;
 		case KEY_DOWN:
-			if (m_curItem < m_items.size()-1)
+			if (m_curItem < (int)m_items.size()-1)
 				m_curItem++;
 			if (input::isKeyDown(KEY_LSHIFT) || input::isKeyDown(KEY_RSHIFT)) {
 				if (m_prevItem == -1) m_prevItem = m_curItem;
@@ -353,7 +359,7 @@ void ListBox::onKeyDown(int key)
 			break;
 		case KEY_END:
 			if (m_items.size() > 0) {
-				m_curItem = m_items.size()-1;
+				m_curItem = (int)m_items.size()-1;
 				if (input::isKeyDown(KEY_LSHIFT) || input::isKeyDown(KEY_RSHIFT)) {
 					if (m_prevItem == -1) m_prevItem = m_curItem;
 					selectRange(m_prevItem, m_curItem);

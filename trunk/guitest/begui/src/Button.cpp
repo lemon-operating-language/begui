@@ -25,17 +25,17 @@
 
 using namespace begui;
 
-Button::Button() : m_pCallback(0),
+Button::Button() : 
 	m_bHover(false),
 	m_id(-1),
 	m_status(Button::UP)
 {
 }
 
-void Button::create(int x, int y, const std::string &title, int id, void (*callback)(int))
+void Button::create(int x, int y, const std::string &title, int id, Functor1<int> &callback)
 {
 	m_title = title;
-	m_pCallback = callback;
+	m_onClick = callback;
 	m_id = id;
 	m_status = Button::UP;
 	m_bHover = false;
@@ -93,10 +93,9 @@ void Button::onRender()
 
 void Button::onMouseDown(int x, int y, int button)
 {
-	if (m_status != Button::INACTIVE)
+	if (m_status != Button::INACTIVE) {
 		m_status = Button::DOWN;
-	if (m_pCallback && m_status != Button::INACTIVE)
-		m_pCallback(m_id);
+	}
 }
 
 void Button::onMouseMove(int x, int y, int prevx, int prevy)
@@ -109,8 +108,10 @@ void Button::onMouseMove(int x, int y, int prevx, int prevy)
 
 void Button::onMouseUp(int x, int y, int button)
 {
-	if (m_status != Button::INACTIVE)
+	if (m_status != Button::INACTIVE) {
 		m_status = Button::UP;
+		m_onClick(m_id);
+	}
 }
 
 void Button::onKeyDown(int key)

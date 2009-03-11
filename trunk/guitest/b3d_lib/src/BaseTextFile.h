@@ -34,6 +34,8 @@ private:
 	bool m_bSkipComments;
 	std::vector<std::string> m_lineCommentPrefixes;
 
+	std::vector<char> m_wordBreakChars;	// characters that indicate the beginning of a new word
+
 public:
 	BaseTextFile();
 	virtual ~BaseTextFile();
@@ -54,6 +56,7 @@ public:
 	void	addCommentBlockDef(const std::string& commentStart, const std::string& commentEnd);
 	void	addLineCommentDef(const std::string& commentStart);
 	void	skipComments(bool bSkip)	{ m_bSkipComments = bSkip; };
+	void	addWordBreakChar(char c)	{ m_wordBreakChars.push_back(c); }
 
 	BaseTextFile& operator >> (std::string&);
 	BaseTextFile& operator >> (double&);

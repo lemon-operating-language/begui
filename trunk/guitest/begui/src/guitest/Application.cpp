@@ -6,7 +6,7 @@ Application *Application::m_pInst = NULL;
 void ChildWnd1::onCreate()
 {
 	// create a simple push button
-	m_button1.create(260, 40, "Button", 1, 0);
+	m_button1.create(260, 40, "Button", 1);
 	addComponent(&m_button1);
 
 	// create a group of radio buttons

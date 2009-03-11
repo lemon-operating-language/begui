@@ -26,16 +26,16 @@
 
 using namespace begui;
 
-CheckBox::CheckBox() : m_state(CheckBox::NOT_CHECKED), m_pCallback(0), m_bHover(false),
+CheckBox::CheckBox() : m_state(CheckBox::NOT_CHECKED), m_bHover(false),
 	m_id(-1), m_pBoundVal(0)
 {
 }
 
-void CheckBox::create(int x, int y, const std::string &title, int id, void (*callback)(int))
+void CheckBox::create(int x, int y, const std::string &title, int id, Functor1<int> &callback)
 {
 	m_title = title;
 	m_state = CheckBox::NOT_CHECKED;
-	m_pCallback = callback;
+	m_onClick = callback;
 	m_id = id;
 	m_bHover = false;
 
@@ -117,17 +117,6 @@ void CheckBox::onRender()
 
 void CheckBox::onMouseDown(int x, int y, int button)
 {
-	if (m_state == CheckBox::INACTIVE)
-		return;
-	m_state = (m_state == CheckBox::CHECKED)?CheckBox::NOT_CHECKED:CheckBox::CHECKED;
-
-	// Call the callback, if any
-	if (m_pCallback)
-		m_pCallback(m_id);
-
-	// update the live var if any
-	if (m_pBoundVal)
-		*m_pBoundVal = (m_state == CheckBox::CHECKED);
 }
 
 void CheckBox::onMouseMove(int x, int y, int prevx, int prevy)
@@ -140,6 +129,16 @@ void CheckBox::onMouseMove(int x, int y, int prevx, int prevy)
 
 void CheckBox::onMouseUp(int x, int y, int button)
 {
+	if (m_state == CheckBox::INACTIVE)
+		return;
+	m_state = (m_state == CheckBox::CHECKED)?CheckBox::NOT_CHECKED:CheckBox::CHECKED;
+
+	// Call the callback, if any
+	m_onClick(m_id);
+
+	// update the live var if any
+	if (m_pBoundVal)
+		*m_pBoundVal = (m_state == CheckBox::CHECKED);
 }
 
 void CheckBox::onKeyDown(int key)
