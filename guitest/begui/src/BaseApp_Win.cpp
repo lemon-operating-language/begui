@@ -142,9 +142,9 @@ void BaseApp_Win::renderFrame()
 
 		// copy the image data to the window
 		HDC dc = GetDC(0);
-		HBITMAP hBMP = CreateBitmap(800,600,1,32,&data2[0]);
+		HBITMAP hBMP = CreateBitmap(w, h, 1, 32, &data2[0]);
 		HBITMAP bmpold = (HBITMAP)SelectObject(hMemDC, hBMP);
-		SIZE sz = {800,600};
+		SIZE sz = {w, h};
 		POINT ptSrc = {0,0};
 		BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 		if (!UpdateLayeredWindow(hWnd, dc, 0, &sz, hMemDC, &ptSrc, 0, &blend, ULW_ALPHA))
@@ -344,12 +344,12 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 		hMemDC = CreateCompatibleDC(0);
 		if (!hMemDC)
 			Console::error("failed to create dc\n");
-		std::vector<unsigned char> data(800*600*4, 0);
-		HBITMAP hBMP = CreateBitmap(800,600,1,32,&data[0]);
+		std::vector<unsigned char> data(width*height*4, 0);
+		HBITMAP hBMP = CreateBitmap(width,height,1,32,&data[0]);
 		if (!hBMP)
 			Console::error("failed to create DIB bitmap\n");
 		HBITMAP bmpold = (HBITMAP)SelectObject(hMemDC, hBMP);
-		SIZE sz = {800,600};
+		SIZE sz = {width,height};
 		POINT ptSrc = {0,0};
 		BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 		if (!UpdateLayeredWindow(hWnd, dc, 0, &sz, hMemDC, &ptSrc, 0, &blend, ULW_ALPHA))
