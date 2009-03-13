@@ -20,7 +20,7 @@
 */
 
 #include "Menu.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 #include "Font.h"
 #include "util.h"
 
@@ -144,7 +144,7 @@ void Menu::onRender()
 	int h = 25;
 
 	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 	pTex->set();
 	
 	glEnable(GL_BLEND);

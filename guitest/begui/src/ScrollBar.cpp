@@ -20,7 +20,7 @@
 */
 
 #include "ScrollBar.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 #include "util.h"
 
 using namespace begui;
@@ -101,7 +101,7 @@ void ScrollBar::onRender()
 	glEnd();
 	
 	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 	pTex->set();
 
 	// render the buttons

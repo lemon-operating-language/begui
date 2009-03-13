@@ -21,7 +21,7 @@
 
 #include "Roller.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 
 using namespace begui;
 

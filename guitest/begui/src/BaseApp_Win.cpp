@@ -23,7 +23,7 @@
 #include "util.h"
 #include "FrameWindow.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 
 using namespace begui;
 
@@ -78,7 +78,7 @@ bool BaseApp_Win::coreInitialize()
 		return false;
 	
 	// Initialize the window manager and load resources
-	WindowResourceManager::inst()->loadResources();
+	ResourceManager::inst()->loadResources();
 
 	return true;
 }
@@ -368,8 +368,6 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 	SetForegroundWindow(hWnd);						// Slightly Higher Priority
 	SetFocus(hWnd);									// Sets Keyboard Focus To The Window
 	
-	if (m_bLayeredWindow)
-		FrameWindow::inst()->showBackground(false);
 	FrameWindow::inst()->create(width, height);
 	resize(width, height);
 
@@ -470,7 +468,7 @@ LRESULT BaseApp_Win::wndProc(	HWND	hWnd,			// Handle For This Window
 				if (!m_bOffscreenRendering)
 					SwapBuffers(hDC);
 			}
-			return 0;
+			break;// let DefWindowProc remove the WM_PAINT message from the queue
 		}
 
 		case WM_KEYDOWN:							// Is A Key Being Held Down?
@@ -575,12 +573,27 @@ LRESULT BaseApp_Win::wndProc(	HWND	hWnd,			// Handle For This Window
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
 
-int BaseApp_Win::run(const std::string &title, size_t width, size_t height)
+int BaseApp_Win::run(const std::string &title, size_t width, size_t height, FrameWindow::Style frame_style)
 {
 	MSG		msg;									// Windows Message Structure
 	BOOL	done=FALSE;								// Bool Variable To Exit Loop
 	
 	fullscreen=FALSE;							// Windowed Mode
+
+	// Depending on the frame window style, set rendering options
+	switch (frame_style) {
+		case FrameWindow::MULTIPLE_SOLID:
+		case FrameWindow::SINGLE:
+			m_bLayeredWindow = false;
+			break;
+		case FrameWindow::SINGLE_OWNDRAW:
+		case FrameWindow::MULTIPLE_SOLID_OWNDRAW:
+		case FrameWindow::MULTIPLE_TRANSPARENT:
+			m_bLayeredWindow = true;
+			m_bSyncRendering = true;	// may not be needed later
+			break;
+	}
+	FrameWindow::inst()->setStyle(frame_style);
 
 	// Create Our OpenGL Window
 	if (!createGLWindow(title.c_str(), (int)width, (int)height, 16, fullscreen))
@@ -605,6 +618,19 @@ int BaseApp_Win::run(const std::string &title, size_t width, size_t height)
 	{
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{
+			if (msg.message == 0)
+			{
+				// Draw The Scene.  Watch For ESC Key And Quit Messages From DrawGLScene()
+				if (active)								// Program Active?
+				{
+					updateFrame();
+					if (m_bSyncRendering) {
+						renderFrame();
+						if (!m_bOffscreenRendering)
+							SwapBuffers(hDC);				// Swap Buffers (Double Buffering)
+					}
+				}
+			}
 			if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
 			{
 				done=TRUE;							// If So done=TRUE

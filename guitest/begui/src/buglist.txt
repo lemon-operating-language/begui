@@ -65,7 +65,7 @@ TimeSeries:
 	for asynchronous updates, so that the new value of a variable is calculated when
 	it's needed. This will get rid of a lot of redundant computations that now take place.
 	
-WindowResourceManager:
+ResourceManager:
 	loads resources relative to APPLICATION working dir (like ../bgui/resources/)
 	
 TextBox:

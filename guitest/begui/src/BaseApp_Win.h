@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "../../b3d_lib/src/RenderPass.h"
+#include "FrameWindow.h"
 
 namespace begui {
 
@@ -37,7 +38,9 @@ private:
 	RenderPass m_frameRenderPass;
 
 public:
-	int run(const std::string &title, size_t width, size_t height);
+	int run(const std::string &title, size_t width, size_t height, 
+			FrameWindow::Style frame_style=FrameWindow::MULTIPLE_SOLID);
+	void setSynchronousRendering(bool bSyncRendering)	{ m_bSyncRendering = bSyncRendering; }
 
 	static BaseApp_Win* inst()	{ if (!m_pInst) m_pInst = new BaseApp_Win(); return m_pInst; }
 
@@ -50,8 +53,7 @@ protected:
 	bool coreInitialize();
 	bool createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag);
 	void killGLWindow();
-	void setSynchronousRendering(bool bSyncRendering)	{ m_bSyncRendering = bSyncRendering; }
-	void setLayeredWindow(bool bLayered)				{ m_bLayeredWindow = bLayered; }
+	//void setLayeredWindow(bool bLayered)				{ m_bLayeredWindow = bLayered; }
 	
 	virtual bool initialize();
 	virtual void resize(int width, int height);

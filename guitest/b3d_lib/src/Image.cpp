@@ -25,6 +25,7 @@
 #include "misc.h"
 #include "histogram.h"
 #include "BaseTextFile.h"
+#include "lodepng/lodepng.h"
 
 Image::Image() : m_width(0),
 	m_height(0),
@@ -505,6 +506,8 @@ bool Image::load(const std::string &fname)
 		return loadPPM(fname);
 	else if (stricmp(ext.c_str(), "hdr") == 0)
 		return loadHDR(fname);
+	else if (stricmp(ext.c_str(), "png") == 0)
+		return loadPNG(fname);
 	else {
 		Console::error("unsupported image file extension %s\n", ext.c_str());
 		return false;
@@ -767,4 +770,17 @@ double Image::calcEntropy(size_t channel, size_t nBins) const
 	}
 
 	return entropy/log(2.0);
+}
+
+bool Image::loadPNG(const std::string &fname)
+{
+	std::vector<unsigned char> data;
+	unsigned int w=0, h=0;
+	if (LodePNG::decode(data, w, h, fname) != 0)
+		return false;
+
+	create(w, h, 4, Image::I8BITS);
+	m_data = data;
+
+	return true;
 }

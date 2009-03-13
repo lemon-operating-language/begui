@@ -293,6 +293,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="lodePNG"
+				>
+				<File
+					RelativePath="..\..\src\lodepng\lodepng.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -512,6 +520,14 @@
 				</File>
 				<File
 					RelativePath="..\..\src\renderAA\small_triangle_AA.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="lodePNG"
+				>
+				<File
+					RelativePath="..\..\src\lodepng\lodepng.h"
 					>
 				</File>
 			</Filter>

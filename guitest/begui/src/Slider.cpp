@@ -21,7 +21,7 @@
 
 #include "Slider.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 
 using namespace begui;
 
@@ -186,7 +186,7 @@ void Slider::onRender()
 	// render the marker
 	if (m_bIsEnabled)
 	{
-		Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+		Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 		pTex->set();
 
 		int t = - 12;

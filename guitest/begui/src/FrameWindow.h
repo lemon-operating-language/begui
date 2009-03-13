@@ -31,13 +31,23 @@ namespace begui {
 
 class FrameWindow : public Container
 {
+public:
+	enum Style {
+		MULTIPLE_SOLID,			// the simplest display style for a frame window with multiple childern
+		MULTIPLE_SOLID_OWNDRAW,	// same but draws its own borders and caption (using transparencies)
+		MULTIPLE_TRANSPARENT,	// transparent main window (mac-style)
+		SINGLE,					// the simplest display style for a frame window containing controls only
+		SINGLE_OWNDRAW			// same but draws its own borders and caption (using transparencies)
+	};
+
 private:
 	Menu					*m_pMenu;
 	Dialog					*m_pModalDialog;
-	bool					m_bShowBackground;
+	Style					m_style;
 
 	static FrameWindow	*m_pInstance;
 	FrameWindow();
+
 public:
 	static FrameWindow* inst()	{ if (!m_pInstance) m_pInstance = new FrameWindow(); return m_pInstance; }
 	virtual ~FrameWindow();
@@ -45,7 +55,7 @@ public:
 	bool create(int width, int height);
 	void resize(int width, int height);
 	void resetViewport();
-	void showBackground(bool bShow)		{ m_bShowBackground = bShow; }
+	void setStyle(Style style)	{ m_style = style; }
 
 	void showModalDialog(Dialog* dlg);
 	void closeModalDialog();
@@ -69,6 +79,10 @@ public:
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
+
+protected:
+	void renderBackground();
+	void renderBorders();	// used on a own-drawn window
 };
 
 };
