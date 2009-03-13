@@ -97,7 +97,9 @@ public:
 	bool loadPPM(const std::string &fname);
 	bool loadBMP(const std::string& fname);
 	bool loadHDR(const std::string& fname);
+	bool loadPNG(const std::string& fname);
 	bool savePPM(const std::string &fname) const;
+	bool savePNG(const std::string &fname) const;
 	void convolution(double *matrix, int size);
 	void getHistogram(Histogram<double> &hist, size_t channel, size_t nBins=256) const;
 	double calcEntropy(size_t channel, size_t nBins=64) const;

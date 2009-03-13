@@ -20,7 +20,7 @@
 */
 
 #include "Window.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 #include "Font.h"
 
 using namespace begui;
@@ -54,7 +54,7 @@ void Window::create(int left, int top, int width, int height, const std::string 
 void Window::onRender()
 {
 	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::WINDOW_RES);
 	pTex->set();
 
 	glEnable(GL_BLEND);

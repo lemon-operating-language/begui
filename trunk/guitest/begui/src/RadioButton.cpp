@@ -21,7 +21,7 @@
 
 #include "RadioButton.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 #include "Container.h"
 
 using namespace begui;
@@ -53,7 +53,7 @@ void RadioButton::onUpdate()
 void RadioButton::onRender()
 {
 	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 	pTex->set();
 	
 	glEnable(GL_BLEND);

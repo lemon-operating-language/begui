@@ -21,7 +21,6 @@
 
 #include "Button.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
 
 using namespace begui;
 
@@ -56,39 +55,88 @@ void Button::onUpdate()
 
 void Button::onRender()
 {
-	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
-	pTex->set();
-	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
 	int w = getWidth();
 	int h = getHeight();
 
-	// render the icon
-	if (m_status == Button::INACTIVE)
-		glColor4f(1,1,1, 0.5);
-	else if (m_bHover)
-		glColor4f(1,1,1,0.8);
-	else
-		glColor4f(1,1,1,1);
-	int offs = (m_status == Button::DOWN)?1:0;
-	Component::drawBorderedQuad(offs, offs, w-offs, h-offs,
-							13, 13, w-13, h-13,
-							410/512.0, 423/512.0, 505/512.0 , 492/512.0,
-							32/512.0, 45/512.0, 58/512.0, 45/512.0);
+	// set the texture of a window
+	ResourceManager::ImageRef btn_face;
+	if (m_faces[Button::UP].m_texture) {
+		if (m_faces[m_status].m_texture)
+			btn_face = m_faces[m_status];
+		else
+			btn_face = m_faces[Button::UP];
+
+		glBegin(GL_QUADS);
+			glTexCoord2f(btn_face.m_topLeft.x, btn_face.m_topLeft.y);
+			glVertex3f(m_left, m_top, 0);
+			glTexCoord2f(btn_face.m_bottomRight.x, btn_face.m_topLeft.y);
+			glVertex3f(m_right, m_top, 0);
+			glTexCoord2f(btn_face.m_bottomRight.x, btn_face.m_bottomRight.y);
+			glVertex3f(m_right, m_bottom, 0);
+			glTexCoord2f(btn_face.m_topLeft.x, btn_face.m_bottomRight.y);
+			glVertex3f(m_left, m_bottom, 0);
+		glEnd();
+	}
+	else {
+		// draw a standard button
+		btn_face.m_texture = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
+		btn_face.m_texture->set();
 		
+		if (m_status == Button::INACTIVE)
+			glColor4f(1,1,1, 0.5);
+		else if (m_bHover)
+			glColor4f(1,1,1,0.8);
+		else
+			glColor4f(1,1,1,1);
+		int offs = (m_status == Button::DOWN)?1:0;
+		Component::drawBorderedQuad(offs, offs, w-offs, h-offs,
+								13, 13, w-13, h-13,
+								410/512.0, 423/512.0, 505/512.0 , 492/512.0,
+								32/512.0, 45/512.0, 58/512.0, 45/512.0);
+	}
+	
+	int centerx = w/2;
+	int centery = h/2;
+	int title_w = Font::stringLength(m_title);
+
+	// if there is an icon, render the icon
+	if (m_icon.m_texture) {
+		m_icon.m_texture->set();
+
+		int iw = m_icon.m_width;
+		int ih = m_icon.m_height;
+		int ix = centerx-iw/2, iy = centery-ih/2;
+
+		// if there is text, the icon should be on its left
+		if (title_w > 0)
+		{
+			ix -= title_w/2 - 3;
+		}
+		
+		glBegin(GL_QUADS);
+			glTexCoord2f(m_icon.m_topLeft.x, m_icon.m_topLeft.y);
+			glVertex2f(ix, iy);
+			glTexCoord2f(m_icon.m_bottomRight.x, m_icon.m_topLeft.y);
+			glVertex2f(ix+iw, iy);
+			glTexCoord2f(m_icon.m_bottomRight.x, m_icon.m_bottomRight.y);
+			glVertex2f(ix+iw, iy+ih);
+			glTexCoord2f(m_icon.m_topLeft.x, m_icon.m_bottomRight.y);
+			glVertex2f(ix, iy+ih);
+		glEnd();
+	}
+	
 	glDisable(GL_BLEND);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render the text
-	int center = getWidth()/2;
 	if (m_status == Button::INACTIVE)
 		glColor3f(0.3, 0.3, 0.3);
 	else
 		glColor3f(1,1,1);
-	Font::renderString(center - Font::stringLength(m_title)/2, h-9, m_title);
+	Font::renderString(centerx - title_w/2, h-9, m_title);
 }
 
 void Button::onMouseDown(int x, int y, int button)

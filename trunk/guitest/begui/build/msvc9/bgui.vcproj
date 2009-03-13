@@ -249,6 +249,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\ResourceManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Roller.cpp"
 				>
 			</File>
@@ -278,10 +282,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Window.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\WindowResourceManager.cpp"
 				>
 			</File>
 		</Filter>
@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\ResourceManager.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Roller.h"
 				>
 			</File>
@@ -414,10 +418,6 @@
 				RelativePath="..\..\src\Window.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\WindowResourceManager.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -425,7 +425,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath="..\..\resources\bg.bmp"
+				RelativePath="..\..\resources\bg.png"
 				>
 			</File>
 			<File

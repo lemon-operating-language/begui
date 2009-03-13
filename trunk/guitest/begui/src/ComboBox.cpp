@@ -21,7 +21,7 @@
 
 #include "ComboBox.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 
 using namespace begui;
 
@@ -89,7 +89,7 @@ void ComboBox::onRender()
 	glEnd();
 		
 	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 	pTex->set();
 	glBegin(GL_QUADS);
 		glColor4f(1,1,1,1);

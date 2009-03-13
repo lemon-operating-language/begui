@@ -21,7 +21,7 @@
 
 #include "Group.h"
 #include "Font.h"
-#include "WindowResourceManager.h"
+#include "ResourceManager.h"
 
 using namespace begui;
 
@@ -42,7 +42,7 @@ void Group::create(int left, int top, int width, int height, const std::string &
 void Group::onRender()
 {
 	// set the texture of a window
-	Texture *pTex = WindowResourceManager::inst()->getChildWindowImage();
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 	pTex->set();
 	
 	glEnable(GL_BLEND);
