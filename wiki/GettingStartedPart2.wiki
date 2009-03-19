@@ -25,7 +25,7 @@
 		Menu &menu = FrameWindow::inst()->getMenu();
 
 		// Create a new drop down menu
-		Menu *pFileMenu = menu.addMenuItem("File", 1, Application::onMenu);
+		Menu *pFileMenu = menu.addMenuItem("File", 1, makeFunctor(*this, &Application::onMenu));
 
 		// Add menu items to this menu.
 		pFileMenu->addMenuItem("Open", 101, makeFunctor(*this, &Application::onMenu));
