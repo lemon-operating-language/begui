@@ -34,7 +34,7 @@
 		pFileMenu->addMenuItem("Exit", 103, makeFunctor(*this, &Application::onMenu));
 
 		// Create a second drop down menu
-		Menu *pSecondMenu = menu.addMenuItem("Another menu", 2, Application::onMenu);
+		Menu *pSecondMenu = menu.addMenuItem("Another menu", 2, makeFunctor(*this, &Application::onMenu));
 		pSecondMenu->addMenuItem("Choice one", 201, makeFunctor(*this, &Application::onMenu));
 		pSecondMenu->addMenuItem("Choice two", 201, makeFunctor(*this, &Application::onMenu));
 
