@@ -62,6 +62,7 @@
 <p>Ok. One more step is missing. BeGUI is using the FreeType library. So, go and download FreeType (2.3.5 used with beGUI, newer versions will probably work fine as well) from <a href="http://www.freetype.org/">here</a>. Make sure that you set up the include and library directories in Visual Studio correctly (to include the corresponding directories of FreeType). Then link with:
 <ul>
 <li>`freetype235MT.lib`</li>
+<li>`glew32.lib`</li>
 <li>`glaux.lib` (this dependency will be removed soon)</li>
 <li>`begui.lib`</li>
 </ul>
