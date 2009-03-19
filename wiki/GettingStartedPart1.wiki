@@ -64,7 +64,7 @@
 <li>`freetype235MT.lib`</li>
 <li>`glew32.lib`</li>
 <li>`glaux.lib` (this dependency will be removed soon)</li>
-<li>`begui.lib`</li>
+<li>`bgui.lib`</li>
 </ul>
 To do so, in Visual Studio, add the above in the field `Project Properties->Linker->Input->Additional Dependencies`. Good. Let's compile and run this simple program, shall we? Before you run it, make sure that the OpenGL, GLEW and FreeType dlls are reachable (e.g. in the application folder). If everything went well, you should see the following after the program loads:</p>
 
