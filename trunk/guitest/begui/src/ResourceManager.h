@@ -67,19 +67,63 @@ public:
 		WINDOW_RES,
 		STD_CONTROLS
 	};
+	
+	struct ImageDesc {
+		std::string filename;
+		int left, top, right, bottom;
+	};
+
+	/**
+	 * Style: collection of properties that define a visual style for a component class
+	 */
+	class Style {
+		friend class ResourceManager;
+	protected:
+		std::string m_name;
+		stdext::hash_map<std::string, std::string>	m_sVals;
+		stdext::hash_map<std::string, double>		m_fVals;
+		stdext::hash_map<std::string, int>			m_iVals;
+		stdext::hash_map<std::string, Color>		m_cVals;
+		stdext::hash_map<std::string, ImageDesc>	m_imgVals;
+	public:
+		const std::string& get_name() const					{ return m_name; }
+		int			get_i(const std::string &name) const	{ return m_iVals.find(name)->second; }
+		double		get_s(const std::string &name) const	{ return m_fVals.find(name)->second; }
+		std::string	get_f(const std::string &name) const	{ return m_sVals.find(name)->second; }
+		Color		get_c(const std::string &name) const	{ return m_cVals.find(name)->second; }
+		ImageDesc	get_img(const std::string &name) const	{ return m_imgVals.find(name)->second; }
+
+		bool hasProp(const std::string &name) const {
+			if (m_iVals.find(name) != m_iVals.end()) return true;
+			if (m_fVals.find(name) != m_fVals.end()) return true;
+			if (m_sVals.find(name) != m_sVals.end()) return true;
+			if (m_cVals.find(name) != m_cVals.end()) return true;
+			if (m_imgVals.find(name) != m_imgVals.end()) return true;
+			return false;
+		}
+	};
+
+	/**
+	 * ClassDef: All styles and properties that define a component class
+	 */
+	class ClassDef {
+		friend class ResourceManager;
+	protected:
+		std::string m_name;
+		stdext::hash_map<std::string, Style>	m_styles;
+	public:
+		const std::string& get_name() const						{ return m_name; }
+		const Style&	style(const std::string &name) const	{ return m_styles.find(name)->second; }
+	};
 
 private:
 	static ResourceManager	*m_instance;
-	std::string				m_resourceDir;
-	std::vector<Texture*>	m_loadedTextures;
-	std::vector<ImageRef>	m_stockImages;
+	std::string								m_resourceDir;
+	std::vector<Texture*>					m_loadedTextures;
+	stdext::hash_map<std::string, ImageRef>	m_images;
 
-	class ClassProps {
-	public:
-		stdext::hash_map<std::string, std::string>	m_strProps;
-		stdext::hash_map<std::string, double>		m_numProps;
-	};
-	stdext::hash_map<std::string, ClassProps> m_classProps;
+	stdext::hash_map<std::string, ClassDef> m_classes;
+
 	
 	ResourceManager();
 
@@ -92,17 +136,18 @@ public:
 	void freeResources();
 
 	Texture*	getStockMap(StockMap i);
-	ImageRef	loadImage(const std::string &filename, bool bPack = true);
+
+	// loadImage is the method that should be used to request images. If the image has already
+	// been loaded, then loadImage will not reload it, unless the bForceDuplicate flag is set.
+	ImageRef	loadImage(const std::string &filename, bool bPack = true, bool bForceDuplicate = false);
+	ImageRef	loadImage(const ImageDesc &desc);
 
 	std::string getResourceDir() const;
 	void		setResourceDir(const std::string& resdir);
 
 	// Property handling
-	void loadPropertyFile(const std::string& fname);
-
-	int			getPropI(const std::string& className, const std::string& propName);
-	double		getPropF(const std::string& className, const std::string& propName);
-	std::string getPropS(const std::string& className, const std::string& propName);
+	bool loadPropertyFile(const std::string& fname);
+	const ClassDef& getClassDef(const std::string &class_name) const	{ return m_classes.find(class_name)->second; }
 };
 
 #pragma warning (pop)

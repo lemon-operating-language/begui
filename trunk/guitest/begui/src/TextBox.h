@@ -45,7 +45,6 @@ public:
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
-	virtual bool isPtInside(int x, int y);
 
 	bool		isEditable() const					{ return m_text.isEditable(); }
 	bool		isMultiline() const					{ return m_text.isMultiLine(); }

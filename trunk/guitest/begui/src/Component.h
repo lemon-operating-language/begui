@@ -24,6 +24,7 @@
 #include "common.h"
 #include "timeseries.h"
 #include "callback.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -73,12 +74,14 @@ public:
 	void setParent(Component *pParent)	{ m_pParent = pParent; }
 	void setAlwaysOnTop(bool ontop)	{ m_bAlwaysOnTop = ontop; }
 	void setVisible(bool visible)	{ m_bVisible = visible; }
+	void enable()					{ m_bEnabled = true; }
+	void disable()					{ m_bEnabled = false; }
 
 	virtual void frameUpdate();
 	virtual void frameRender();
 	
 	// event handlers. Override these methods to define how your
-	// component behaves
+	// component behaves. Coordinates are in the PARENT COORDINATE SPACE
 	virtual void onUpdate() { };
 	virtual void onRender() = 0;
 	virtual void onMouseDown(int x, int y, int button);
@@ -89,19 +92,21 @@ public:
 	virtual void onActivate() { m_bActive = true; };
 	virtual void onDeactivate() { m_bActive = false; };
 
+	// x,y in PARENT COORDINATES!
 	virtual bool isPtInside(int x, int y);
 
 	// Coordinate transformation
-	Vector2	worldToLocal(const Vector2& v) const;
-	Vector2 parentToLocal(const Vector2& v) const;
-	Vector2 localToWorld(const Vector2& v) const;
-	Vector2 localToParent(const Vector2& v) const;
+	Vector2i worldToLocal(const Vector2i& v) const;
+	Vector2i parentToLocal(const Vector2i& v) const;
+	Vector2i localToWorld(const Vector2i& v) const;
+	Vector2i localToParent(const Vector2i& v) const;
 
 	//helpers
 	static void drawBorderedQuad(int left, int top, int right, int bottom,		// position to appear on screen
 						int lB, int tB, int rB, int bB,							// border positions
 						double texL, double texLB, double texR, double texRB,	// left to right positions in tex
 						double texT, double texTB, double texB, double texBB);	// top to bottom
+	static void drawImage(ResourceManager::ImageRef &image, int x, int y, int w=0, int h=0);
 };
 
 };

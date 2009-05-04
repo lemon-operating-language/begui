@@ -26,15 +26,19 @@
 
 using namespace begui;
 
-CheckBox::CheckBox() : m_state(CheckBox::NOT_CHECKED), m_bHover(false),
-	m_id(-1), m_pBoundVal(0)
+CheckBox::CheckBox() : m_state(false), m_bHover(false),
+	m_id(-1)
 {
 }
 
-void CheckBox::create(int x, int y, const std::string &title, int id, Functor1<int> &callback)
+CheckBox::~CheckBox()
+{
+}
+
+void CheckBox::create(int x, int y, const std::string &title, int id, const Functor1<int> &callback)
 {
 	m_title = title;
-	m_state = CheckBox::NOT_CHECKED;
+	m_state = false;
 	m_onClick = callback;
 	m_id = id;
 	m_bHover = false;
@@ -45,18 +49,8 @@ void CheckBox::create(int x, int y, const std::string &title, int id, Functor1<i
 	m_bottom = y+12;
 }
 
-void CheckBox::bindValue(bool *val)
-{
-	m_pBoundVal = val;
-}
-
 void CheckBox::onUpdate()
 {
-	if (m_pBoundVal)
-	{
-		if (m_state == CheckBox::NOT_CHECKED && *m_pBoundVal)
-			m_state = CheckBox::CHECKED;
-	}
 }
 
 void CheckBox::onRender()
@@ -72,36 +66,37 @@ void CheckBox::onRender()
 	int h = getHeight();
 
 	// find the position
-	int tL=388;
-	int tR = tL+12;
-	int tT = 2;
-	int tB=tT+12;
+	float tL=388;
+	float tR = tL+12;
+	float tT = 2;
+	float tB=tT+12;
 
 	// render the icon
-	glColor4f(1,1,1,1);
-	if (m_bHover && m_state != CheckBox::INACTIVE)
-		glColor4f(1,1,1,0.8);
-	else if (m_state == CheckBox::INACTIVE)
-		glColor4f(1,1,1,0.5);
+	if (!isEnabled())
+		glColor4f(1.0f,1.0f,1.0f,0.5f);
+	else if (m_bHover)
+		glColor4f(1.0f,1.0f,1.0f,0.8f);
+	else
+		glColor4f(1,1,1,1);
 	glBegin(GL_QUADS);
-		glTexCoord2f(tL/512.0, tT/512.0);	glVertex3f(0, 0, 0);
-		glTexCoord2f(tR/512.0, tT/512.0);	glVertex3f(12, 0, 0);
-		glTexCoord2f(tR/512.0, tB/512.0);	glVertex3f(12, 12, 0);
-		glTexCoord2f(tL/512.0, tB/512.0);	glVertex3f(0, 12, 0);
+		glTexCoord2f(tL/512.0f, tT/512.0f);	glVertex3f(0, 0, 0);
+		glTexCoord2f(tR/512.0f, tT/512.0f);	glVertex3f(12, 0, 0);
+		glTexCoord2f(tR/512.0f, tB/512.0f);	glVertex3f(12, 12, 0);
+		glTexCoord2f(tL/512.0f, tB/512.0f);	glVertex3f(0, 12, 0);
 		
 		// render the check mark
-		if (m_state == CheckBox::CHECKED)
+		if (m_state == true)
 		{
 			// size of the checkmark
-			int chW = 17;
-			int chH = 20;
+			float chW = 17;
+			float chH = 20;
 			// pos in the texture file.
-			int chU = 405;
-			int chV = 4;
-			glTexCoord2f(chU/512.0, chV/512.0);			glVertex3f(2, -2, 0);
-			glTexCoord2f((chU+chW)/512.0, chV/512.0);	glVertex3f(11, -2, 0);
-			glTexCoord2f((chU+chW)/512.0, (chV+chH)/512.0);	glVertex3f(11, h-1, 0);
-			glTexCoord2f(chU/512.0, (chV+chH)/512.0);	glVertex3f(2, h-1, 0);
+			float chU = 405;
+			float chV = 4;
+			glTexCoord2f(chU/512.0f, chV/512.0f);			glVertex3f(2, -2, 0);
+			glTexCoord2f((chU+chW)/512.0f, chV/512.0f);	glVertex3f(11, -2, 0);
+			glTexCoord2f((chU+chW)/512.0f, (chV+chH)/512.0f);	glVertex3f(11, h-1, 0);
+			glTexCoord2f(chU/512.0f, (chV+chH)/512.0f);	glVertex3f(2, h-1, 0);
 		}
 	glEnd();
 		
@@ -109,9 +104,9 @@ void CheckBox::onRender()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// render the text
-	glColor3f(0.3,0.3,0.3);
-	if (m_state == CheckBox::INACTIVE)
-		glColor3f(0.6, 0.6, 0.6);
+	glColor3f(0.3f,0.3f,0.3f);
+	if (!isEnabled())
+		glColor3f(0.6f, 0.6f, 0.6f);
 	Font::renderString(18, h-2, m_title);
 }
 
@@ -129,16 +124,12 @@ void CheckBox::onMouseMove(int x, int y, int prevx, int prevy)
 
 void CheckBox::onMouseUp(int x, int y, int button)
 {
-	if (m_state == CheckBox::INACTIVE)
+	if (!isEnabled())
 		return;
-	m_state = (m_state == CheckBox::CHECKED)?CheckBox::NOT_CHECKED:CheckBox::CHECKED;
+	m_state = !m_state;
 
 	// Call the callback, if any
 	m_onClick(m_id);
-
-	// update the live var if any
-	if (m_pBoundVal)
-		*m_pBoundVal = (m_state == CheckBox::CHECKED);
 }
 
 void CheckBox::onKeyDown(int key)
@@ -149,11 +140,3 @@ void CheckBox::onKeyUp(int key)
 {
 }
 
-bool CheckBox::isPtInside(int x, int y)
-{
-	if (x<m_left || x>m_left+18)
-		return false;
-	if (y<m_top || y>m_top+18)
-		return false;
-	return true;
-}

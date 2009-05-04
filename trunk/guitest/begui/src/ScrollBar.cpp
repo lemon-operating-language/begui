@@ -29,7 +29,13 @@ ScrollBar::ScrollBar() : m_scrollDir(SCROLL_VERTICAL),
 	m_minPos(0), m_maxPos(1), m_curPos(0),
 	m_sliderDragStart(-1),
 	m_percVisible(-1),
-	m_sliderLen(20)
+	m_sliderLen(20),
+	m_barSize(18),
+	m_buttonWidth(18),
+	m_buttonHeight(18),
+	m_sliderWidth(18),
+	m_sliderOffs1(0),
+	m_sliderOffs2(0)
 {
 }
 
@@ -37,7 +43,8 @@ ScrollBar::~ScrollBar()
 {
 }
 
-void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, double maxPos)
+void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, double maxPos,
+						const std::string &style_name)
 {
 	// set the dimensions of the component
 	m_left = x;
@@ -45,11 +52,11 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 	if (dir == ScrollBar::SCROLL_HORIZONTAL)
 	{
 		m_right = x+length;
-		m_bottom = y+SCROLL_WIDTH;
+		m_bottom = y+m_barSize;
 	}
 	else
 	{
-		m_right = x+SCROLL_WIDTH;
+		m_right = x+m_barSize;
 		m_bottom = y+length;
 	}
 
@@ -58,129 +65,103 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 	m_minPos = minPos;
 	m_maxPos = maxPos;
 	m_curPos = minPos;
+
+	// get the style of the scrollbar
+	ResourceManager::Style barstyle = ResourceManager::inst()->getClassDef("ScrollBar").style(style_name);
+	m_barBg = ResourceManager::inst()->loadImage(barstyle.get_img("bg"));
+
+	// create the buttons
+	if (dir == ScrollBar::SCROLL_HORIZONTAL) {
+		ResourceManager::Style bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_btn_left");
+		m_incBtn.create(-bstyle.get_i("padding_left"), -bstyle.get_i("padding_top"), 
+						"", 101, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_left");
+
+		bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_btn_right");
+		m_decBtn.create(m_right+bstyle.get_i("padding_right")-bstyle.get_i("default_width"), 
+						-bstyle.get_i("padding_top"), 
+						"", 101, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_right");
+
+		m_slider.create(0, 0, "", 103, Functor1<int>(), "scroller_slider");
+	}
+	else {
+		int xCenter = 0;
+		ResourceManager::Style bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_btn_up");
+		m_sliderOffs1 = bstyle.get_i("padding_bottom");
+		m_incBtn.create(-bstyle.get_i("padding_left"), -bstyle.get_i("padding_top"), 
+						"", 101, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_up");
+		
+		// use the top button to define the center of the scroll bar
+		xCenter = bstyle.get_i("default_width")/2 - bstyle.get_i("padding_left");
+
+		bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_btn_down");
+		m_sliderOffs2 = -bstyle.get_i("padding_top");
+		m_decBtn.create(-bstyle.get_i("padding_left"), 
+						getHeight()+bstyle.get_i("padding_bottom")-bstyle.get_i("default_height"), 
+						"", 102, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_down");
+		
+		bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_slider");
+		m_sliderOffs1 += bstyle.get_i("padding_top");
+		m_sliderOffs2 += -bstyle.get_i("padding_bottom");
+		m_slider.create(xCenter-(bstyle.get_i("default_width")/2-bstyle.get_i("padding_left")), 
+						-m_sliderOffs1, 
+						"", 
+						103, 
+						Functor1<int>(), "scroller_slider");
+	}
+	addComponent(&m_incBtn);
+	addComponent(&m_decBtn);
+	addComponent(&m_slider);
+/*	if (dir == ScrollBar::SCROLL_HORIZONTAL)
+		m_decBtn.create(m_right,y, "", 101, Functor1<int>(), "std");
+	else
+		m_decBtn.create(x,m_bottom, "", 101, Functor1<int>(), "std");
+	m_slider.create(x,y, "", 101, Functor1<int>(), "std");*/
 }
 
 void ScrollBar::onUpdate()
 {
-	int w = SCROLL_WIDTH-2;
-	int h = SCROLL_WIDTH-2;
-
-	// update the size of the slider
+	// update the position and size of the slider
 	int runArea = 0;
-	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
-		runArea = getHeight()-2*h-4;
-	else
-		runArea = getWidth()-2*w-4;
+	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
+		runArea = m_decBtn.getBottom() - m_incBtn.getTop();
+	}
+	else {
+		runArea = m_decBtn.getRight() - m_incBtn.getLeft();
+	}
+
 	if (m_percVisible > 1)
 		m_percVisible = 1;
 	if (m_percVisible > 0)
 		m_sliderLen = runArea * m_percVisible;
 	else
 		m_sliderLen = (runArea > 20) ? 20 : 0.8*runArea;
+
+	m_sliderLen += m_sliderOffs1-m_sliderOffs2;
+
+	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
+		m_slider.setPos(m_slider.getLeft(), m_incBtn.getBottom() + (runArea - m_sliderLen/2)*m_curPos - m_sliderOffs1);
+		m_slider.setSize(m_slider.getWidth(), m_sliderLen);
+	}
+	else {
+	}
+
+	Container::onUpdate();
 }
 
 void ScrollBar::onRender()
 {
-	int cw = getWidth();
-	int ch = getHeight();
-
-	int w = SCROLL_WIDTH-2;
-	int h = SCROLL_WIDTH-2;
-	float tX = 332.0/512;
-	float tY = 37.0/512;
-	float tX2 = tX + 19.0/512;
-	float tY2 = tY + 19.0/512;
-
-	// render the background
-	glColor4f(0,0.05,0.1,0.3);
-	glBegin(GL_QUADS);
-		glVertex2f(0, 0);
-		glVertex2f(cw, 0);
-		glVertex2f(cw, ch);
-		glVertex2f(0, ch);
-	glEnd();
-	
-	// set the texture of a window
-	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
-	pTex->set();
-
-	// render the buttons
-	glBegin(GL_QUADS);
-		if (m_curPos > m_minPos)
-			glColor4f(1,1,1,1);
-		else
-			glColor4f(1,1,1,0.3);
-		
-		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
-		{
-			glTexCoord2f(tX, tY2);  glVertex2f(1, 1);
-			glTexCoord2f(tX2, tY2); glVertex2f(1+w, 1);
-			glTexCoord2f(tX2, tY);  glVertex2f(1+w, 1+h);
-			glTexCoord2f(tX, tY);	glVertex2f(1, 1+h);
-		}
-		else
-		{
-			glTexCoord2f(tX, tY2);	glVertex2f(1, 1);
-			glTexCoord2f(tX, tY);	glVertex2f(1+w, 1);
-			glTexCoord2f(tX2, tY);	glVertex2f(1+w, 1+h);
-			glTexCoord2f(tX2, tY2); glVertex2f(1, 1+h);
-		}
-		
-		if (m_curPos < m_maxPos)
-			glColor4f(1,1,1,1);
-		else
-			glColor4f(1,1,1,0.3);
-		
-		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
-		{
-			glTexCoord2f(tX, tY);	glVertex2f(1, ch-h-1);
-			glTexCoord2f(tX2, tY);	glVertex2f(1+w, ch-h-1);
-			glTexCoord2f(tX2, tY2); glVertex2f(1+w, ch-1);
-			glTexCoord2f(tX, tY2);	glVertex2f(1, ch-1);
-		}
-		else
-		{
-			glTexCoord2f(tX2, tY);	glVertex2f(cw-w-1, 1);
-			glTexCoord2f(tX2, tY2); glVertex2f(cw-1, 1);
-			glTexCoord2f(tX, tY2);	glVertex2f(cw-1, h+1);
-			glTexCoord2f(tX, tY);	glVertex2f(cw-w-1, h+1);
-		}
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// render the slider
-	float sX = 355.0/512;
-	float sY = 33.0/512;
-	float sX2 = sX + 26.0/512;
-	float sY2 = sY + 26.0/512;
-
-	double sliderPos = (m_curPos-m_minPos)/(m_maxPos - m_minPos);
-	glColor4f(1,1,1,0.5);
-	glBegin(GL_QUADS);
-		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
-		{
-			glTexCoord2f(sX, sY2); glVertex2f(1, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos);
-			glTexCoord2f(sX2, sY2); glVertex2f(1+w, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos);
-			glTexCoord2f(sX2, sY); glVertex2f(1+w, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos + m_sliderLen);
-			glTexCoord2f(sX, sY); glVertex2f(1, h+2 + (ch-2*h-4-m_sliderLen)*sliderPos + m_sliderLen);
-		}
-		else
-		{
-			glTexCoord2f(sX, sY2); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos, 1);
-			glTexCoord2f(sX2, sY2); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos, h+1);
-			glTexCoord2f(sX2, sY); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos + m_sliderLen, h+1);
-			glTexCoord2f(sX, sY); glVertex2f(w+2 + (cw-2*w-4-m_sliderLen)*sliderPos + m_sliderLen, 1);
-		}
-	glEnd();
-	
-	glBindTexture(GL_TEXTURE_2D, 0);
+	Component::drawImage(m_barBg, (m_incBtn.getWidth() - m_barBg.m_width)/2 + m_incBtn.getLeft()+1 , 
+					 m_incBtn.getBottom() - m_incBtn.getHeight()/2, 
+					 m_barBg.m_width, getHeight());
 }
 	
 void ScrollBar::onMouseDown(int x, int y, int button)
 {
-	int w = SCROLL_WIDTH-2;
+/*	int w = SCROLL_WIDTH-2;
 	int h = SCROLL_WIDTH-2;
+
+	x-=m_left;
+	y-=m_top;
 
 	double sliderPos = (m_curPos-m_minPos)/(m_maxPos - m_minPos);
 	
@@ -258,13 +239,20 @@ void ScrollBar::onMouseDown(int x, int y, int button)
 	if (m_curPos < m_minPos)
 		m_curPos = m_minPos;
 	if (m_curPos > m_maxPos)
-		m_curPos = m_maxPos;
+		m_curPos = m_maxPos;*/
+
+	Container::onMouseDown(x,y,button);
 }
 
 void ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
 {
-	int w = SCROLL_WIDTH-2;
+/*	int w = SCROLL_WIDTH-2;
 	int h = SCROLL_WIDTH-2;
+	
+	x-=m_left;
+	y-=m_top;
+	prevx-=m_left;
+	prevy-=m_top;
 	
 	if (m_sliderDragStart != -1)
 	{
@@ -296,12 +284,15 @@ void ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
 			if (m_curPos > m_maxPos)
 				m_curPos = m_maxPos;
 		}
-	}
+	}*/
+	Container::onMouseMove(x,y,prevx,prevy);
 }
 
 void ScrollBar::onMouseUp(int x, int y, int button)
 {
 	m_sliderDragStart = -1;
+
+	Container::onMouseUp(x,y,button);
 }
 
 void ScrollBar::onKeyDown(int key)
@@ -362,19 +353,13 @@ void ScrollBar::onKeyDown(int key)
 		m_curPos = m_maxPos;
 		break;
 	}
+
+	Container::onKeyDown(key);
 }
 
 void ScrollBar::onKeyUp(int key)
 {
-}
-
-bool ScrollBar::isPtInside(int x, int y)
-{
-	if (x < m_left || x > m_right)
-		return false;
-	if (y < m_top || y > m_bottom)
-		return false;
-	return true;
+	Container::onKeyUp(key);
 }
 
 void ScrollBar::setBounds(double minPos, double maxPos, double percVisible)
@@ -384,4 +369,24 @@ void ScrollBar::setBounds(double minPos, double maxPos, double percVisible)
 	m_minPos = minPos;
 	m_maxPos = maxPos;
 	m_percVisible = percVisible;
+}
+
+void ScrollBar::handleClick(int id)
+{
+	double pageStep = (m_maxPos - m_minPos)/5;
+	if (m_percVisible > 0)
+		pageStep = (m_maxPos - m_minPos)*m_percVisible;
+
+	switch (id) {
+		case 101:
+			m_curPos -= pageStep/STEPS_PER_PAGE;
+			if (m_curPos < m_minPos)
+				m_curPos = m_minPos;
+			break;
+		case 102:
+			m_curPos += pageStep/STEPS_PER_PAGE;
+			if (m_curPos > m_maxPos)
+				m_curPos = m_maxPos;
+			break;
+	}
 }

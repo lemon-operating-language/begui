@@ -30,7 +30,9 @@
 
 #define SAFE_DELETE(x) { if (x) { delete x; x=0; } }
 #define SAFE_DELETE_VEC(x) { if (x) { delete[] x; x=0; } }
-#define ASSERT(x)	{ assert(x); }
+#ifndef ASSERT
+	#define ASSERT(x)	{ assert(x); }
+#endif
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,7 +51,7 @@
 //#include <gl\gl.h>	// opengl
 //#include <gl\glu.h>	// glu32
 #include "..\gl\glaux.h"		// DEPRECATED! REMOVE! (also from project directory) - used in Image.cpp for loading bmps
-#include <gl\glut.h>
+//#include <gl\glut.h>
 //#include <gl\glui.h>
 //#include <GL/glext.h>
 

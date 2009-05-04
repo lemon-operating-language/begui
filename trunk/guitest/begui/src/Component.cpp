@@ -37,10 +37,10 @@ Component::Component() : m_left(0), m_right(0), m_top(0), m_bottom(0),
 }
 
 // Coordinate transformation
-Vector2	Component::worldToLocal(const Vector2& v) const
+Vector2i	Component::worldToLocal(const Vector2i& v) const
 {
 	Component *parent = m_pParent;
-	Vector2 pos(v.x-m_left, v.y-m_top);
+	Vector2i pos(v.x-m_left, v.y-m_top);
 	while (parent) {
 		pos.x -= parent->m_left;
 		pos.y -= parent->m_top;
@@ -49,15 +49,15 @@ Vector2	Component::worldToLocal(const Vector2& v) const
 	return pos;
 }
 
-Vector2	Component::parentToLocal(const Vector2& v) const
+Vector2i	Component::parentToLocal(const Vector2i& v) const
 {
-	return Vector2(v.x-m_left, v.y-m_top);
+	return Vector2i(v.x-m_left, v.y-m_top);
 }
 
-Vector2 Component::localToWorld(const Vector2& v) const
+Vector2i Component::localToWorld(const Vector2i& v) const
 {
 	Component *parent = m_pParent;
-	Vector2 pos(v.x+m_left, v.y+m_top);
+	Vector2i pos(v.x+m_left, v.y+m_top);
 	while (parent) {
 		pos.x += parent->m_left;
 		pos.y += parent->m_top;
@@ -66,9 +66,9 @@ Vector2 Component::localToWorld(const Vector2& v) const
 	return pos;
 }
 
-Vector2 Component::localToParent(const Vector2& v) const
+Vector2i Component::localToParent(const Vector2i& v) const
 {
-	return Vector2(v.x+m_left, v.y+m_top);
+	return Vector2i(v.x+m_left, v.y+m_top);
 }
 
 void Component::drawBorderedQuad(int l, int t, int r, int b,		// position to appear on screen
@@ -210,4 +210,27 @@ void Component::frameRender()
 void Component::frameUpdate()
 {
 	onUpdate();
+}
+
+void Component::drawImage(ResourceManager::ImageRef &image, int x, int y, int w, int h)
+{
+	ASSERT(image.m_texture);
+	image.m_texture->set();
+
+	if (w <= 0)
+		w = image.m_width;
+	if (h <= 0)
+		h = image.m_height;
+	glBegin(GL_QUADS);
+		glTexCoord2f(image.m_topLeft.x, image.m_topLeft.y);
+		glVertex3f(x, y, 0);
+		glTexCoord2f(image.m_bottomRight.x, image.m_topLeft.y);
+		glVertex3f(x+w, y, 0);
+		glTexCoord2f(image.m_bottomRight.x, image.m_bottomRight.y);
+		glVertex3f(x+w, y+h, 0);
+		glTexCoord2f(image.m_topLeft.x, image.m_bottomRight.y);
+		glVertex3f(x, y+h, 0);
+	glEnd();
+	
+	glDisable(GL_TEXTURE_2D);
 }

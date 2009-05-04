@@ -7,6 +7,9 @@ void ChildWnd1::onCreate()
 {
 	// create a simple push button
 	m_button1.create(260, 40, "Button", 1);
+	//m_button1.create(260, 40, 80, 60, "Button", 1);
+	m_button1.setIcon(ResourceManager::inst()->loadImage("gears.png"), Button::NEAR_LEFT, 32,32);
+	//m_button1.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
 	addComponent(&m_button1);
 
 	// create a group of radio buttons
@@ -90,7 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	// Uncomment this line to have a console for text output
 	Console::create();
 
-	return Application::inst()->run("beGUI test", 800, 600);
+	return Application::inst()->run("beGUI test", 800, 600, FrameWindow::MULTIPLE_TRANSPARENT);
 }
 
 void Application::onMenu(int id)

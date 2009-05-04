@@ -128,3 +128,5 @@ ImageBox:
 ComboBox:
 	-z-order of the ListBox sub-component
 	
+***************URGENT!!!
+	-coordinates work differently for mouseDown and mouseMove, when isPtInside is called (example: Button)!!!!!

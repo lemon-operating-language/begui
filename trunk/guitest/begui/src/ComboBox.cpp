@@ -123,7 +123,7 @@ void ComboBox::onRender()
 void ComboBox::onMouseDown(int x, int y, int button)
 {
 	// if the expand button was clicked:
-	if (x >= getWidth()-m_btnW && x<=getWidth() && y>=0 && y<=m_btnH) {
+	if (x >= m_right-m_btnW && x<=m_right && y>=m_top && y<=m_top+m_btnH) {
 		if (!m_bIsOpen) {
 			m_bIsOpen = true;
 			addComponent(&m_listbox);
@@ -159,7 +159,7 @@ void ComboBox::onKeyUp(int key)
 bool ComboBox::isPtInside(int x, int y)
 {
 	if (m_bIsOpen) {
-		Vector2 lPt = Component::parentToLocal(Vector2(x,y));
+		Vector2i lPt = Component::parentToLocal(Vector2i(x,y));
 		if (m_listbox.isPtInside(lPt.x,lPt.y))
 			return true;
 	}

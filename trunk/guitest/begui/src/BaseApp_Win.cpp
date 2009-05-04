@@ -681,3 +681,13 @@ bool BaseApp_Win::setupOffscreenPass(int width, int height)
 
 	return true;
 }
+
+HWND BaseApp_Win::getHWND()
+{
+	return hWnd;
+}
+
+HINSTANCE BaseApp_Win::getHINSTANCE()
+{
+	return hInstance;
+}

@@ -29,7 +29,7 @@
 #include "../src/Slider.h"
 #include "../src/Window.h"
 #include "../src/FrameWindow.h"
-#include "../src/WindowResourceManager.h"
+#include "../src/ResourceManager.h"
 #include "../src/Label.h"
 #include "../src/ProgressManager.h"
 #include "../src/RegionSelectGizmo.h"

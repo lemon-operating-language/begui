@@ -22,18 +22,18 @@
 #pragma once
 
 #include "common.h"
-#include "Component.h"
+#include "Container.h"
+#include "Button.h"
 
 namespace begui {
 
-class ScrollBar : public Component
+class ScrollBar : public Container
 {
 public:
 	enum ScrollDir {
 		SCROLL_HORIZONTAL,
 		SCROLL_VERTICAL
 	};
-	const static int SCROLL_WIDTH = 18;
 
 private:
 	ScrollDir	m_scrollDir;
@@ -48,13 +48,22 @@ private:
 
 	const static int STEPS_PER_PAGE = 4;
 
+	int		m_barSize;	// the width/height of the bar for a vertical/horizontal bar correspondingly
+	int		m_buttonWidth, m_buttonHeight;	// the dimensions of the arrow buttons of the scrollbar
+	int		m_sliderWidth;	// the size of the handle
+
+	Button	m_incBtn, m_decBtn, m_slider;
+	int		m_sliderOffs1, m_sliderOffs2;
+	ResourceManager::ImageRef m_barBg;
+
 public:
 	ScrollBar();
 	virtual ~ScrollBar();
 
-	virtual void	create(int x, int y, int length, ScrollDir dir, double minPos=0, double maxPos=1);
-			void	setPos(double pos);
-			double	getPos() const				{ return m_curPos; }
+	virtual void	create(int x, int y, int length, ScrollDir dir, double minPos=0, double maxPos=1,
+							const std::string &style_name="std");
+			void	setScrollPos(double pos);
+			double	getScrollPos() const				{ return m_curPos; }
 			void	setPercVisible(double perc)	{ ASSERT(perc >= 0 && perc <= 1.0); m_percVisible = perc; }
 			void	setBounds(double minPos, double maxPos, double percVisible);
 
@@ -65,7 +74,9 @@ public:
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
-	virtual bool isPtInside(int x, int y);
+
+private:
+	void handleClick(int id);
 };
 
 };

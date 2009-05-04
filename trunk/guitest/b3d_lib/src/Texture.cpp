@@ -197,7 +197,7 @@ void Texture::create(const Image &image, bool bResize)
 	Image tmp_img;
 	if (w != image.getWidth() || h != image.getHeight())
 	{
-		bResize = true;
+		//bResize = true;
 		if (bResize) {
 			tmp_img.copy(image);
 			tmp_img.resize(w, h);

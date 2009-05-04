@@ -72,7 +72,7 @@ void Container::onMouseDown(int x, int y, int button)
 	glTranslatef(m_left, m_top, 0);
 	
 	// Transform coordinates.
-	Vector2 lP = /*toLocal*/(Vector2(x,y));
+	Vector2i lP = parentToLocal(Vector2i(x,y));
 
 	// select active component
 	// traversal is done in z-order (starting from the end of the
@@ -116,8 +116,7 @@ void Container::onMouseDown(int x, int y, int button)
 		m_pActiveComponent->getFocus();
 
 		// get the local coordinates inside the child component:
-		Vector2 llP = m_pActiveComponent->parentToLocal(lP);
-		m_pActiveComponent->onMouseDown((int)llP.x, (int)llP.y, button);
+		m_pActiveComponent->onMouseDown(lP.x, lP.y, button);
 	}
 	else
 	{
@@ -136,15 +135,14 @@ void Container::onMouseMove(int x, int y, int prevx, int prevy)
 	glPushMatrix();
 	glTranslatef(m_left, m_top, 0);
 
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+	Vector2i lPrevP = parentToLocal(Vector2i(prevx,prevy));
+
 	if ((m_pActiveComponent && !m_pActiveComponent->hasMouseFocus()) || !m_pActiveComponent)
 	{
 		for (int i=(int)m_children.size()-1; i>=0; --i)
 		{
-			// Transform coordinates.
-			Vector2 lP = m_children[i]->parentToLocal(Vector2(x,y));
-			Vector2 lpP = m_children[i]->parentToLocal(Vector2(prevx,prevy));
-
-			m_children[i]->onMouseMove((int)lP.x, (int)lP.y, (int)lpP.x, (int)lpP.y);
+			m_children[i]->onMouseMove(lP.x, lP.y, lPrevP.x, lPrevP.y);
 		}
 	}
 
@@ -153,12 +151,9 @@ void Container::onMouseMove(int x, int y, int prevx, int prevy)
 	if (m_pActiveComponent)
 	{
 		// Transform coordinates.
-		Vector2 lP = m_pActiveComponent->parentToLocal(Vector2(x,y));
-		Vector2 lpP = m_pActiveComponent->parentToLocal(Vector2(prevx,prevy));
-
 		if (m_pActiveComponent->hasMouseFocus())
 		{
-			m_pActiveComponent->onMouseMove((int)lP.x, (int)lP.y, (int)lpP.x, (int)lpP.y);
+			m_pActiveComponent->onMouseMove(lP.x, lP.y, lPrevP.x, lPrevP.y);
 		}
 	}
 	else
@@ -177,15 +172,14 @@ void Container::onMouseUp(int x, int y, int button)
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glTranslatef(m_left, m_top, 0);
+	
+	Vector2i lP = parentToLocal(Vector2i(x,y));
 
 	// call mouseUp of active component
 	// (without updating the active component)
 	if (m_pActiveComponent)
 	{
-		// Transform coordinates.
-		Vector2 lP = m_pActiveComponent->parentToLocal(Vector2(x,y));
-
-		m_pActiveComponent->onMouseUp((int)lP.x, (int)lP.y, button);
+		m_pActiveComponent->onMouseUp(lP.x, lP.y, button);
 	}
 	else
 	{

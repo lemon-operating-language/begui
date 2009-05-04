@@ -37,37 +37,54 @@ public:
 		MOUSE_OVER,
 		STATES_NUM
 	};
+	enum IconPlacement {
+		FAR_LEFT,
+		NEAR_LEFT,
+		FAR_RIGHT,
+		NEAR_RIGHT,
+		TOP,
+		BOTTOM,
+		CUSTOM
+	};
 
 private:
 	std::string		m_title;
 	int				m_id;
 	Functor1<int>	m_onClick;	// arg1: the id of the button
-	bool			m_bHover;
 	State			m_status;
+	bool			m_bAutoSzX, m_bAutoSzY;				// true to determine the button size automatically
 
 	ResourceManager::ImageRef	m_faces[STATES_NUM];	// the faces corresponding to each state of the button
 	ResourceManager::ImageRef	m_icon;
+	int							m_iconSzX, m_iconSzY;
+
+	int				m_reszLeft, m_reszTop, m_reszRight, m_reszBottom;	// the resizable area
+	IconPlacement	m_iconPlacement;
 
 public:
 	Button();
 
-	void create(int x, int y, const std::string &title, int id, Functor1<int> &callback = Functor1<int>());
+	void create(int x, int y, const std::string &title, int id, Functor1<int> &callback = Functor1<int>(), 
+				const std::string &style = "std");
+	void create(int x, int y, int w, int h, const std::string &title, int id, 
+				Functor1<int> &callback = Functor1<int>(), 
+				const std::string &style = "std");
 
 	virtual void onUpdate();
 	virtual void onRender();
 
-	void setState(State state)	{ m_status = state; }
-	State getState() const		{ return m_status; }
-	void setTitle(const std::string& title)	{ m_title = title; }
-	void setFace(State state, const ResourceManager::ImageRef &img)	{ m_faces[(size_t)state] = img; }
-	void setIcon(const ResourceManager::ImageRef &icon) { m_icon = icon; }
+	void	setState(State state)	{ m_status = state; }
+	State	getState() const		{ return m_status; }
+	void	setTitle(const std::string& title)	{ m_title = title; }
+	void	setFace(State state, const ResourceManager::ImageRef &img);
+	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
+	void	setResizableArea(int left, int top, int right, int bottom);
 
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
-	virtual bool isPtInside(int x, int y);
 };
 
 };

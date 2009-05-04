@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.h"
-#include "../../b3d_lib/src/Rect.h"
+#include "../../bcore/src/Rect.h"
 #include "timeseries.h"
 #include "LiveVar.h"
 

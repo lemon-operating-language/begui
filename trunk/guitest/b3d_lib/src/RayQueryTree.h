@@ -30,16 +30,16 @@
 
 class RayQueryTree
 {
-private:
-	class FaceEntry {
-	public:
-		Vector3 v[3];
-	};
-
+public:
 	class Face {
 	public:
 		Vector3 v[3];
 		BBox bbox;
+	};
+private:
+	class FaceEntry {
+	public:
+		Vector3 v[3];
 	};
 	class TreeNode
 	{
@@ -72,7 +72,7 @@ private:
 					split();
 			}
 		}
-		bool ray_query(const Vector3& orig, const Vector3& dir, float& t)
+		__forceinline bool ray_query(const Vector3& orig, const Vector3& dir, float& t, Face **face)
 		{
 			// check if we are in the bbox
 			float tMin, tMax;
@@ -85,14 +85,16 @@ private:
 				if (intersect_triangle(&orig.x, &dir.x, &(*it).v[0].x, &(*it).v[1].x, &(*it).v[2].x,
 					&t, &u, &v))
 				{
-					if (t > 0.001f)
+					if (t > 0.001f) {
+						*face = &(*it);
 						return true;
+					}
 				}
 			}
 			for (int i=0; i<8; ++i)
 			{
 				if (m_children[i])
-					if (m_children[i]->ray_query(orig, dir, t))
+					if (m_children[i]->ray_query(orig, dir, t, face))
 						return true;
 			}
 			return false;
@@ -138,14 +140,24 @@ public:
 private:
 //	Octree<tEntry>	m_octree;
 	float m_lastT;
+	Face *m_hitFace;
 
 public:
 	RayQueryTree();
 	~RayQueryTree() {};
 
 	void addTriangle(const Vector3 &v1, const Vector3 &v2, const Vector3 &v3);
-	bool intersectsRay(const Vector3& orig, const Vector3& dir);
-	void clear()	{ m_root.clear(); }
+	__forceinline bool intersectsRay(const Vector3& orig, const Vector3& dir);
+	void clear()				{ m_root.clear(); }
 
-	float last_t() const	{ return m_lastT; }
+	float last_t() const		{ return m_lastT; }
+	Face* getFaceHit() const	{ return m_hitFace; }
 };
+
+//----------------------------------------------------------------------
+bool RayQueryTree::intersectsRay(const Vector3& orig, const Vector3& dir)
+{
+	m_lastT = -1;
+	m_hitFace = 0;
+	return m_root.ray_query(orig, dir, m_lastT, &m_hitFace);
+}

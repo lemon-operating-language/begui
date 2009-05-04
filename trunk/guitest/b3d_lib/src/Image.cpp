@@ -782,5 +782,7 @@ bool Image::loadPNG(const std::string &fname)
 	create(w, h, 4, Image::I8BITS);
 	m_data = data;
 
+	Console::print("loaded PNG file (%d x %d)\n", w, h);
+
 	return true;
 }

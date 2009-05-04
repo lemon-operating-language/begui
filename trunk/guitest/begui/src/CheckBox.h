@@ -23,46 +23,42 @@
 
 #include "common.h"
 #include "Component.h"
+#include "LiveVar.h"
 
 namespace begui {
 
 class CheckBox : public Component
 {
 public:
-	enum State {
-		CHECKED,
-		NOT_CHECKED,
-		INACTIVE
-	};
-
-private:
-	State		m_state;
-	std::string m_title;
-	int			m_id;
-	Functor1<int>	m_onClick;	// arg1: the id of the checkbutton
-	bool		m_bHover;
-
-	bool		*m_pBoundVal;
-
-public:
 	CheckBox();
+	virtual ~CheckBox();
 
-	void create(int x, int y, const std::string &title, int id, Functor1<int> &callback = Functor1<int>());
-	void setState(State state)	{ m_state = state; }
-	State getState() const		{ return m_state; }
-	
-	void bindValue(bool *val);	// create a 'live' variable for the slider's current value
-									// 0 accepted, to remove current bound variable.
+	void create(int x, int y, const std::string &title, int id, const Functor1<int> &callback = Functor1<int>());
 
+	// change the state of the check box
+	void setState(bool state)	{ m_state = state; }
+	bool getState() const		{ return m_state; }
+	LiveVar<bool>& state()		{ return m_state; }
+
+	// set the event handlers
+	void handleOnClick(const Functor1<int> &fun)	{ m_onClick = fun; }
+
+	// overriden methods
 	virtual void onUpdate();
 	virtual void onRender();
-
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
-	virtual bool isPtInside(int x, int y);
+	
+private:
+	std::string		m_title;
+	int				m_id;
+	LiveVar<bool>	m_state;	// the state of the checkbox, true for checked
+	Functor1<int>	m_onClick;	// arg1: the id of the checkbutton
+	bool			m_bHover;
+
 };
 
 };

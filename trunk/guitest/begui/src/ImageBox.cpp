@@ -71,13 +71,13 @@ void ImageBox::onRender()
 
 		float u = 1.0f, v = 1.0f;
 		int iw = w, ih=h;
-		if (!m_bResizeImg)
+	/*	if (!m_bResizeImg)
 		{
 			iw = (w > m_pImage->getWidth()) ? m_pImage->getWidth() : w;
 			ih = (h > m_pImage->getHeight()) ? m_pImage->getHeight() : h;
 			u = (float)iw/m_texture.getWidth();
 			v = (float)ih/m_texture.getHeight();
-		}
+		}*/
 		m_texture.set();
 		glColor4f(1,1,1,1);
 		glBegin(GL_QUADS);
@@ -102,6 +102,9 @@ void ImageBox::onRender()
 			glVertex2f(m_selLine[0].x, m_selLine[0].y);
 		glEnd();
 	}
+
+	// additional rendering, controlled by the application
+	m_onRender();
 }
 
 void ImageBox::onMouseDown(int x, int y, int button)
@@ -112,13 +115,15 @@ void ImageBox::onMouseDown(int x, int y, int button)
 		{
 			m_selLine.clear();
 			
-			Vector2 pt(x,y);
+			Vector2 pt(x-m_left,y-m_top);
 			if (pt.x < 0) pt.x = 0;
 			if (pt.y < 0) pt.y = 0;
 			if (pt.x > m_pImage->getWidth()) pt.x = m_pImage->getWidth();
 			if (pt.y > m_pImage->getHeight()) pt.y = m_pImage->getHeight();
 			m_selLine.push_back(pt);
 		}
+
+		m_onMouseDown(Vector2i(x-m_left,y-m_top));
 	}
 
 	Component::onMouseDown(x,y,button);
@@ -130,7 +135,7 @@ void ImageBox::onMouseMove(int x, int y, int prevx, int prevy)
 	{
 		if (m_pImage && m_bSelectable)
 		{
-			Vector2 pt(x,y);
+			Vector2 pt(x-m_left,y-m_top);
 			if (pt.x < 0) pt.x = 0;
 			if (pt.y < 0) pt.y = 0;
 			if (pt.x > m_pImage->getWidth()) pt.x = m_pImage->getWidth();
@@ -148,7 +153,7 @@ void ImageBox::onMouseUp(int x, int y, int button)
 	{
 		if (m_pImage && m_bSelectable)
 		{
-			Vector2 pt(x,y);
+			Vector2 pt(x-m_left,y-m_top);
 			if (pt.x < 0) pt.x = 0;
 			if (pt.y < 0) pt.y = 0;
 			if (pt.x > m_pImage->getWidth()) pt.x = m_pImage->getWidth();
@@ -161,6 +166,8 @@ void ImageBox::onMouseUp(int x, int y, int button)
 				return;
 			}
 		}
+		
+		m_onMouseUp(Vector2i(x-m_left,y-m_top));
 	}
 
 	Component::onMouseUp(x,y,button);
@@ -168,10 +175,12 @@ void ImageBox::onMouseUp(int x, int y, int button)
 
 void ImageBox::onKeyDown(int key)
 {
+	m_onKeyDown(key);
 }
 
 void ImageBox::onKeyUp(int key)
 {
+	m_onKeyUp(key);
 }
 
 bool ImageBox::isPtInside(int x, int y)
