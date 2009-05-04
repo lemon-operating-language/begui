@@ -217,9 +217,6 @@ void Slider::onMouseDown(int x, int y, int button)
 	if (!m_bIsEnabled)
 		return;
 
-	x+= m_left;
-	y+= m_top;
-
 	// position of the marker
 	double f = (m_curValue - m_min)/(m_max - m_min);
 	int spos = (1-f)*m_left + f*m_right;
@@ -260,9 +257,6 @@ void Slider::onMouseMove(int x, int y, int prevx, int prevy)
 	if (!m_bIsEnabled)
 		return;
 
-	x+= m_left;
-	y+= m_top;
-
 	if (m_bDragging)
 	{
 		// check if x is inside the slider
@@ -293,8 +287,6 @@ void Slider::onMouseUp(int x, int y, int button)
 	if (!m_bIsEnabled)
 		return;
 
-	x+= m_left;
-	y+= m_top;
 	m_bDragging = false;
 
 	if (m_pCallback && m_bActive)

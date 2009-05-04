@@ -208,7 +208,7 @@ void TimeSeries<T>::update(double time)
 	case LINEAR: {
 		double t1 = m_timestamps[i-1];
 		double t2 = m_timestamps[i];
-		m_curValue = (t2-time)/(t2-t1)*m_values[i-1] + (time-t1)/(t2-t1)*m_values[i];
+		m_curValue = (T)((t2-time)/(t2-t1)*m_values[i-1] + (time-t1)/(t2-t1)*m_values[i]);
 		return;
 		}
 	}

@@ -47,7 +47,7 @@ void Font::renderString(int x, int y, const std::string &str,
 	{
 		// fall back to rendering text with GLUT
 
-		// UGLY hack to cope with different viewports
+/*		// UGLY hack to cope with different viewports
 		if (vpWidth == -1)
 			vpWidth = display::getWidth();
 		if (vpHeight == -1)
@@ -75,7 +75,7 @@ void Font::renderString(int x, int y, const std::string &str,
 		glMatrixMode(GL_PROJECTION);
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
+		glPopMatrix();*/
 	}
 }
 
@@ -206,27 +206,19 @@ void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string 
 
 int Font::stringLength(const std::string &str)
 {
-	if (FontManager::m_curFont >= 0)
+	ASSERT(FontManager::m_curFont >= 0);
+
+	int len = 0;
+	Font *curFont = FontManager::getCurFont();
+	ASSERT(curFont);
+	for (size_t i=0; i<str.length(); ++i)
 	{
-		int len = 0;
-		Font *curFont = FontManager::getCurFont();
-		ASSERT(curFont);
-		for (size_t i=0; i<str.length(); ++i)
-		{
-			if (str[i] < curFont->m_startChar || str[i] > 255)
-				continue;
-			Character& charInfo = curFont->m_character[str[i] - curFont->m_startChar];
-			len += charInfo.m_horiAdvance;
-		}
-		return len;
+		if (str[i] < curFont->m_startChar || str[i] > 255)
+			continue;
+		Character& charInfo = curFont->m_character[str[i] - curFont->m_startChar];
+		len += charInfo.m_horiAdvance;
 	}
-	else
-	{
-		int len = 0;
-		for (size_t i=0; i<str.length(); ++i)
-			len += glutBitmapWidth( GLUT_BITMAP_HELVETICA_10, str.at(i));
-		return len;
-	}
+	return len;
 }
 
 bool Font::createFont(const std::string &font_file, int font_size)

@@ -111,6 +111,9 @@ void EditableText::renderString()
 
 void EditableText::onMouseDown(int x, int y, int button)
 {
+	x-=m_x;
+	y-=m_y;
+
 	if (button == MOUSE_BUTTON_LEFT) {
 		if (input::isDoubleClick(MOUSE_BUTTON_LEFT)) {
 		}
@@ -123,6 +126,11 @@ void EditableText::onMouseDown(int x, int y, int button)
 
 void EditableText::onMouseMove(int x, int y, int prevx, int prevy)
 {
+	x-=m_x;
+	y-=m_y;
+	prevx-=m_x;
+	prevx-=m_y;
+
 	if (input::isMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		getStringPos(x,y, &m_cursorX, &m_cursorY, &m_cursorH, &m_cursorPos);
 		m_selectEnd = m_cursorPos;
@@ -131,6 +139,9 @@ void EditableText::onMouseMove(int x, int y, int prevx, int prevy)
 
 void EditableText::onMouseUp(int x, int y, int button)
 {
+	x-=m_x;
+	y-=m_y;
+
 	if (button == MOUSE_BUTTON_LEFT) {
 		getStringPos(x,y, &m_cursorX, &m_cursorY, &m_cursorH, &m_cursorPos);
 		m_selectEnd = m_cursorPos;

@@ -42,7 +42,9 @@ void ListBox::create(int x, int y, int width, int height, SelectionMode selMode,
 	m_selectMode = selMode;
 	m_style = style;
 
-	m_scroller.create(width-ScrollBar::SCROLL_WIDTH, 0, height, ScrollBar::SCROLL_VERTICAL);
+//	m_scroller.create(width-ScrollBar::SCROLL_WIDTH, 0, height, ScrollBar::SCROLL_VERTICAL);
+	m_scroller.create(width, 0, height, ScrollBar::SCROLL_VERTICAL);
+	m_scroller.setPos(width-m_scroller.getWidth(),0);
 }
 
 void ListBox::onUpdate()
@@ -69,15 +71,15 @@ void ListBox::onRender()
 	int content_y_offs = 0;
 	if (bNeedsScrolling) {
 		m_scroller.setBounds(0, m_items.size()-getHeight()/lineHeight, (double)getHeight()/(content_height));
-		content_y_offs = -(int)(m_scroller.getPos()*lineHeight);
+		content_y_offs = -(int)(m_scroller.getScrollPos()*lineHeight);
 	}
 	
-	Vector2 wpos = Component::localToWorld(Vector2(0, 0));
-	display::maskRect(wpos.x-1, wpos.y, getWidth()+2-((bNeedsScrolling)? ScrollBar::SCROLL_WIDTH : 0), getHeight()+1);
+	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
+	display::maskRect(wpos.x-1, wpos.y, getWidth()+2-((bNeedsScrolling)? m_scroller.getWidth() : 0), getHeight()+1);
 
 	glEnable(GL_BLEND);
 
-	int w = getWidth()-((bNeedsScrolling)? ScrollBar::SCROLL_WIDTH+1 : 0);
+	int w = getWidth()-((bNeedsScrolling)? m_scroller.getWidth()+1 : 0);
 	int h = getHeight();
 
 	// draw background
@@ -218,11 +220,13 @@ void ListBox::onRender()
 	}
 }
 
-void ListBox::onMouseDown(int x, int y, int button)
+void ListBox::onMouseDown(int _x, int _y, int button)
 {
+	int x = _x-m_left;
+	int y = _y-m_top;
+
 	if (m_scroller.isPtInside(x, y)) {
-		Vector2 lPt = m_scroller.parentToLocal(Vector2(x,y));
-		m_scroller.onMouseDown(lPt.x, lPt.y, button);
+		m_scroller.onMouseDown(x, y, button);
 		return;
 	}
 
@@ -272,15 +276,17 @@ void ListBox::onMouseDown(int x, int y, int button)
 			}
 		}
 	}
-	Component::onMouseDown(x,y,button);
 }
 
-void ListBox::onMouseMove(int x, int y, int prevx, int prevy)
+void ListBox::onMouseMove(int _x, int _y, int _prevx, int _prevy)
 {
+	int x = _x-m_left;
+	int y = _y-m_top;
+	int prevx = _prevx-m_left;
+	int prevy = _prevy-m_top;
+
 	if (m_scroller.isPtInside(x, y)) {
-		Vector2 lPt = m_scroller.parentToLocal(Vector2(x,y));
-		Vector2 lpPt = m_scroller.parentToLocal(Vector2(prevx, prevy));
-		m_scroller.onMouseMove((int)lPt.x, (int)lPt.y, (int)lpPt.x, (int)lpPt.y);
+		m_scroller.onMouseMove(x, y, prevx, prevy);
 		return;
 	}
 	
@@ -297,19 +303,16 @@ void ListBox::onMouseMove(int x, int y, int prevx, int prevy)
 			}
 		}
 	}
-
-	Component::onMouseMove(x,y,prevx,prevy);
 }
 
 void ListBox::onMouseUp(int x, int y, int button)
 {
+	x -= m_left;
+	y -= m_top;
 	if (m_scroller.isPtInside(x,y)) {
-		Vector2 lPt = m_scroller.parentToLocal(Vector2(x,y));
-		m_scroller.onMouseUp((int)lPt.x, (int)lPt.y, button);
+		m_scroller.onMouseUp(x, y, button);
 		return;
 	}
-
-	Component::onMouseUp(x,y,button);
 }
 
 void ListBox::onKeyDown(int key)

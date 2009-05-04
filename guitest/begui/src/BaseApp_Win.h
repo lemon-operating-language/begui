@@ -22,7 +22,7 @@
 #pragma once
 
 #include "common.h"
-#include "../../b3d_lib/src/RenderPass.h"
+#include "../../bcore/src/RenderPass.h"
 #include "FrameWindow.h"
 
 namespace begui {
@@ -45,6 +45,9 @@ public:
 	static BaseApp_Win* inst()	{ if (!m_pInst) m_pInst = new BaseApp_Win(); return m_pInst; }
 
 	LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	HWND		getHWND();
+	HINSTANCE	getHINSTANCE();
 
 protected:
 	BaseApp_Win();

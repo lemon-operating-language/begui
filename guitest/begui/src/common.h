@@ -27,8 +27,9 @@
 #include <math.h>
 #include <ctype.h>
 
-#include "../../b3d_lib/src/common.h"
-#include "../../b3d_lib/src/Texture.h"
-#include "../../b3d_lib/src/Scene.h"
-#include "../../b3d_lib/src/sequence.h"
+#include "../../bcore/src/common.h"
+#include "../../bcore/src/Texture.h"
+//#include "../../bcore/src/Scene.h"
+#include "../../bcore/src/sequence.h"
+#include "../../bcore/src/Vector2i.h"
 

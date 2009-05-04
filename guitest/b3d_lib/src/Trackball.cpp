@@ -126,14 +126,14 @@ void Trackball::reshape(int width, int height)
 
 void Trackball::mouseDown(int x, int y)
 {
-	int button = GLUT_LEFT;//TEMP
-	_tbStartMotion(x, y, button, glutGet(GLUT_ELAPSED_TIME));
+	int button = 1;//TEMP
+	_tbStartMotion(x, y, button, timeGetTime());
 }
 
 void Trackball::mouseUp(int x, int y)
 {
-	int button = GLUT_LEFT;//TEMP
-	_tbStopMotion(button, glutGet(GLUT_ELAPSED_TIME));
+	int button = 1;//TEMP
+	_tbStopMotion(button, timeGetTime());
 }
 
 void Trackball::motion(int x, int y)
@@ -161,7 +161,7 @@ void Trackball::motion(int x, int y)
 				tb_lastposition[1] * current_position[0];
 
 	/* reset for next time */
-	tb_lasttime = glutGet(GLUT_ELAPSED_TIME);
+	tb_lasttime = timeGetTime();
 	tb_lastposition[0] = current_position[0];
 	tb_lastposition[1] = current_position[1];
 	tb_lastposition[2] = current_position[2];

@@ -83,7 +83,7 @@ void itemCB(RayQueryTree::tEntry& item)
 	}
 }*/
 
-bool RayQueryTree::intersectsRay(const Vector3& orig, const Vector3& dir)
+/*bool RayQueryTree::intersectsRay(const Vector3& orig, const Vector3& dir)
 {
 	// query the octree to check for intersection
 //	g_bRes = false;
@@ -95,4 +95,4 @@ bool RayQueryTree::intersectsRay(const Vector3& orig, const Vector3& dir)
 	return m_root.ray_query(orig, dir, m_lastT);
 
 //	return g_bRes;
-}
+}*/

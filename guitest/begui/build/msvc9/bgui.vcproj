@@ -437,7 +437,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\resources\style.txt"
+				>
+			</File>
+			<File
 				RelativePath="..\..\resources\widgets.bmp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\resources\widgets2.png"
 				>
 			</File>
 			<File

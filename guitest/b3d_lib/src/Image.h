@@ -74,6 +74,8 @@ public:
 	void clear();
 	void copy(const Image& image);
 
+	void rawCopy(void *data)	{ memcpy(&m_data[0], data, m_data.size()); }
+
 	Format		getFormat() const			{ return m_format; }
 	size_t		getChannelsNum() const	{ return m_nChannels; }
 	size_t		getWidth() const			{ return m_width; }
@@ -83,6 +85,7 @@ public:
 	bool		isEmpty() const			{ if (m_width*m_height == 0 || m_data.size()==0) return true; return false; }
 	double		getExposure() const			{ return m_exposure; }
 	double		getGamma() const			{ return m_gamma; }
+	void*		getData()					{ return (void*)&m_data[0]; }
 
 	static size_t	getFormatSize(Format format);
 

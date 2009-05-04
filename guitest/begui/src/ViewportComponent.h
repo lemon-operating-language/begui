@@ -23,8 +23,8 @@
 
 #include "common.h"
 #include "Component.h"
-#include "../../b3d_lib/src/Trackball.h"
-#include "../../b3d_lib/src/Viewport.h"
+#include "../../bcore/src/Trackball.h"
+#include "../../bcore/src/Viewport.h"
 
 namespace begui {
 

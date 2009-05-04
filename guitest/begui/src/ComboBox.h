@@ -44,27 +44,34 @@ public:
 
 	virtual void create(int x, int y, int width, int list_height);
 
+	// event handlers
+	void handleOnSelect(const Functor1<int> &onSelect);
+	void handleOnExpand(const Functor1<int> &onExpand);
+	void handleOnType(const Functor1<int> &onType);
+
+	// overrides
 	virtual void onUpdate();
 	virtual void onRender();
-	
 	virtual void onMouseDown(int x, int y, int button);
 	virtual void onMouseMove(int x, int y, int prevx, int prevy);
 	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
-
 	virtual bool isPtInside(int x, int y);
 
+	// manage items
 	void		addItem(const std::string &item)	{ m_listbox.addItem(item); }
 	int			itemsNum() const					{ return m_listbox.itemsNum(); }
 	bool		itemEnabled(size_t i) const			{ return m_listbox.itemEnabled(i); }
 	void		remItem(int pos)					{ m_listbox.remItem(pos); }
 	void		remAllItems()						{ m_listbox.remAllItems(); }
-	int			getCurrent() const					{ return m_curItem; }
+	int			getCurrentItem() const				{ return m_curItem; }
+	void		setCurrentItem(int i)				{ ASSERT(i>=0 && i<m_listbox.itemsNum()); m_curItem = i; }
 	void		enableItem(size_t i)				{ m_listbox.enableItem(i); }
 	void		disableItem(size_t i)				{ m_listbox.disableItem(i); }
 
-	void	onItemClick(int i);
+private:
+	void	onItemClick(int i);	// called when the user makes a selection
 };
 
 };

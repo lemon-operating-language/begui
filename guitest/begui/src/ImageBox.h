@@ -23,7 +23,7 @@
 
 #include "common.h"
 #include "Component.h"
-#include "../../b3d_lib/src/Image.h"
+#include "../../bcore/src/Image.h"
 
 namespace begui {
 
@@ -36,6 +36,10 @@ protected:
 
 	std::vector<Vector2> m_selLine;
 	bool	m_bSelectable;
+	
+	Functor1<Vector2i>	m_onMouseDown, m_onMouseUp;
+	Functor1<int>		m_onKeyDown, m_onKeyUp;
+	Functor0			m_onRender;
 
 public:
 	ImageBox();
@@ -43,6 +47,11 @@ public:
 	virtual void create(int x, int y, int width, int height, Image *pImg, bool bResizeImg = false);
 
 	virtual void setImage(Image *pImg);
+	virtual void handleMouseDown(const Functor1<Vector2i> fun)	{ m_onMouseDown = fun; }
+	virtual void handleMouseUp(const Functor1<Vector2i> fun)	{ m_onMouseUp = fun; }
+	virtual void handleKeyDown(const Functor1<int> fun)			{ m_onKeyDown = fun; }
+	virtual void handleKeyUp(const Functor1<int> fun)			{ m_onKeyUp = fun; }
+	virtual void handleRender(const Functor0 fun)				{ m_onRender = fun; }
 
 	virtual void onUpdate();
 	virtual void onRender();	

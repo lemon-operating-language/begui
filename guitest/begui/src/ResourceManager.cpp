@@ -20,8 +20,8 @@
 */
 
 #include "ResourceManager.h"
-#include "../../b3d_lib/src/BaseTextFile.h"
-#include "../../b3d_lib/src/Image.h"
+#include "../../bcore/src/BaseTextFile.h"
+#include "../../bcore/src/Image.h"
 #include <direct.h>
 
 #pragma warning (disable : 4996)
@@ -46,9 +46,11 @@ void ResourceManager::loadResources()
 
 	// load all textures
 	// Initialize the window manager and load resources
+
+	loadPropertyFile(getResourceDir() + "style.txt");
 	
 	Image img;
-	img.load(getResourceDir() + "bg.bmp");
+	img.load(getResourceDir() + "bg.png");
 	Texture *bgtex = new Texture();
 	bgtex->create(img);
 	m_loadedTextures.push_back(bgtex);
@@ -62,7 +64,7 @@ void ResourceManager::loadResources()
 void ResourceManager::freeResources()
 {
 	// Free all allocated resources
-	m_stockImages.clear();
+	m_images.clear();
 	for (size_t i=0; i<m_loadedTextures.size(); ++i)
 		SAFE_DELETE(m_loadedTextures[i]);
 	m_loadedTextures.clear();
@@ -78,9 +80,20 @@ Texture* ResourceManager::getStockMap(ResourceManager::StockMap i)
 	return 0;
 }
 
-ResourceManager::ImageRef ResourceManager::loadImage(const std::string &filename, bool bPack)
+ResourceManager::ImageRef ResourceManager::loadImage(const std::string &filename, bool bPack, bool bForceDuplicate)
 {
+	ASSERT(!(bPack && bForceDuplicate));	// sanity check
+
 	ImageRef iref;
+
+	// check if the image is already loaded in one of the textures
+	// if bForceDuplicate is true, then we have to reload the image anyway
+	if (!bForceDuplicate)
+	{
+		stdext::hash_map<std::string, ImageRef>::const_iterator it = m_images.find(filename);
+		if (it != m_images.end())
+			return it->second;
+	}
 
 	// load the texture
 	Image img;
@@ -92,7 +105,23 @@ ResourceManager::ImageRef ResourceManager::loadImage(const std::string &filename
 	
 	iref.m_texture = tex;
 	iref.m_topLeft = Vector2(0,0);
-	iref.m_bottomRight = Vector2(img.getWidth(), img.getHeight());
+	iref.m_bottomRight = Vector2((float)img.getWidth()/tex->getWidth(), (float)img.getHeight()/tex->getHeight());
+	iref.m_width = img.getWidth();
+	iref.m_height = img.getHeight();
+
+	m_images.insert(std::pair<std::string, ImageRef>(filename, iref));
+
+	return iref;
+}
+
+ResourceManager::ImageRef ResourceManager::loadImage(const ResourceManager::ImageDesc &desc)
+{
+	ImageRef iref = loadImage(desc.filename, false, false);
+	
+	iref.m_topLeft = Vector2((float)desc.left/iref.m_width, (float)desc.top/iref.m_height);
+	iref.m_bottomRight = Vector2((float)desc.right/iref.m_width, (float)desc.bottom/iref.m_height);
+	iref.m_width = desc.right - desc.left;
+	iref.m_height = desc.bottom - desc.top;
 
 	return iref;
 }
@@ -110,4 +139,146 @@ std::string ResourceManager::getResourceDir() const
 void ResourceManager::setResourceDir(const std::string &resdir)
 {
 	m_resourceDir = resdir;
+}
+
+bool ResourceManager::loadPropertyFile(const std::string& fname)
+{
+	BaseTextFile file;
+	if (!file.loadFile(fname))
+		throw std::exception(("could not open file: " + fname).c_str());
+	file.addLineCommentDef("#");
+	file.skipComments(true);
+	file.addWordBreakChar('{');
+	file.addWordBreakChar('}');
+	file.addWordBreakChar(',');
+	file.addWordBreakChar('=');
+
+	try {
+		while (!file.eof()) {
+			std::string token;
+
+			file >> token;
+			if (file.eof()) break;	// handle trailing whitespace in the file
+
+			if (token == "class")
+			{
+				// read the class name
+				std::string class_name;
+				file >> class_name;
+
+				// create the new class
+				ClassDef cls;
+				cls.m_name = class_name;
+
+				file >> token;
+				if (token != "{")
+					throw std::exception("'{' expected");
+
+				// read the class definition
+				while (!file.eof())
+				{
+					file >> token;
+					if (token == "}")
+						break;
+
+					if (token == "style") {
+						// read a style for this class
+
+						// read the style name
+						std::string style_name;
+						file >> style_name;
+
+						file >> token;
+						if (token != "{")
+							throw std::exception("'{' expected");
+						
+						// create the new style
+						Style style;
+						style.m_name = style_name;
+
+						// read the class definition
+						while (!file.eof())
+						{
+							file >> token;
+							if (token == "}")
+								break;
+
+							std::string var_type = token;
+							std::string var_name;
+							file >> var_name;
+
+							file >> token;
+							if (token != "=")
+								throw std::exception("'=' expected");
+							if (var_type == "int") {
+								int var_val;
+								file >> var_val;
+								style.m_iVals.insert(std::pair<std::string, int>(var_name, var_val));
+							}
+							else if (var_type == "float") {
+								double var_val;
+								file >> var_val;
+								style.m_fVals.insert(std::pair<std::string, double>(var_name, var_val));
+							}
+							else if (var_type == "string") {
+								std::string var_val = file.getline();
+								style.m_sVals.insert(std::pair<std::string, std::string>(var_name, var_val));
+							}
+							else if (var_type == "color") {
+								Color cl;
+								file >> cl.r;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> cl.g;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> cl.b;
+								style.m_cVals.insert(std::pair<std::string, Color>(var_name, cl));
+							}
+							else if (var_type == "image") {
+								ImageDesc desc;
+								file >> desc.left;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> desc.top;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> desc.right;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> desc.bottom;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								desc.filename = file.getline();
+
+								style.m_imgVals.insert(std::pair<std::string, ImageDesc>(var_name, desc));
+							}
+							else
+								throw std::exception(("unknown variable type: " + var_type).c_str());
+						}
+
+						// add the style to the class
+						cls.m_styles.insert(std::pair<std::string, ResourceManager::Style>(style_name, style));
+					}
+				}
+
+				// add the class definition to the list
+				m_classes.insert(std::pair<std::string, ResourceManager::ClassDef>(class_name, cls));
+			}
+			else
+				throw std::exception("'class' expected");
+		}
+	}
+	catch (std::exception e)
+	{
+		char str[1024];
+		sprintf(str, "parsing error (file %s, line %d): %s\n", fname.c_str(), file.getCurLine(), e.what());
+		Console::error(str);
+		file.close();
+		return false;
+	}
+
+	file.close();
+
+	return true;
 }

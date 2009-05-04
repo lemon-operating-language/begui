@@ -1,0 +1,81 @@
+#
+# This is the default stylesheet for beGUI
+#
+
+class Button {
+	style std_old {
+		image face_up = 410,32,505,58, widgets.bmp
+		color main_color = 255,255,255
+		int reszLeft = 13
+		int reszTop = 13
+		int reszRight = 69
+		int reszBottom = 13
+		int default_height = 26
+	}
+	style std {
+		image face_up = 1,29,100,64, widgets2.png
+		image face_hover = 1,63,100,98, widgets2.png
+		color main_color = 255,255,255
+		int reszLeft = 13
+		int reszTop = 13
+		int reszRight = 69
+		int reszBottom = 22
+		int default_height = 35
+	}
+	
+	style scroller_btn_down {
+		image face_up = 30,134,61,166, widgets2.png
+		int default_height = 25 #31
+		int default_width = 25 #32
+		int padding_left = 4
+		int padding_top = 4
+		int padding_right = 4
+		int padding_bottom = 3
+	}
+	style scroller_btn_up {
+		image face_up = 30,166,61,198, widgets2.png
+		int default_height = 25 #31
+		int default_width = 25 #32
+		int padding_left = 4
+		int padding_top = 4
+		int padding_right = 4
+		int padding_bottom = 3
+	}
+	style scroller_btn_left {
+		image face_up = 30,198,61,230, widgets2.png
+		int default_height = 25 #31
+		int default_width = 25 #32
+		int padding_left = 4
+		int padding_top = 4
+		int padding_right = 4
+		int padding_bottom = 3
+	}
+	style scroller_btn_right {
+		image face_up = 30,231,61,263, widgets2.png
+		int default_height = 31
+		int default_width = 32
+		int padding_left = 4
+		int padding_top = 4
+		int padding_right = 4
+		int padding_bottom = 3
+	}
+	style scroller_slider {
+		image face_up = 0,131,31,197, widgets2.png
+		int default_height = 67
+		int default_width = 32
+		int padding_left = 1
+		int padding_top = 4
+		int padding_right = 1
+		int padding_bottom = 4
+		int reszTop = 10
+		int reszBottom = 51
+	}
+}
+
+class ScrollBar {
+	style std_old {
+	}
+	style std {
+		image bg = 1,198,15,355, widgets2.png
+	}
+}
