@@ -698,6 +698,8 @@ bool Image::loadPNG(const std::string &fname)
 	unsigned int w=0, h=0;
 	if (LodePNG::decode(data, w, h, fname) != 0)
 		return false;
+	if (w==0||h==0)
+		return false;
 
 	create(w, h, 4, Image::I8BITS);
 	m_data = data;
