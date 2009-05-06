@@ -65,7 +65,8 @@ bool BaseApp_Win::coreInitialize()
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 
-	glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+	if (m_bLayeredWindow)
+		glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 
 	// Get windows directory
 	char win_dir[MAX_PATH+1];
@@ -331,9 +332,34 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 	if (err != GLEW_OK)
 	{
 		Console::error("GLEW initialization error: %s\n", glewGetErrorString(err));
+		killGLWindow();
 		return FALSE;
 	}
 	Console::print("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+
+	// Check hardware support
+	std::string err_str = "";
+	bool bSimpleOk = true;
+	if (!GL_VERSION_2_0)
+		err_str = "WARNING: OpenGL 2.0 not supported. Try updating the graphics card drivers.";
+	if (!GLEW_EXT_framebuffer_object)
+		err_str = "frame buffer objects not supported";
+	if (err_str.length() > 0) {
+		Console::print("ERROR: " + err_str + "\n");
+		if (bSimpleOk) {
+			Console::print("WARNING: cannot use layered windows! Falling back to standard window style\n");
+			MessageBox(hWnd, "WARNING: cannot use layered windows! Falling back to standard window style", "Error",
+				MB_OK|MB_ICONEXCLAMATION);
+		}
+		else {
+			Console::print("ERROR: OpenGL requirements not met. Cannot initialize BeGUI\n");
+			MessageBox(hWnd, "ERROR: OpenGL requirements not met. Cannot initialize BeGUI", "Error",
+				MB_OK|MB_ICONEXCLAMATION);
+			killGLWindow();
+		}
+		m_bLayeredWindow = false;
+		m_bOffscreenRendering = false;
+	}
 
 	// Create a layered window?
 	if (m_bLayeredWindow)
@@ -356,6 +382,11 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 			Console::error("UpdateLayeredWindow failed\n");
 		SelectObject(hMemDC, bmpold);
 		DeleteObject(hBMP);
+	}
+	else {
+		// Reset the window style, in case we are falling back from layered window
+		SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 	}
 
 	// Create an offscreen rendering surface
