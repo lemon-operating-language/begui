@@ -38,10 +38,10 @@ public:
 	Container();
 	virtual ~Container();
 	
-	void		addComponent(Component *pC);
-	int			getChildrenNum() const	{ return (int)m_children.size(); }
-	Component*	getChild(int pos)		{ return m_children[pos]; }
-	void		remComponent(Component *pC);
+	virtual void		addComponent(Component *pC);
+	virtual int			getChildrenNum() const	{ return (int)m_children.size(); }
+	virtual Component*	getChild(int pos)		{ return m_children[pos]; }
+	virtual void		remComponent(Component *pC);
 
 	// overridables
 	virtual void onMouseDownEx(int x, int y) { };
@@ -52,11 +52,12 @@ public:
 
 	virtual void frameUpdate();
 	virtual void frameRender();
+	
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 
 protected:
-	virtual void onMouseDown(int x, int y, int button);
-	virtual void onMouseMove(int x, int y, int prevx, int prevy);
-	virtual void onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 

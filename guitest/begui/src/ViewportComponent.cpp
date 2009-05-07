@@ -89,30 +89,30 @@ void ViewportComponent::onRender()
 	FrameWindow::inst()->resetViewport();
 }
 
-void ViewportComponent::onMouseDown(int x, int y, int button)
+bool ViewportComponent::onMouseDown(int x, int y, int button)
 {
 	if (m_bNavigationEnabled)
 		m_trackball.mouseDown(x-Component::getLeft(), y-Component::getTop());
 
-	Component::onMouseDown(x,y,button);
+	return Component::onMouseDown(x,y,button);
 }
 
-void ViewportComponent::onMouseMove(int x, int y, int prevx, int prevy)
+bool ViewportComponent::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (m_bNavigationEnabled)
 		m_trackball.motion(x-Component::getLeft(), y-Component::getTop());
 
-	Component::onMouseMove(x,y,prevx, prevy);
+	return Component::onMouseMove(x,y,prevx, prevy);
 }
 
-void ViewportComponent::onMouseUp(int x, int y, int button)
+bool ViewportComponent::onMouseUp(int x, int y, int button)
 {
 	if (m_bNavigationEnabled)
 		m_trackball.mouseUp(x-Component::getLeft(), y-Component::getTop());
 
 	m_lastClickPos = Vector2(x-Component::getLeft(),y-Component::getTop());
 
-	Component::onMouseUp(x,y,button);
+	return Component::onMouseUp(x,y,button);
 }
 
 void ViewportComponent::onKeyDown(int key)

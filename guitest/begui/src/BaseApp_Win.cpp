@@ -68,19 +68,6 @@ bool BaseApp_Win::coreInitialize()
 	if (m_bLayeredWindow)
 		glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
 
-	// Get windows directory
-	char win_dir[MAX_PATH+1];
-	GetWindowsDirectory(win_dir, MAX_PATH);
-
-	// Initialize font subsystem
-	if (!FontManager::initialize())
-		return false;
-	if (!FontManager::setFont(strcat(win_dir, "\\Fonts\\tahoma.ttf"), 11))
-		return false;
-	
-	// Initialize the window manager and load resources
-	ResourceManager::inst()->loadResources();
-
 	return true;
 }
 
@@ -399,7 +386,22 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 	SetForegroundWindow(hWnd);						// Slightly Higher Priority
 	SetFocus(hWnd);									// Sets Keyboard Focus To The Window
 	
-	FrameWindow::inst()->create(width, height);
+	
+	// Get windows directory
+	char win_dir[MAX_PATH+1];
+	GetWindowsDirectory(win_dir, MAX_PATH);
+
+	// Initialize font subsystem
+	if (!FontManager::initialize())
+		return false;
+	if (!FontManager::setFont(strcat(win_dir, "\\Fonts\\tahoma.ttf"), 11))
+		return false;
+	
+	// Initialize the window manager and load resources
+	ResourceManager::inst()->loadResources();
+
+	// create the frame window
+	FrameWindow::inst()->create(width, height, title);
 	resize(width, height);
 
 	return TRUE;									// Success

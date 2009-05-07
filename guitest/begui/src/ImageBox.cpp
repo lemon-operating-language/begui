@@ -107,7 +107,7 @@ void ImageBox::onRender()
 	m_onRender();
 }
 
-void ImageBox::onMouseDown(int x, int y, int button)
+bool ImageBox::onMouseDown(int x, int y, int button)
 {
 	if (button == MOUSE_BUTTON_LEFT)
 	{
@@ -126,10 +126,10 @@ void ImageBox::onMouseDown(int x, int y, int button)
 		m_onMouseDown(Vector2i(x-m_left,y-m_top));
 	}
 
-	Component::onMouseDown(x,y,button);
+	return Component::onMouseDown(x,y,button);
 }
 
-void ImageBox::onMouseMove(int x, int y, int prevx, int prevy)
+bool ImageBox::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (input::isMouseButtonDown(MOUSE_BUTTON_LEFT))
 	{
@@ -144,10 +144,10 @@ void ImageBox::onMouseMove(int x, int y, int prevx, int prevy)
 		}
 	}
 
-	Component::onMouseMove(x,y,prevx,prevy);
+	return Component::onMouseMove(x,y,prevx,prevy);
 }
 
-void ImageBox::onMouseUp(int x, int y, int button)
+bool ImageBox::onMouseUp(int x, int y, int button)
 {
 	if (button == MOUSE_BUTTON_LEFT)
 	{
@@ -163,14 +163,14 @@ void ImageBox::onMouseUp(int x, int y, int button)
 			if (m_selLine.size() <= 2)	// only endpoints, no mouse move in between
 			{
 				m_selLine.clear();
-				return;
+				return true;
 			}
 		}
 		
 		m_onMouseUp(Vector2i(x-m_left,y-m_top));
 	}
 
-	Component::onMouseUp(x,y,button);
+	return Component::onMouseUp(x,y,button);
 }
 
 void ImageBox::onKeyDown(int key)

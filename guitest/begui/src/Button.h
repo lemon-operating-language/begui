@@ -58,8 +58,9 @@ private:
 	ResourceManager::ImageRef	m_icon;
 	int							m_iconSzX, m_iconSzY;
 
-	int				m_reszLeft, m_reszTop, m_reszRight, m_reszBottom;	// the resizable area
+	//int				m_reszLeft, m_reszTop, m_reszRight, m_reszBottom;	// the resizable area
 	IconPlacement	m_iconPlacement;
+	Rect<int>		m_activeArea, m_resizableArea;
 
 public:
 	Button();
@@ -78,11 +79,11 @@ public:
 	void	setTitle(const std::string& title)	{ m_title = title; }
 	void	setFace(State state, const ResourceManager::ImageRef &img);
 	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
-	void	setResizableArea(int left, int top, int right, int bottom);
+	void	setResizableArea(const Rect<int> &resizable_area);
 
-	virtual void onMouseDown(int x, int y, int button);
-	virtual void onMouseMove(int x, int y, int prevx, int prevy);
-	virtual void onMouseUp(int x, int y, int button);
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 };

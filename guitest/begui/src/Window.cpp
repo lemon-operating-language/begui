@@ -80,7 +80,7 @@ void Window::onRender()
 
 	// render the window title
 	int len = Font::stringLength(m_title) + 40;
-	glColor4f(1,1,1, 0.95);
+	glColor4f(1,1,1, 0.95f);
 	int left = 12;
 	int right = left + len;	//TODO: resize
 	int top = -11;

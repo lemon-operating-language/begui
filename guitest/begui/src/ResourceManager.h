@@ -27,6 +27,7 @@
 
 #include "common.h"
 #include <hash_map>
+#include "../../bcore/src/Rect.h"
 
 namespace begui {
 
@@ -53,7 +54,8 @@ public:
 		Texture *m_texture;
 		Vector2 m_topLeft;
 		Vector2 m_bottomRight;
-		int		m_width, m_height;
+		int		m_width, m_height;	// width and height of the original image file from which this image was loaded
+									// (can be used to convert from normalized to pixel coordinates and vice versa)
 
 	public:
 		ImageRef() : m_texture(0), m_width(0), m_height(0) { }
@@ -85,6 +87,7 @@ public:
 		stdext::hash_map<std::string, int>			m_iVals;
 		stdext::hash_map<std::string, Color>		m_cVals;
 		stdext::hash_map<std::string, ImageDesc>	m_imgVals;
+		stdext::hash_map<std::string, Rect<int> >	m_riVals;
 	public:
 		const std::string& get_name() const					{ return m_name; }
 		int			get_i(const std::string &name) const	{ return m_iVals.find(name)->second; }
@@ -92,6 +95,7 @@ public:
 		std::string	get_f(const std::string &name) const	{ return m_sVals.find(name)->second; }
 		Color		get_c(const std::string &name) const	{ return m_cVals.find(name)->second; }
 		ImageDesc	get_img(const std::string &name) const	{ return m_imgVals.find(name)->second; }
+		Rect<int>	get_rect(const std::string &name) const	{ return m_riVals.find(name)->second; }
 
 		bool hasProp(const std::string &name) const {
 			if (m_iVals.find(name) != m_iVals.end()) return true;
@@ -99,6 +103,7 @@ public:
 			if (m_sVals.find(name) != m_sVals.end()) return true;
 			if (m_cVals.find(name) != m_cVals.end()) return true;
 			if (m_imgVals.find(name) != m_imgVals.end()) return true;
+			if (m_riVals.find(name) != m_riVals.end()) return true;
 			return false;
 		}
 	};

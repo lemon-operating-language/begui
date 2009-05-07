@@ -233,7 +233,7 @@ bool ResourceManager::loadPropertyFile(const std::string& fname)
 								file >> token;
 								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
 								file >> cl.b;
-								style.m_cVals.insert(std::pair<std::string, Color>(var_name, cl));
+								style.m_cVals.insert(std::pair<std::string, Color>(var_name, cl/255.0f));
 							}
 							else if (var_type == "image") {
 								ImageDesc desc;
@@ -252,6 +252,21 @@ bool ResourceManager::loadPropertyFile(const std::string& fname)
 								desc.filename = file.getline();
 
 								style.m_imgVals.insert(std::pair<std::string, ImageDesc>(var_name, desc));
+							}
+							else if (var_type == "rect") {
+								Rect<int> rect;
+								file >> rect.left;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> rect.top;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> rect.right;
+								file >> token;
+								if (token != ",") throw std::exception(("expected ',', found: " + token).c_str());
+								file >> rect.bottom;
+
+								style.m_riVals.insert(std::pair<std::string, Rect<int> >(var_name, rect));
 							}
 							else
 								throw std::exception(("unknown variable type: " + var_type).c_str());

@@ -220,14 +220,14 @@ void ListBox::onRender()
 	}
 }
 
-void ListBox::onMouseDown(int _x, int _y, int button)
+bool ListBox::onMouseDown(int _x, int _y, int button)
 {
 	int x = _x-m_left;
 	int y = _y-m_top;
 
 	if (m_scroller.isPtInside(x, y)) {
 		m_scroller.onMouseDown(x, y, button);
-		return;
+		return true;
 	}
 
 	if (button == MOUSE_BUTTON_LEFT) {
@@ -272,13 +272,14 @@ void ListBox::onMouseDown(int _x, int _y, int button)
 				// call the event handler for item click
 				m_onItemClick((int)i);
 				
-				return;
+				return true;
 			}
 		}
 	}
+	return true;
 }
 
-void ListBox::onMouseMove(int _x, int _y, int _prevx, int _prevy)
+bool ListBox::onMouseMove(int _x, int _y, int _prevx, int _prevy)
 {
 	int x = _x-m_left;
 	int y = _y-m_top;
@@ -287,7 +288,7 @@ void ListBox::onMouseMove(int _x, int _y, int _prevx, int _prevy)
 
 	if (m_scroller.isPtInside(x, y)) {
 		m_scroller.onMouseMove(x, y, prevx, prevy);
-		return;
+		return true;
 	}
 	
 	// find the item under the mouse cursor
@@ -303,15 +304,16 @@ void ListBox::onMouseMove(int _x, int _y, int _prevx, int _prevy)
 			}
 		}
 	}
+	return true;
 }
 
-void ListBox::onMouseUp(int x, int y, int button)
+bool ListBox::onMouseUp(int x, int y, int button)
 {
 	x -= m_left;
 	y -= m_top;
 	if (m_scroller.isPtInside(x,y)) {
 		m_scroller.onMouseUp(x, y, button);
-		return;
+		return true;
 	}
 }
 

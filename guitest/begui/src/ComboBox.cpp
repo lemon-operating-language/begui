@@ -120,7 +120,7 @@ void ComboBox::onRender()
 	m_text.renderString();
 }
 
-void ComboBox::onMouseDown(int x, int y, int button)
+bool ComboBox::onMouseDown(int x, int y, int button)
 {
 	// if the expand button was clicked:
 	if (x >= m_right-m_btnW && x<=m_right && y>=m_top && y<=m_top+m_btnH) {
@@ -133,17 +133,17 @@ void ComboBox::onMouseDown(int x, int y, int button)
 			remComponent(&m_listbox);
 		}
 	}
-	Container::onMouseDown(x,y,button);
+	return Container::onMouseDown(x,y,button);
 }
 
-void ComboBox::onMouseMove(int x, int y, int prevx, int prevy)
+bool ComboBox::onMouseMove(int x, int y, int prevx, int prevy)
 {
-	Container::onMouseMove(x,y,prevx,prevy);
+	return Container::onMouseMove(x,y,prevx,prevy);
 }
 
-void ComboBox::onMouseUp(int x, int y, int button)
+bool ComboBox::onMouseUp(int x, int y, int button)
 {
-	Container::onMouseUp(x,y,button);
+	return Container::onMouseUp(x,y,button);
 }
 
 void ComboBox::onKeyDown(int key)

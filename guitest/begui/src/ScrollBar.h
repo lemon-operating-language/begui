@@ -69,9 +69,9 @@ public:
 
 	virtual void onUpdate();
 	virtual void onRender();	
-	virtual void onMouseDown(int x, int y, int button);
-	virtual void onMouseMove(int x, int y, int prevx, int prevy);
-	virtual void onMouseUp(int x, int y, int button);
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 

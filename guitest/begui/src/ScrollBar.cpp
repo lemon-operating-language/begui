@@ -155,7 +155,7 @@ void ScrollBar::onRender()
 					 m_barBg.m_width, getHeight());
 }
 	
-void ScrollBar::onMouseDown(int x, int y, int button)
+bool ScrollBar::onMouseDown(int x, int y, int button)
 {
 /*	int w = SCROLL_WIDTH-2;
 	int h = SCROLL_WIDTH-2;
@@ -241,10 +241,10 @@ void ScrollBar::onMouseDown(int x, int y, int button)
 	if (m_curPos > m_maxPos)
 		m_curPos = m_maxPos;*/
 
-	Container::onMouseDown(x,y,button);
+	return Container::onMouseDown(x,y,button);
 }
 
-void ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
+bool ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
 {
 /*	int w = SCROLL_WIDTH-2;
 	int h = SCROLL_WIDTH-2;
@@ -285,14 +285,14 @@ void ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
 				m_curPos = m_maxPos;
 		}
 	}*/
-	Container::onMouseMove(x,y,prevx,prevy);
+	return Container::onMouseMove(x,y,prevx,prevy);
 }
 
-void ScrollBar::onMouseUp(int x, int y, int button)
+bool ScrollBar::onMouseUp(int x, int y, int button)
 {
 	m_sliderDragStart = -1;
 
-	Container::onMouseUp(x,y,button);
+	return Container::onMouseUp(x,y,button);
 }
 
 void ScrollBar::onKeyDown(int key)

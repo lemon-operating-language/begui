@@ -165,16 +165,19 @@ void Component::releaseKeybFocus()
 	m_bHasKeybFocus = false;
 }
 
-void Component::onMouseDown(int x, int y, int button)
+bool Component::onMouseDown(int x, int y, int button)
 {
+	return true;
 }
 
-void Component::onMouseMove(int x, int y, int prevx, int prevy)
+bool Component::onMouseMove(int x, int y, int prevx, int prevy)
 {
+	return true;
 }
 
-void Component::onMouseUp(int x, int y, int button)
+bool Component::onMouseUp(int x, int y, int button)
 {
+	return true;
 }
 
 void Component::onKeyDown(int key)
@@ -231,6 +234,32 @@ void Component::drawImage(ResourceManager::ImageRef &image, int x, int y, int w,
 		glTexCoord2f(image.m_topLeft.x, image.m_bottomRight.y);
 		glVertex3f(x, y+h, 0);
 	glEnd();
+	
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Component::drawImageWtBorders(begui::ResourceManager::ImageRef &image, int x, int y, 
+								   int w, int h, const Rect<int> &resizable_area)
+{
+	ASSERT(image.m_texture);
+	image.m_texture->set();
+
+	if (w <= 0)
+		w = image.m_width;
+	if (h <= 0)
+		h = image.m_height;
+
+	int intern_left = x+resizable_area.left;
+	int intern_right = x+w - (image.m_width - resizable_area.right);
+	int intern_top = y+resizable_area.top;
+	int intern_bottom = y+h - (image.m_height - resizable_area.bottom);
+
+	drawBorderedQuad(x, y, x+w, y+h, 
+		intern_left, intern_top, intern_right, intern_bottom,
+		image.m_topLeft.x, image.m_topLeft.x + (float)resizable_area.left/image.m_texture->getWidth(),
+		image.m_bottomRight.x, image.m_topLeft.x + (float)resizable_area.right/image.m_texture->getWidth(),
+		image.m_topLeft.y, image.m_topLeft.y + (float)resizable_area.top/image.m_texture->getHeight(),
+		image.m_bottomRight.y, image.m_topLeft.y + (float)resizable_area.bottom/image.m_texture->getHeight());
 	
 	glDisable(GL_TEXTURE_2D);
 }

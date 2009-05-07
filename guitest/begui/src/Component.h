@@ -52,8 +52,8 @@ public:
 	int getWidth() const	{ return m_right - m_left; }
 	int getHeight() const	{ return m_bottom - m_top; }
 
-	void setPos(int x, int y)	{ m_right=x+getWidth(); m_bottom=y+getHeight(); m_left=x; m_top=y; }
-	void setSize(int w, int h)	{ m_right = m_left+w; m_bottom = m_top + h; }
+	virtual void setPos(int x, int y)	{ m_right=x+getWidth(); m_bottom=y+getHeight(); m_left=x; m_top=y; }
+	virtual void setSize(int w, int h)	{ m_right = m_left+w; m_bottom = m_top + h; }
 	void setFixedZOrder(bool fixed)		{ m_bFixedZOrder = fixed; }
 
 	bool hasFixedZOrder() const	{ return m_bFixedZOrder; }
@@ -64,18 +64,19 @@ public:
 
 	bool hasMouseFocus() const	{ return m_bHasMouseFocus; }
 	bool hasKeybFocus() const	{ return m_bHasKeybFocus; }
-	void getFocus();
-	void releaseFocus();
-	void getMouseFocus();
-	void getKeybFocus();
-	void releaseMouseFocus();
-	void releaseKeybFocus();
+	virtual void getFocus();
+	virtual void releaseFocus();
+	virtual void getMouseFocus();
+	virtual void getKeybFocus();
+	virtual void releaseMouseFocus();
+	virtual void releaseKeybFocus();
 
-	void setParent(Component *pParent)	{ m_pParent = pParent; }
-	void setAlwaysOnTop(bool ontop)	{ m_bAlwaysOnTop = ontop; }
-	void setVisible(bool visible)	{ m_bVisible = visible; }
-	void enable()					{ m_bEnabled = true; }
-	void disable()					{ m_bEnabled = false; }
+	virtual void setParent(Component *pParent)	{ m_pParent = pParent; }
+	virtual Component* getParent() const		{ return m_pParent; }
+	virtual void setAlwaysOnTop(bool ontop)	{ m_bAlwaysOnTop = ontop; }
+	virtual void setVisible(bool visible)	{ m_bVisible = visible; }
+	virtual void enable()					{ m_bEnabled = true; }
+	virtual void disable()					{ m_bEnabled = false; }
 
 	virtual void frameUpdate();
 	virtual void frameRender();
@@ -84,9 +85,9 @@ public:
 	// component behaves. Coordinates are in the PARENT COORDINATE SPACE
 	virtual void onUpdate() { };
 	virtual void onRender() = 0;
-	virtual void onMouseDown(int x, int y, int button);
-	virtual void onMouseMove(int x, int y, int prevx, int prevy);
-	virtual void onMouseUp(int x, int y, int button);
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 	virtual void onActivate() { m_bActive = true; };
@@ -107,6 +108,13 @@ public:
 						double texL, double texLB, double texR, double texRB,	// left to right positions in tex
 						double texT, double texTB, double texB, double texBB);	// top to bottom
 	static void drawImage(ResourceManager::ImageRef &image, int x, int y, int w=0, int h=0);
+
+	// draw an image, using non-resizable borders and a resizable center area. Arguments
+	// are the same as in drawImage(..), and resizable_area gives the coordinates in pixels
+	// of the rectangle indicating the resizable area, relative to the top left corner of
+	// the face described in the image.
+	static void drawImageWtBorders(ResourceManager::ImageRef &image, int x, int y, 
+						int w, int h, const Rect<int> &resizable_area);
 };
 
 };

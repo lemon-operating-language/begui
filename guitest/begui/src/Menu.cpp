@@ -23,6 +23,7 @@
 #include "ResourceManager.h"
 #include "Font.h"
 #include "util.h"
+#include "FrameWindow.h"
 
 using namespace begui;
 
@@ -30,15 +31,13 @@ Menu::Menu() : m_id(-1),
 	m_itemOpen(false),
 	m_activeItem(-1),
 	m_isMainMenu(false),
-	m_left(0),
-	m_right(0),
-	m_top(0),
-	m_bottom(0),
 	m_contentWidth(100),
 	m_contentHeight(25),
 	m_pParent(0),
 	m_bSeparator(false),
-	m_bChecked(false)
+	m_bChecked(false),
+	m_menuFaceResizableArea(0,0,0,0),
+	m_textColor(0.0f,0.0f,0.0f)
 {
 	setAlwaysOnTop(true);
 }
@@ -56,11 +55,19 @@ void Menu::clear()
 	m_menuItems.clear();
 }
 
-void Menu::createMainMenu()
+void Menu::createMainMenu(const std::string &style_name)
 {
 	m_isMainMenu = true;
 	m_right = display::getWidth();
 	m_bottom = 25;
+
+	// get the style properties
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("Menu").style("std");
+	ASSERT(style.hasProp("menubar_face"));
+	m_menuFace = ResourceManager::inst()->loadImage(style.get_img("menubar_face"));
+	m_menuFaceResizableArea = style.get_rect("resizable_area");
+	if (style.hasProp("mainmenu_text_color"))
+		m_textColor = style.get_c("mainmenu_text_color");
 }
 
 void Menu::close()
@@ -136,16 +143,26 @@ void Menu::addSeparator()
 
 void Menu::onUpdate()
 {
+	// update the width of the menu, if it is a main menu attached
+	// to a frame window
+	if (m_isMainMenu && Component::m_pParent) {
+		try {
+			FrameWindow::InternalContainer *pContainer = dynamic_cast<FrameWindow::InternalContainer*>(Component::m_pParent);
+			FrameWindow *pWnd = dynamic_cast<FrameWindow*>(pContainer->getParent());
+
+			if (pWnd) {
+				m_right = m_left + pWnd->getClientArea().getWidth();
+			}
+		}
+		catch (std::bad_cast&) {
+		}
+	}
 }
 
 void Menu::onRender()
 {
-	int w = display::getWidth();
+	int w = m_right-m_left;
 	int h = 25;
-
-	// set the texture of a window
-	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
-	pTex->set();
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -153,16 +170,21 @@ void Menu::onRender()
 
 	if (m_isMainMenu)
 	{
-		glBegin(GL_QUADS);
+	/*	glBegin(GL_QUADS);
 			// top-left corner
 			glTexCoord2f(510.0/512, 0);	glVertex3f(0, 0, 0);
 			glTexCoord2f(511.0/512, 0);	glVertex3f(w, 0, 0);
 			glTexCoord2f(511.0/512, 25.0/512);	glVertex3f(w, h, 0);
 			glTexCoord2f(510.0/512, 25.0/512);	glVertex3f(0, h, 0);
-		glEnd();
+		glEnd();*/
+		Component::drawImageWtBorders(m_menuFace, 0, 0, w, m_menuFace.m_height, m_menuFaceResizableArea);
 	}
 	else
 	{
+		// set the texture of a window
+		Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
+		pTex->set();
+
 		// This is a submenu or a menuitem
 		if (m_menuItems.size() > 0)
 		{
@@ -192,7 +214,7 @@ void Menu::onRender()
 	{
 		Menu *mi = m_menuItems[m_activeItem];
 		if (m_itemOpen || !m_isMainMenu)
-			glColor3f(0.9, 0.5, 0);
+			glColor3f(0.9f, 0.5f, 0);
 		else
 			glColor3f(0.6, 0.6, 0.6);
 		int hl_right = mi->m_right;
@@ -216,19 +238,21 @@ void Menu::onRender()
 	// render menu item text
 	for (size_t i=0; i<m_menuItems.size(); ++i)
 	{
-		// render the menu item text
+		// set the text color
+		glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, 1.0f);
 		if (m_menuItems[i]->m_bSeparator)
 			glColor3f(0.6,0.6,0.6);
 		else if (!m_menuItems[i]->isEnabled())
 			glColor3f(0.5, 0.5, 0.5);
 		else if (i == m_activeItem)
 			glColor3f(1,1,1);
-		else
-			glColor3f(0,0,0);
+
+		// render the menu item text
 		Font::renderString(m_menuItems[i]->m_left+5, m_menuItems[i]->m_top + 11, m_menuItems[i]->m_title);
 	}
 	glColor3f(1,1,1);
-		
+
+	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
 	pTex->set();
 	glEnable(GL_BLEND);
 	
@@ -271,7 +295,7 @@ void Menu::onRender()
 	}
 }
 
-void Menu::onMouseDown(int x, int y, int button)
+bool Menu::onMouseDown(int x, int y, int button)
 {
 	for (size_t i=0; i<m_menuItems.size(); ++i)
 	{
@@ -300,7 +324,7 @@ void Menu::onMouseDown(int x, int y, int button)
 				if (m_menuItems[i]->isEnabled())
 					m_menuItems[i]->m_onItemClick(m_menuItems[i]->m_id);
 			}
-			return;
+			return true;
 		}
 	}
 
@@ -308,14 +332,15 @@ void Menu::onMouseDown(int x, int y, int button)
 	{
 		m_menuItems[m_activeItem]->onMouseDown(x,y,button);
 	}
+	return true;
 }
 
-void Menu::onMouseMove(int x, int y, int prevx, int prevy)
+bool Menu::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (!m_itemOpen && !isPtInside(x,y) && !isPtInsideSubmenu(x, y))
 	{
 		m_activeItem = -1;
-		return;
+		return false;
 	}
 
 	// Check if the mouse is over a menu item
@@ -340,10 +365,13 @@ void Menu::onMouseMove(int x, int y, int prevx, int prevy)
 	{
 		m_menuItems[m_activeItem]->onMouseMove(x, y, prevx, prevy);
 	}
+
+	return true;
 }
 
-void Menu::onMouseUp(int x, int y, int button)
+bool Menu::onMouseUp(int x, int y, int button)
 {
+	return true;
 }
 
 void Menu::onKeyDown(int key)

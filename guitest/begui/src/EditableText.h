@@ -35,9 +35,9 @@ public:
 	// live variable access
 	LiveVar<std::string>&	text()	{ return m_text; }
 
-	void onMouseDown(int x, int y, int button);	// WC means world coordinates
-	void onMouseMove(int x, int y, int prevx, int prevy);
-	void onMouseUp(int x, int y, int button);
+	bool onMouseDown(int x, int y, int button);	// WC means world coordinates
+	bool onMouseMove(int x, int y, int prevx, int prevy);
+	bool onMouseUp(int x, int y, int button);
 	void onKeyDown(int key);
 	void onKeyUp(int key);
 

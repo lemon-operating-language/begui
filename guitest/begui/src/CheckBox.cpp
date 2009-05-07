@@ -110,26 +110,30 @@ void CheckBox::onRender()
 	Font::renderString(18, h-2, m_title);
 }
 
-void CheckBox::onMouseDown(int x, int y, int button)
+bool CheckBox::onMouseDown(int x, int y, int button)
 {
+	return true;
 }
 
-void CheckBox::onMouseMove(int x, int y, int prevx, int prevy)
+bool CheckBox::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (isPtInside(x,y))
 		m_bHover = true;
 	else
 		m_bHover = false;
+	return true;
 }
 
-void CheckBox::onMouseUp(int x, int y, int button)
+bool CheckBox::onMouseUp(int x, int y, int button)
 {
 	if (!isEnabled())
-		return;
+		return false;
 	m_state = !m_state;
 
 	// Call the callback, if any
 	m_onClick(m_id);
+
+	return true;
 }
 
 void CheckBox::onKeyDown(int key)

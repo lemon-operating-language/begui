@@ -24,6 +24,7 @@
 #include "common.h"
 #include "Component.h"
 #include "callback.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -36,31 +37,31 @@ private:
 	int					m_activeItem;
 	int					m_isMainMenu;
 
-	std::string	m_title;
-	int			m_id;
-	//void		(*m_pCallback)(int);
+	std::string			m_title;
+	int					m_id;
 	Functor1<int>		m_onItemClick;	// arg1: the id of the clicked item
-	bool		m_bSeparator;	// this menu item is a seperator
-	bool		m_bChecked;		// a check mark is displayed next to the menu item
-
-	int	m_left, m_right;
-	int m_top, m_bottom;
+	bool				m_bSeparator;	// this menu item is a seperator
+	bool				m_bChecked;		// a check mark is displayed next to the menu item
 
 	int m_contentWidth, m_contentHeight;
+
+	ResourceManager::ImageRef	m_menuFace;
+	Rect<int>					m_menuFaceResizableArea;
+	Color						m_textColor;
 
 public:
 	Menu();
 	virtual ~Menu();
 
-	void createMainMenu();
+	void createMainMenu(const std::string &style = "std");
 	void close();
 	void clear();
 
 	virtual void onUpdate();
 	virtual void onRender();
-	virtual void onMouseDown(int x, int y, int button);
-	virtual void onMouseMove(int x, int y, int prevx, int prevy);
-	virtual void onMouseUp(int x, int y, int button);
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 	virtual bool isPtInside(int x, int y);
