@@ -211,7 +211,7 @@ void RegionSelectGizmo::onRender()
 	glDisable(GL_BLEND);
 }
 
-void RegionSelectGizmo::onMouseDown(int x, int y, int button)
+bool RegionSelectGizmo::onMouseDown(int x, int y, int button)
 {
 	if (m_hoverId > 0)
 		m_bDragging = true;
@@ -220,9 +220,10 @@ void RegionSelectGizmo::onMouseDown(int x, int y, int button)
 		if (m_bClickable && m_pCallback)
 			m_pCallback(m_id);
 	}
+	return true;
 }
 
-void RegionSelectGizmo::onMouseMove(int x, int y, int prevx, int prevy)
+bool RegionSelectGizmo::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	int cx = (m_minX + m_maxX)/2;
 	int cy = (m_minY + m_maxY)/2;
@@ -285,11 +286,14 @@ void RegionSelectGizmo::onMouseMove(int x, int y, int prevx, int prevy)
 				m_maxY = m_limMaxY;
 		}
 	}
+
+	return true;
 }
 
-void RegionSelectGizmo::onMouseUp(int x, int y, int button)
+bool RegionSelectGizmo::onMouseUp(int x, int y, int button)
 {
 	m_bDragging = false;
+	return true;
 }
 
 void RegionSelectGizmo::onKeyDown(int key)

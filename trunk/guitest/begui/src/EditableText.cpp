@@ -109,7 +109,7 @@ void EditableText::renderString()
 	}
 }
 
-void EditableText::onMouseDown(int x, int y, int button)
+bool EditableText::onMouseDown(int x, int y, int button)
 {
 	x-=m_x;
 	y-=m_y;
@@ -122,9 +122,10 @@ void EditableText::onMouseDown(int x, int y, int button)
 			m_selectStart = m_selectEnd = m_cursorPos;
 		}
 	}
+	return true;
 }
 
-void EditableText::onMouseMove(int x, int y, int prevx, int prevy)
+bool EditableText::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	x-=m_x;
 	y-=m_y;
@@ -135,9 +136,10 @@ void EditableText::onMouseMove(int x, int y, int prevx, int prevy)
 		getStringPos(x,y, &m_cursorX, &m_cursorY, &m_cursorH, &m_cursorPos);
 		m_selectEnd = m_cursorPos;
 	}
+	return true;
 }
 
-void EditableText::onMouseUp(int x, int y, int button)
+bool EditableText::onMouseUp(int x, int y, int button)
 {
 	x-=m_x;
 	y-=m_y;
@@ -146,6 +148,7 @@ void EditableText::onMouseUp(int x, int y, int button)
 		getStringPos(x,y, &m_cursorX, &m_cursorY, &m_cursorH, &m_cursorPos);
 		m_selectEnd = m_cursorPos;
 	}
+	return true;
 }
 
 void EditableText::onKeyDown(int key)

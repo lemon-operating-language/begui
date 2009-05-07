@@ -31,11 +31,9 @@ Button::Button() :
 	m_iconSzY(0),
 	m_bAutoSzX(true),
 	m_bAutoSzY(true),
-	m_reszLeft(0),
-	m_reszRight(0),
-	m_reszTop(0),
-	m_reszBottom(0),
-	m_iconPlacement(NEAR_LEFT)
+	m_iconPlacement(NEAR_LEFT),
+	m_activeArea(0,0,0,0),
+	m_resizableArea(0,0,0,0)
 {
 }
 
@@ -63,16 +61,14 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 		setFace(MOUSE_OVER, ResourceManager::inst()->loadImage(style.get_img("face_hover")));
 	if (style.hasProp("face_down"))
 		setFace(DOWN, ResourceManager::inst()->loadImage(style.get_img("face_down")));
-	int rL = 0, rR = 0, rT = 0, rB = 0;
-	if (style.hasProp("reszLeft") && style.hasProp("reszRight")) {
-		rL = style.get_i("reszLeft");
-		rR = style.get_i("reszRight");
-	}
-	if (style.hasProp("reszTop") && style.hasProp("reszBottom")) {
-		rT = style.get_i("reszTop");
-		rB = style.get_i("reszBottom");
-	}
-	setResizableArea(rL, rT, rR, rB);
+	ASSERT(style.hasProp("resizable_area"));
+	setResizableArea(style.get_rect("resizable_area"));
+	
+	// get the button's active area
+	if (style.hasProp("active_area"))
+		m_activeArea = style.get_rect("active_area");
+	else
+		;//m_activeArea = 
 
 	if (w > 0) {
 		m_bAutoSzX = false;
@@ -139,45 +135,21 @@ void Button::onRender()
 	if (m_status == Button::DOWN && !m_faces[m_status].m_texture)
 		offs = 1.0f;
 
-	if (m_reszLeft != m_reszRight || m_reszTop != m_reszBottom)
-	{
-		float rL = btn_face.m_topLeft.x + (float)m_reszLeft / btn_face.m_texture->getWidth();
-		float rR = btn_face.m_topLeft.x + (float)m_reszRight / btn_face.m_texture->getWidth();
-		float rT = btn_face.m_topLeft.y + (float)m_reszTop / btn_face.m_texture->getHeight();
-		float rB = btn_face.m_topLeft.y + (float)m_reszBottom / btn_face.m_texture->getHeight();
-		Component::drawBorderedQuad(offs, offs, w-offs, h-offs,
-								m_reszLeft, m_reszTop,
-								w-(btn_face.m_width - m_reszRight),
-								h-(btn_face.m_height - m_reszBottom),
-								btn_face.m_topLeft.x, rL,
-								btn_face.m_bottomRight.x, rR,
-								btn_face.m_topLeft.y, rT,
-								btn_face.m_bottomRight.y, rB);
-	}
-	else
-	{
-		glBegin(GL_QUADS);
-			glTexCoord2f(btn_face.m_topLeft.x, btn_face.m_topLeft.y);
-			glVertex3f(offs, offs, 0);
-			glTexCoord2f(btn_face.m_bottomRight.x, btn_face.m_topLeft.y);
-			glVertex3f(w-offs, offs, 0);
-			glTexCoord2f(btn_face.m_bottomRight.x, btn_face.m_bottomRight.y);
-			glVertex3f(w-offs, h-offs, 0);
-			glTexCoord2f(btn_face.m_topLeft.x, btn_face.m_bottomRight.y);
-			glVertex3f(offs, h-offs, 0);
-		glEnd();
-	}
+	Component::drawImageWtBorders(btn_face, 
+							offs-m_activeArea.left,
+							offs-m_activeArea.top,
+							w-2*offs, h-2*offs,
+							m_resizableArea);
 	
-	int centerx = w/2;
-	int centery = h/2;
+	int centerx = w/2-m_activeArea.left;
+	int centery = h/2-m_activeArea.top;
 	int title_w = Font::stringLength(m_title);
 
 	// if there is an icon, render the icon
 	int iw = m_iconSzX;
 	int ih = m_iconSzY;
-	if (m_icon.m_texture) {
-		m_icon.m_texture->set();
-
+	if (m_icon.m_texture)
+	{
 		int ix = centerx-iw/2, iy = centery-ih/2;
 
 		// if there is text, the icon should be on its left
@@ -186,16 +158,8 @@ void Button::onRender()
 			ix -= title_w/2 + 1;
 		}
 		
-		glBegin(GL_QUADS);
-			glTexCoord2f(m_icon.m_topLeft.x, m_icon.m_topLeft.y);
-			glVertex2f(ix, iy);
-			glTexCoord2f(m_icon.m_bottomRight.x, m_icon.m_topLeft.y);
-			glVertex2f(ix+iw, iy);
-			glTexCoord2f(m_icon.m_bottomRight.x, m_icon.m_bottomRight.y);
-			glVertex2f(ix+iw, iy+ih);
-			glTexCoord2f(m_icon.m_topLeft.x, m_icon.m_bottomRight.y);
-			glVertex2f(ix, iy+ih);
-		glEnd();
+		// render the icon
+		Component::drawImage(m_icon, ix, iy, iw, ih);
 	}
 	
 	glDisable(GL_BLEND);
@@ -206,25 +170,27 @@ void Button::onRender()
 		glColor3f(0.3, 0.3, 0.3);
 	else
 		glColor3f(1,1,1);
-	Font::renderString(centerx - title_w/2 + iw/2, h/2+4, m_title);
+	Font::renderString(centerx - title_w/2 + iw/2, centery+4, m_title);
 }
 
-void Button::onMouseDown(int x, int y, int button)
+bool Button::onMouseDown(int x, int y, int button)
 {
 	if (m_status != Button::INACTIVE) {
 		m_status = Button::DOWN;
 	}
+	return true;
 }
 
-void Button::onMouseMove(int x, int y, int prevx, int prevy)
+bool Button::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (m_status != Button::INACTIVE && isPtInside(x,y))
 		m_status = Button::MOUSE_OVER;
 	else
 		m_status = Button::UP;
+	return true;
 }
 
-void Button::onMouseUp(int x, int y, int button)
+bool Button::onMouseUp(int x, int y, int button)
 {
 	if (m_status != Button::INACTIVE) {
 		if (m_status == Button::DOWN)
@@ -234,6 +200,7 @@ void Button::onMouseUp(int x, int y, int button)
 		else
 			m_status = Button::UP;
 	}
+	return true;
 }
 
 void Button::onKeyDown(int key)
@@ -266,13 +233,10 @@ void Button::setFace(State state, const ResourceManager::ImageRef &img)
 	m_faces[(size_t)state] = img;
 
 	// no resizable area known about this face
-	m_reszLeft = m_reszRight = m_reszTop = m_reszBottom = 0;
+	m_resizableArea = Rect<int>(0,0,0,0);
 }
 
-void Button::setResizableArea(int left, int top, int right, int bottom)
+void Button::setResizableArea(const Rect<int> &resizable_area)
 {
-	m_reszLeft = left;
-	m_reszRight = right;
-	m_reszTop = top;
-	m_reszBottom = bottom;
+	m_resizableArea = resizable_area;
 }

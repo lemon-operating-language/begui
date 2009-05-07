@@ -105,25 +105,25 @@ void TextBox::onRender()
 	display::unmask();
 }
 
-void TextBox::onMouseDown(int x, int y, int button)
+bool TextBox::onMouseDown(int x, int y, int button)
 {
 	m_text.onMouseDown(x-m_left, y-m_top, button);
 
-	Component::onMouseDown(x,y,button);
+	return Component::onMouseDown(x,y,button);
 }
 
-void TextBox::onMouseMove(int x, int y, int prevx, int prevy)
+bool TextBox::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	m_text.onMouseMove(x-m_left, y-m_top, prevx-m_left, prevy-m_top);
 
-	Component::onMouseMove(x,y,prevx,prevy);
+	return Component::onMouseMove(x,y,prevx,prevy);
 }
 
-void TextBox::onMouseUp(int x, int y, int button)
+bool TextBox::onMouseUp(int x, int y, int button)
 {
 	m_text.onMouseUp(x-m_left, y-m_top, button);
 
-	Component::onMouseUp(x,y,button);
+	return Component::onMouseUp(x,y,button);
 }
 
 void TextBox::onKeyDown(int key)

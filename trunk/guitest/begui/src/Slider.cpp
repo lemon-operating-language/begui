@@ -212,10 +212,10 @@ void Slider::onRender()
 	}
 }
 
-void Slider::onMouseDown(int x, int y, int button)
+bool Slider::onMouseDown(int x, int y, int button)
 {
 	if (!m_bIsEnabled)
-		return;
+		return false;
 
 	// position of the marker
 	double f = (m_curValue - m_min)/(m_max - m_min);
@@ -249,13 +249,17 @@ void Slider::onMouseDown(int x, int y, int button)
 			// after initial jump, start dragging
 			m_bDragging = true;
 		}
+		else
+			return false;
 	}
+
+	return true;
 }
 
-void Slider::onMouseMove(int x, int y, int prevx, int prevy)
+bool Slider::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (!m_bIsEnabled)
-		return;
+		return false;
 
 	if (m_bDragging)
 	{
@@ -264,7 +268,7 @@ void Slider::onMouseMove(int x, int y, int prevx, int prevy)
 		{
 			// check relaxed bounds for y
 			if (y < m_top - 50 || y > m_bottom + 50)
-				return;
+				return true;
 
 			// update the slider value
 			double f = (double)(x - m_left)/(m_right - m_left);
@@ -280,12 +284,14 @@ void Slider::onMouseMove(int x, int y, int prevx, int prevy)
 				*m_pBoundValue = m_curValue;
 		}
 	}
+
+	return true;
 }
 
-void Slider::onMouseUp(int x, int y, int button)
+bool Slider::onMouseUp(int x, int y, int button)
 {
 	if (!m_bIsEnabled)
-		return;
+		return false;
 
 	m_bDragging = false;
 
@@ -293,6 +299,8 @@ void Slider::onMouseUp(int x, int y, int button)
 		m_pCallback(m_id);
 	if (m_pBoundValue)
 		*m_pBoundValue = m_curValue;
+
+	return true;
 }
 
 void Slider::onKeyDown(int key)

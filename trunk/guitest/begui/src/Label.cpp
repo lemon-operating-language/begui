@@ -47,16 +47,19 @@ void Label::onRender()
 	Font::renderString(0, getHeight(), m_text);
 }
 
-void Label::onMouseDown(int x, int y, int button)
+bool Label::onMouseDown(int x, int y, int button)
 {
+	return false;
 }
 
-void Label::onMouseMove(int x, int y, int prevx, int prevy)
+bool Label::onMouseMove(int x, int y, int prevx, int prevy)
 {
+	return false;
 }
 
-void Label::onMouseUp(int x, int y, int button)
+bool Label::onMouseUp(int x, int y, int button)
 {
+	return false;
 }
 
 void Label::onKeyDown(int key)

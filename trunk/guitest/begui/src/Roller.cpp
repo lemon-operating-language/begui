@@ -170,13 +170,14 @@ void Roller::onRender()
 	}
 }
 
-void Roller::onMouseDown(int x, int y, int button)
+bool Roller::onMouseDown(int x, int y, int button)
 {
 	// start dragging the marker
 	m_bDragging = true;
+	return true;
 }
 
-void Roller::onMouseMove(int x, int y, int prevx, int prevy)
+bool Roller::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (m_bDragging)
 	{
@@ -190,10 +191,13 @@ void Roller::onMouseMove(int x, int y, int prevx, int prevy)
 			
 		if (m_pBoundValue)
 			*m_pBoundValue = m_curValue;
+		
+		return true;
 	}
+	return false;
 }
 
-void Roller::onMouseUp(int x, int y, int button)
+bool Roller::onMouseUp(int x, int y, int button)
 {
 	m_bDragging = false;
 
@@ -201,6 +205,8 @@ void Roller::onMouseUp(int x, int y, int button)
 		m_pCallback(m_id);
 	if (m_pBoundValue)
 		*m_pBoundValue = m_curValue;
+
+	return true;
 }
 
 void Roller::onKeyDown(int key)

@@ -26,6 +26,7 @@
 #include "Window.h"
 #include "Menu.h"
 #include "Dialog.h"
+#include "Button.h"
 
 namespace begui {
 
@@ -39,6 +40,10 @@ public:
 		SINGLE,					// the simplest display style for a frame window containing controls only
 		SINGLE_OWNDRAW			// same but draws its own borders and caption (using transparencies)
 	};
+	class InternalContainer : public Container {
+	public:
+		virtual void onRender() { };
+	};
 
 private:
 	Menu					*m_pMenu;
@@ -48,11 +53,26 @@ private:
 	static FrameWindow	*m_pInstance;
 	FrameWindow();
 
+	ResourceManager::ImageRef	m_windowFace, m_captionFace;
+	Rect<int>	m_windowActiveArea, m_captionActiveArea;
+	Rect<int>	m_windowResizableArea, m_captionResizableArea;
+	Button		m_closeBtn, m_minBtn, m_maxBtn;
+	int			m_captionTextYPos;
+	int			m_captionBarWidth;
+	Color		m_captionTextColor;
+	int			m_captionTextPadLeft;
+	Rect<int>	m_clientArea;
+	Rect<int>	m_borderSize;
+
+	InternalContainer	m_container;
+
+	std::string	m_title;
+
 public:
 	static FrameWindow* inst()	{ if (!m_pInstance) m_pInstance = new FrameWindow(); return m_pInstance; }
 	virtual ~FrameWindow();
 
-	bool create(int width, int height);
+	bool create(int width, int height, const std::string &title);
 	void resize(int width, int height);
 	void resetViewport();
 	void setStyle(Style style)	{ m_style = style; }
@@ -60,13 +80,20 @@ public:
 	void showModalDialog(Dialog* dlg);
 	void closeModalDialog();
 
-	virtual void frameUpdate() { Container::frameUpdate(); }
+	// redirect container methods to the dummy container
+	virtual void addComponent(Component *pC)	{ m_container.addComponent(pC); }
+	virtual void remComponent(Component *pC)	{ m_container.remComponent(pC); }
+	virtual int			getChildrenNum() const	{ return m_container.getChildrenNum(); }
+	virtual Component*	getChild(int pos)		{ return m_container.getChild(pos); }
+
+	virtual void frameUpdate();
 	virtual void frameRender();
 	virtual void onRender();
 
-	inline int	getWidth() const	{ return m_right - m_left; }
-	inline int	getHeight() const	{ return m_bottom - m_top; }
-	inline Menu& getMenu()			{ return *m_pMenu; }
+	inline int			getWidth() const		{ return m_right - m_left; }
+	inline int			getHeight() const		{ return m_bottom - m_top; }
+	inline Menu&		getMenu()				{ return *m_pMenu; }
+	inline Rect<int>	getClientArea() const	{ return m_clientArea; }
 
 	virtual void onMouseDownEx(int x, int y);
 	virtual void onMouseMoveEx(int x, int y, int prevx, int prevy);
@@ -74,11 +101,13 @@ public:
 	virtual bool isPtInside(int x, int y) { return true; }
 	
 	// Change access to main event handlers to public
-	virtual void onMouseDown(int x, int y, int button);
-	virtual void onMouseMove(int x, int y, int prevx, int prevy);
-	virtual void onMouseUp(int x, int y, int button);
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
+
+	virtual void onCaptionBtn(int id);
 
 protected:
 	void renderBackground();

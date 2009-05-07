@@ -65,12 +65,8 @@ void Container::frameRender()
 	glPopMatrix();
 }
 
-void Container::onMouseDown(int x, int y, int button)
+bool Container::onMouseDown(int x, int y, int button)
 {
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(m_left, m_top, 0);
-	
 	// Transform coordinates.
 	Vector2i lP = parentToLocal(Vector2i(x,y));
 
@@ -123,18 +119,12 @@ void Container::onMouseDown(int x, int y, int button)
 		// Custom mouse handling
 		onMouseDownEx((int)lP.x, (int)lP.y);
 	}
-	
-	// Reset the coordinate system
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+
+	return false;
 }
 
-void Container::onMouseMove(int x, int y, int prevx, int prevy)
+bool Container::onMouseMove(int x, int y, int prevx, int prevy)
 {
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(m_left, m_top, 0);
-
 	Vector2i lP = parentToLocal(Vector2i(x,y));
 	Vector2i lPrevP = parentToLocal(Vector2i(prevx,prevy));
 
@@ -161,18 +151,12 @@ void Container::onMouseMove(int x, int y, int prevx, int prevy)
 		// custom handling
 		onMouseMoveEx(x, y, prevx, prevy);
 	}
-	
-	// Reset the coordinate system
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+
+	return false;
 }
 
-void Container::onMouseUp(int x, int y, int button)
+bool Container::onMouseUp(int x, int y, int button)
 {
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(m_left, m_top, 0);
-	
 	Vector2i lP = parentToLocal(Vector2i(x,y));
 
 	// call mouseUp of active component
@@ -186,10 +170,8 @@ void Container::onMouseUp(int x, int y, int button)
 		// custom handling
 		onMouseUpEx(x, y);
 	}
-	
-	// Reset the coordinate system
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+
+	return false;
 }
 
 void Container::onKeyDown(int key)

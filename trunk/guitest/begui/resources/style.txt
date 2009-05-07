@@ -6,20 +6,15 @@ class Button {
 	style std_old {
 		image face_up = 410,32,505,58, widgets.bmp
 		color main_color = 255,255,255
-		int reszLeft = 13
-		int reszTop = 13
-		int reszRight = 69
-		int reszBottom = 13
+		rect resizable_area = 13,13,69,13
 		int default_height = 26
 	}
 	style std {
 		image face_up = 1,29,100,64, widgets2.png
 		image face_hover = 1,63,100,98, widgets2.png
+		rect active_area = 5, 5, 89, 53
 		color main_color = 255,255,255
-		int reszLeft = 13
-		int reszTop = 13
-		int reszRight = 69
-		int reszBottom = 22
+		rect resizable_area = 13,13,69,22
 		int default_height = 35
 	}
 	
@@ -31,6 +26,7 @@ class Button {
 		int padding_top = 4
 		int padding_right = 4
 		int padding_bottom = 3
+		rect resizable_area = 0,0,0,0
 	}
 	style scroller_btn_up {
 		image face_up = 30,166,61,198, widgets2.png
@@ -40,6 +36,7 @@ class Button {
 		int padding_top = 4
 		int padding_right = 4
 		int padding_bottom = 3
+		rect resizable_area = 0,0,0,0
 	}
 	style scroller_btn_left {
 		image face_up = 30,198,61,230, widgets2.png
@@ -49,6 +46,7 @@ class Button {
 		int padding_top = 4
 		int padding_right = 4
 		int padding_bottom = 3
+		rect resizable_area = 0,0,0,0
 	}
 	style scroller_btn_right {
 		image face_up = 30,231,61,263, widgets2.png
@@ -58,6 +56,7 @@ class Button {
 		int padding_top = 4
 		int padding_right = 4
 		int padding_bottom = 3
+		rect resizable_area = 0,0,0,0
 	}
 	style scroller_slider {
 		image face_up = 0,131,31,197, widgets2.png
@@ -69,6 +68,33 @@ class Button {
 		int padding_bottom = 4
 		int reszTop = 10
 		int reszBottom = 51
+		rect resizable_area = 0,0,0,0
+	}
+	
+	# Styles of the standard buttons for a main window caption
+	style std_wnd_close_btn {
+		image face_up = 60,1,81,22, gui2_wnd_texture.png
+		rect active_area = 3, 3, 18, 18
+		color main_color = 255,255,255
+		rect resizable_area = 0,0,0,0
+		int default_width = 21
+		int default_height = 21
+	}
+	style std_wnd_max_btn {
+		image face_up = 82,1,103,22, gui2_wnd_texture.png
+		rect active_area = 3, 3, 18, 18
+		color main_color = 255,255,255
+		rect resizable_area = 0,0,0,0
+		int default_width = 21
+		int default_height = 21
+	}
+	style std_wnd_min_btn {
+		image face_up = 104,1,125,22, gui2_wnd_texture.png
+		rect active_area = 3, 3, 18, 18
+		color main_color = 255,255,255
+		rect resizable_area = 0,0,0,0
+		int default_width = 21
+		int default_height = 21
 	}
 }
 
@@ -77,5 +103,32 @@ class ScrollBar {
 	}
 	style std {
 		image bg = 1,198,15,355, widgets2.png
+	}
+}
+
+class FrameWindow {
+	style std {
+		#not used
+	}
+	style std_owndraw {
+		image window_bg = 0,74,423,511, gui2_wnd_texture.png
+		rect window_active_area = 18,12,401,412			#active area relative to the top left corner of the face
+		rect window_resizable_area = 26,20,393,404		#resizable area relative to the top left corner of the face
+		
+		image caption = 0,25,438,74, gui2_wnd_texture.png
+		rect caption_resizable_area = 23,30,412,30
+		rect caption_active_area = 17,12,419,35
+		int caption_y_pos = 16
+		color caption_text_color = 220,220,220
+		
+		rect border_size = 2,2,2,2	#width of the window border for each of the 4 sides
+	}
+}
+
+class Menu {
+	style std {
+		image menubar_face = 1,1,56,26, gui2_wnd_texture.png
+		rect resizable_area = 4,0,51,0
+		color mainmenu_text_color = 230,230,230
 	}
 }

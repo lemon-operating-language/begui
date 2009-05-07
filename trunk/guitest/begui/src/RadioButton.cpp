@@ -92,10 +92,10 @@ void RadioButton::onRender()
 	Font::renderString(23, getHeight()-5, m_title);
 }
 
-void RadioButton::onMouseDown(int x, int y, int button)
+bool RadioButton::onMouseDown(int x, int y, int button)
 {
 	if (m_state == RadioButton::INACTIVE)
-		return;
+		return false;
 
 	// Deselect all other radio buttons in the group
 	if (m_bIsRadio && m_pParent)
@@ -130,18 +130,22 @@ void RadioButton::onMouseDown(int x, int y, int button)
 	// Call the callback, if any
 	if (m_pCallback)
 		m_pCallback(m_id);
+	
+	return true;
 }
 
-void RadioButton::onMouseMove(int x, int y, int prevx, int prevy)
+bool RadioButton::onMouseMove(int x, int y, int prevx, int prevy)
 {
 	if (isPtInside(x,y))
 		m_bHover = true;
 	else
 		m_bHover = false;
+	return true;
 }
 
-void RadioButton::onMouseUp(int x, int y, int button)
+bool RadioButton::onMouseUp(int x, int y, int button)
 {
+	return true;
 }
 
 void RadioButton::onKeyDown(int key)
