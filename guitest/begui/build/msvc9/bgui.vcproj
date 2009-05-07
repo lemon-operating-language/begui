@@ -437,6 +437,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\resources\gears.png"
+				>
+			</File>
+			<File
+				RelativePath="..\..\resources\gui2_wnd_texture.png"
+				>
+			</File>
+			<File
 				RelativePath="..\..\resources\style.txt"
 				>
 			</File>
