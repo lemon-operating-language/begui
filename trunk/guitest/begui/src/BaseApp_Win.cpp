@@ -381,7 +381,7 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 		FrameWindow::inst()->setEventHook(FrameWindow::CLOSE, makeFunctor(*this, &BaseApp_Win::handleWindowEvent));
 	}
 
-	return TRUE;									// Success
+	return TRUE;
 }
 
 void BaseApp_Win::killGLWindow()								// Properly Kill The Window

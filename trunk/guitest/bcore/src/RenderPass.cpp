@@ -91,7 +91,7 @@ bool RenderPass::setup(PixelFormat pixelFormat, int frameW, int frameH, Texture 
 //		}
 
 		// create an FBO for rendering
-		glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)wglGetProcAddress("glGenFramebuffersEXT");
+		//glGenFramebuffersEXT = (PFNGLGENFRAMEBUFFERSEXTPROC)wglGetProcAddress("glGenFramebuffersEXT");
 		glGenFramebuffersEXT(1, &m_FBO);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_FBO);
 
