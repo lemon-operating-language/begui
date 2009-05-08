@@ -164,7 +164,7 @@ void ListBox::onRender()
 		top += content_y_offs;
 		bottom += content_y_offs;
 
-		m_items[i].m_rect = Rect<int>(left, right, top, bottom);
+		m_items[i].m_rect = Rect<int>(left, top, right, bottom);
 
 		// do some culling of invisible items to reduce rendering needs
 		if (bottom < 0)
