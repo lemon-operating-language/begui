@@ -603,11 +603,11 @@ int BaseApp_Win::run(const std::string &title, size_t width, size_t height, Fram
 	bool bSimpleOk = true;
 	if (!GL_VERSION_2_0)
 		err_str = "WARNING: OpenGL 2.0 not supported. Try updating the graphics card drivers.";
-	if (!GLEW_EXT_framebuffer_object)
+	if (glewIsSupported("GL_EXT_framebuffer_object"))
 		err_str = "frame buffer objects not supported";
 	if (err_str.length() > 0) {
 		Console::print("ERROR: " + err_str + "\n");
-		if (bSimpleOk) {
+		if (m_bLayeredWindow && bSimpleOk) {
 			Console::print("WARNING: cannot use layered windows! Falling back to standard window style\n");
 			MessageBox(hWnd, "WARNING: cannot use layered windows! Falling back to standard window style", "Error",
 				MB_OK|MB_ICONEXCLAMATION);

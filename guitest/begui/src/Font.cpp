@@ -126,7 +126,7 @@ void Font::renderString_i(int x, int y, const std::string &str,
 
 		// store the position of the rendered character
 		if (char_pos_out) {
-			char_pos_out->push_back(Rect<int>(left, right, top, bottom));
+			char_pos_out->push_back(Rect<int>(left, top, right, bottom));
 		}
 		
 		// advance horizontal position
@@ -156,7 +156,7 @@ void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string 
 				curLinePos + m_character[str[i] - m_startChar].m_horiAdvance > lineWidth))
 			{
 				if (char_pos_out)
-					char_pos_out->push_back(Rect<int>(x+curLinePos, x+curLinePos, ypos, ypos));	// a zero rect indicates a line break
+					char_pos_out->push_back(Rect<int>(x+curLinePos, ypos, x+curLinePos, ypos));	// a zero rect indicates a line break
 				ypos += m_lineHeight;
 				curLinePos = 0;
 				++i;
@@ -164,15 +164,16 @@ void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string 
 			}
 			if (str[i] == '\t') {
 				if (char_pos_out)
-					char_pos_out->push_back(Rect<int>(x+curLinePos, 
-											x+curLinePos+m_tabSize*m_character[' ' - m_startChar].m_horiAdvance, 
-											ypos-m_lineHeight, ypos));
+					char_pos_out->push_back(Rect<int>(x+curLinePos,  
+											ypos-m_lineHeight, 
+											x+curLinePos+m_tabSize*m_character[' ' - m_startChar].m_horiAdvance,
+											ypos));
 				curLinePos += m_tabSize*m_character[' ' - m_startChar].m_horiAdvance;
 			}
 			else {	
 				// add an empty entry for non-printable characters
 				if (char_pos_out)
-					char_pos_out->push_back(Rect<int>(x+curLinePos, x+curLinePos, ypos-m_lineHeight, ypos));
+					char_pos_out->push_back(Rect<int>(x+curLinePos, ypos-m_lineHeight, x+curLinePos, ypos));
 
 				if (str[i] - m_startChar < 0)
 					continue;
