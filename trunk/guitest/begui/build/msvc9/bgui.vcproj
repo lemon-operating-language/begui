@@ -441,6 +441,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\resources\gui2_widgets.png"
+				>
+			</File>
+			<File
 				RelativePath="..\..\resources\gui2_wnd_texture.png"
 				>
 			</File>

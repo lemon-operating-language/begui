@@ -10,12 +10,12 @@ class Button {
 		int default_height = 26
 	}
 	style std {
-		image face_up = 1,29,100,64, widgets2.png
-		image face_hover = 1,63,100,98, widgets2.png
-		rect active_area = 5, 5, 89, 53
+		image face_up = 1,209,92,232, gui2_widgets.png
+		#image face_hover = 1,63,100,98, widgets2.png
+		rect active_area = 0, 0, 90, 22
 		color main_color = 255,255,255
-		rect resizable_area = 13,13,69,22
-		int default_height = 35
+		rect resizable_area = 5,5,85,17
+		int default_height = 23
 	}
 	
 	style scroller_btn_down {
@@ -130,5 +130,35 @@ class Menu {
 		image menubar_face = 1,1,56,26, gui2_wnd_texture.png
 		rect resizable_area = 4,0,51,0
 		color mainmenu_text_color = 230,230,230
+	}
+}
+
+class List {
+	style std {
+	}
+	style std_modern {
+		image list_face = 1,1,118,158, gui2_widgets.png
+		rect active_area = 0,0,117,157
+		rect resizable_area = 8,8,109,149
+	}
+	style std_modern_shadow {
+		image list_face = 184,0,310,168, gui2_widgets.png
+		rect active_area = 4,1,121,158
+		rect resizable_area = 12,9,113,150
+	}
+}
+
+class TextBox {
+	style std {
+		image 312,0,425,164, gui2_widgets.png
+		rect active_area = 1,1,111,162
+		rect resizable_area = 10,11,104,158
+	}
+}
+
+class ComboBox {
+	style std {
+	}
+	style std_small {
 	}
 }
