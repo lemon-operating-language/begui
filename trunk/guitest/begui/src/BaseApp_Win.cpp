@@ -150,14 +150,10 @@ void BaseApp_Win::renderFrame()
  *	bits			- Number Of Bits To Use For Color (8/16/24/32)			*
  *	fullscreenflag	- Use Fullscreen Mode (TRUE) Or Windowed Mode (FALSE)	*/
  
-bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag)
+bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag,
+								 FrameWindow::Style wnd_style)
 {
 	ASSERT(!(fullscreenflag && m_bLayeredWindow));	// sanity check: cant have layered fullscreen-mode windows
-	
-	if (m_bLayeredWindow)
-		m_bOffscreenRendering = true;
-	else
-		m_bOffscreenRendering = false;
 
 	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
 	WNDCLASS	wc;						// Windows Class Structure
@@ -324,30 +320,6 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 	}
 	Console::print("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 
-	// Check hardware support
-	std::string err_str = "";
-	bool bSimpleOk = true;
-	if (!GL_VERSION_2_0)
-		err_str = "WARNING: OpenGL 2.0 not supported. Try updating the graphics card drivers.";
-	if (!GLEW_EXT_framebuffer_object)
-		err_str = "frame buffer objects not supported";
-	if (err_str.length() > 0) {
-		Console::print("ERROR: " + err_str + "\n");
-		if (bSimpleOk) {
-			Console::print("WARNING: cannot use layered windows! Falling back to standard window style\n");
-			MessageBox(hWnd, "WARNING: cannot use layered windows! Falling back to standard window style", "Error",
-				MB_OK|MB_ICONEXCLAMATION);
-		}
-		else {
-			Console::print("ERROR: OpenGL requirements not met. Cannot initialize BeGUI\n");
-			MessageBox(hWnd, "ERROR: OpenGL requirements not met. Cannot initialize BeGUI", "Error",
-				MB_OK|MB_ICONEXCLAMATION);
-			killGLWindow();
-		}
-		m_bLayeredWindow = false;
-		m_bOffscreenRendering = false;
-	}
-
 	// Create a layered window?
 	if (m_bLayeredWindow)
 	{
@@ -369,11 +341,6 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 			Console::error("UpdateLayeredWindow failed\n");
 		SelectObject(hMemDC, bmpold);
 		DeleteObject(hBMP);
-	}
-	else {
-		// Reset the window style, in case we are falling back from layered window
-		SetWindowLong(hWnd, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 	}
 
 	// Create an offscreen rendering surface
@@ -401,8 +368,18 @@ bool BaseApp_Win::createGLWindow(const char* title, int width, int height, int b
 	ResourceManager::inst()->loadResources();
 
 	// create the frame window
-	FrameWindow::inst()->create(width, height, title);
+	bool bOwnDraw = m_bLayeredWindow;
+	FrameWindow::inst()->create(width, height, title, wnd_style, bOwnDraw);
 	resize(width, height);
+
+	// set some basic window hooks
+	if (bOwnDraw) {
+		// if it is a own-drawn window, we need to handle events like minimize and maximize
+		FrameWindow::inst()->setEventHook(FrameWindow::MINIMIZE, makeFunctor(*this, &BaseApp_Win::handleWindowEvent));
+		FrameWindow::inst()->setEventHook(FrameWindow::MAXIMIZE, makeFunctor(*this, &BaseApp_Win::handleWindowEvent));
+		FrameWindow::inst()->setEventHook(FrameWindow::RESTORE, makeFunctor(*this, &BaseApp_Win::handleWindowEvent));
+		FrameWindow::inst()->setEventHook(FrameWindow::CLOSE, makeFunctor(*this, &BaseApp_Win::handleWindowEvent));
+	}
 
 	return TRUE;									// Success
 }
@@ -613,23 +590,40 @@ int BaseApp_Win::run(const std::string &title, size_t width, size_t height, Fram
 	
 	fullscreen=FALSE;							// Windowed Mode
 
-	// Depending on the frame window style, set rendering options
-	switch (frame_style) {
-		case FrameWindow::MULTIPLE_SOLID:
-		case FrameWindow::SINGLE:
-			m_bLayeredWindow = false;
-			break;
-		case FrameWindow::SINGLE_OWNDRAW:
-		case FrameWindow::MULTIPLE_SOLID_OWNDRAW:
-		case FrameWindow::MULTIPLE_TRANSPARENT:
-			m_bLayeredWindow = true;
-			m_bSyncRendering = true;	// may not be needed later
-			break;
+	// setup some attributes
+	if (m_bLayeredWindow) {
+		m_bSyncRendering = true;
+		m_bOffscreenRendering = true;
 	}
-	FrameWindow::inst()->setStyle(frame_style);
+	else
+		m_bOffscreenRendering = false;
+	
+	// Check hardware support
+	std::string err_str = "";
+	bool bSimpleOk = true;
+	if (!GL_VERSION_2_0)
+		err_str = "WARNING: OpenGL 2.0 not supported. Try updating the graphics card drivers.";
+	if (!GLEW_EXT_framebuffer_object)
+		err_str = "frame buffer objects not supported";
+	if (err_str.length() > 0) {
+		Console::print("ERROR: " + err_str + "\n");
+		if (bSimpleOk) {
+			Console::print("WARNING: cannot use layered windows! Falling back to standard window style\n");
+			MessageBox(hWnd, "WARNING: cannot use layered windows! Falling back to standard window style", "Error",
+				MB_OK|MB_ICONEXCLAMATION);
+		}
+		else {
+			Console::print("ERROR: OpenGL requirements not met. Cannot initialize BeGUI\n");
+			MessageBox(hWnd, "ERROR: OpenGL requirements not met. Cannot initialize BeGUI", "Error",
+				MB_OK|MB_ICONEXCLAMATION);
+			killGLWindow();
+		}
+		m_bLayeredWindow = false;
+		m_bOffscreenRendering = false;
+	}
 
 	// Create Our OpenGL Window
-	if (!createGLWindow(title.c_str(), (int)width, (int)height, 16, fullscreen))
+	if (!createGLWindow(title.c_str(), (int)width, (int)height, 16, fullscreen, frame_style))
 	{
 		return 0;									// Quit If Window Was Not Created
 	}
@@ -697,13 +691,6 @@ int BaseApp_Win::run(const std::string &title, size_t width, size_t height, Fram
 
 bool BaseApp_Win::setupOffscreenPass(int width, int height)
 {
-	/*if (GLEW_EXT_framebuffer_object)
-		;
-	else {
-		Console::error("shit\n");
-		return false;
-	}*/
-
 	// create the render pass
 	if (!m_frameRenderPass.setup(RenderPass::PIXEL_RGBA8, width, height, 0, false)) {
 		Console::error("failed to create render pass for offscreen rendering\n");
@@ -723,4 +710,29 @@ HWND BaseApp_Win::getHWND()
 HINSTANCE BaseApp_Win::getHINSTANCE()
 {
 	return hInstance;
+}
+
+void BaseApp_Win::minimizeApp()
+{
+	ShowWindow(hWnd, SW_MINIMIZE);
+}
+
+void BaseApp_Win::maximizeApp()
+{
+	ShowWindow(hWnd, SW_MAXIMIZE);
+}
+
+void BaseApp_Win::restoreApp()
+{
+	ShowWindow(hWnd, SW_RESTORE);
+}
+
+void BaseApp_Win::handleWindowEvent(begui::FrameWindow::Event evt)
+{
+	switch (evt) {
+		case FrameWindow::MINIMIZE: minimizeApp(); break;
+		case FrameWindow::MAXIMIZE: maximizeApp(); break;
+		case FrameWindow::RESTORE: restoreApp(); break;
+		case FrameWindow::CLOSE: exit(0); break;
+	}
 }

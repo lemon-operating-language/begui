@@ -93,7 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	// Uncomment this line to have a console for text output
 	Console::create();
 
-	return Application::inst()->run("beGUI test", 800, 600, FrameWindow::MULTIPLE_TRANSPARENT);
+	return Application::inst()->run("beGUI test", 800, 600, FrameWindow::MULTIPLE);
 }
 
 void Application::onMenu(int id)

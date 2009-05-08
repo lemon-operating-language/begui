@@ -39,8 +39,12 @@ private:
 
 public:
 	int run(const std::string &title, size_t width, size_t height, 
-			FrameWindow::Style frame_style=FrameWindow::MULTIPLE_SOLID);
+			FrameWindow::Style frame_style=FrameWindow::MULTIPLE);
 	void setSynchronousRendering(bool bSyncRendering)	{ m_bSyncRendering = bSyncRendering; }
+
+	void minimizeApp();
+	void maximizeApp();
+	void restoreApp();
 
 	static BaseApp_Win* inst()	{ if (!m_pInst) m_pInst = new BaseApp_Win(); return m_pInst; }
 
@@ -54,7 +58,8 @@ protected:
 	virtual ~BaseApp_Win();
 
 	bool coreInitialize();
-	bool createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag);
+	bool createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag,
+						FrameWindow::Style wnd_style);
 	void killGLWindow();
 	//void setLayeredWindow(bool bLayered)				{ m_bLayeredWindow = bLayered; }
 	
@@ -64,6 +69,8 @@ protected:
 	virtual void renderFrame();
 
 	bool setupOffscreenPass(int width, int height);
+
+	virtual void handleWindowEvent(FrameWindow::Event evt);
 };
 
 };

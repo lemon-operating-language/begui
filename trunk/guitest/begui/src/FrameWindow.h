@@ -34,11 +34,21 @@ class FrameWindow : public Container
 {
 public:
 	enum Style {
-		MULTIPLE_SOLID,			// the simplest display style for a frame window with multiple childern
-		MULTIPLE_SOLID_OWNDRAW,	// same but draws its own borders and caption (using transparencies)
-		MULTIPLE_TRANSPARENT,	// transparent main window (mac-style)
-		SINGLE,					// the simplest display style for a frame window containing controls only
-		SINGLE_OWNDRAW			// same but draws its own borders and caption (using transparencies)
+		MULTIPLE,				// a frame window with multiple childern
+	//	MULTIPLE_TRANSPARENT,	// transparent main window (mac-style)
+		SINGLE					// a frame window containing controls only
+	};
+	enum State {
+		VISIBLE,
+		MINIMIZED,
+		MAXIMIZED,
+		FULLSCREEN
+	};
+	enum Event {
+		MINIMIZE,
+		MAXIMIZE,
+		RESTORE,
+		CLOSE
 	};
 	class InternalContainer : public Container {
 	public:
@@ -46,9 +56,12 @@ public:
 	};
 
 private:
+	std::string				m_title;
 	Menu					*m_pMenu;
 	Dialog					*m_pModalDialog;
-	Style					m_style;
+	Style					m_style;	// the style of the frame window (single/multiple doc)
+	bool					m_bOwnDraw;	// true if the window has to draw and handle its own caption and borders
+	State					m_state;
 
 	static FrameWindow	*m_pInstance;
 	FrameWindow();
@@ -66,16 +79,16 @@ private:
 
 	InternalContainer	m_container;
 
-	std::string	m_title;
+	// event hooks
+	Functor1<FrameWindow::Event>	m_onMinimize, m_onMaximize, m_onRestore, m_onClose;
 
 public:
 	static FrameWindow* inst()	{ if (!m_pInstance) m_pInstance = new FrameWindow(); return m_pInstance; }
 	virtual ~FrameWindow();
 
-	bool create(int width, int height, const std::string &title);
+	bool create(int width, int height, const std::string &title, Style style=MULTIPLE, bool ownDraw=true);
 	void resize(int width, int height);
 	void resetViewport();
-	void setStyle(Style style)	{ m_style = style; }
 
 	void showModalDialog(Dialog* dlg);
 	void closeModalDialog();
@@ -95,9 +108,6 @@ public:
 	inline Menu&		getMenu()				{ return *m_pMenu; }
 	inline Rect<int>	getClientArea() const	{ return m_clientArea; }
 
-	virtual void onMouseDownEx(int x, int y);
-	virtual void onMouseMoveEx(int x, int y, int prevx, int prevy);
-	virtual void onMouseUpEx(int x, int y);
 	virtual bool isPtInside(int x, int y) { return true; }
 	
 	// Change access to main event handlers to public
@@ -107,11 +117,13 @@ public:
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 
+	// handle event hooks
+	virtual void setEventHook(Event evt, const Functor1<Event> &fun);
+
 	virtual void onCaptionBtn(int id);
 
 protected:
-	void renderBackground();
-	void renderBorders();	// used on a own-drawn window
+	void calcClientArea();
 };
 
 };
