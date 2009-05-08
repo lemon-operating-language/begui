@@ -26,6 +26,7 @@
 #include "ScrollBar.h"
 #include "EditableText.h"
 #include "callback.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -66,11 +67,21 @@ protected:
 
 	Functor1<int>		m_onItemClick;	// arg1: the id of the clicked item
 
+	ResourceManager::ImageRef	m_bg, m_selection;
+	Rect<int>					m_activeArea, m_resizableArea;
+	Rect<int>					m_selectionActiveArea, m_selectionResizableArea;
+	Rect<int>					m_contentPadding;
+	Color						m_textColor;
+	bool						m_bAutoHeight;
+	int							m_maxHeight;
+
 public:
 	ListBox();
 	virtual ~ListBox();
 
-	virtual void create(int x, int y, int width, int height, SelectionMode selMode, Style style=STYLE_FLAT);
+	virtual void create(int x, int y, int width, int height, SelectionMode selMode, Style style=STYLE_FLAT,
+		const std::string &style_name = "std");
+	void setAutoHeight(bool bAuto)	{ m_bAutoHeight = bAuto; }
 
 	virtual void onUpdate();
 	virtual void onRender();

@@ -27,7 +27,9 @@ using namespace begui;
 
 ListBox::ListBox() : 
 	m_curItem(0), m_prevItem(-1), m_selectMode(MULTI_SELECT), m_style(STYLE_FLAT),
-	m_bHighlightMouseOver(false), m_mouseOverItem(-1)
+	m_bHighlightMouseOver(false), m_mouseOverItem(-1),
+	m_textColor(0,0,0),
+	m_contentPadding(0,0,0,0)
 {
 }
 
@@ -35,12 +37,24 @@ ListBox::~ListBox()
 {
 }
 
-void ListBox::create(int x, int y, int width, int height, SelectionMode selMode, Style style)
+void ListBox::create(int x, int y, int width, int height, SelectionMode selMode, Style lstyle,
+					 const std::string &style_name)
 {
 	setPos(x,y);
 	setSize(width, height);
 	m_selectMode = selMode;
-	m_style = style;
+	m_style = lstyle;
+	m_maxHeight = height;
+
+	// load the stylesheet for the listbox
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("ListBox").style(style_name);
+	m_bg = ResourceManager::inst()->loadImage(style.get_img("face"));
+	m_activeArea = style.get_rect("active_area");
+	m_resizableArea = style.get_rect("resizable_area");
+	if (style.hasProp("text_color"))
+		m_textColor = style.get_c("text_color");
+	if (style.hasProp("padding"))
+		m_contentPadding = style.get_rect("padding");
 
 //	m_scroller.create(width-ScrollBar::SCROLL_WIDTH, 0, height, ScrollBar::SCROLL_VERTICAL);
 	m_scroller.create(width, 0, height, ScrollBar::SCROLL_VERTICAL);
@@ -50,6 +64,16 @@ void ListBox::create(int x, int y, int width, int height, SelectionMode selMode,
 void ListBox::onUpdate()
 {
 	m_scroller.frameUpdate();
+	
+	if (m_bAutoHeight) {
+		int content_height = (int)m_items.size()*getItemHeight();
+		int height = content_height + m_contentPadding.top + m_contentPadding.bottom +
+			m_activeArea.top + (m_bg.m_height-m_activeArea.bottom);
+		if (height > m_maxHeight)
+			setSize(getWidth(), m_maxHeight);
+		else
+			setSize(getWidth(), height);
+	}
 }
 
 int ListBox::getItemHeight() const
@@ -73,16 +97,23 @@ void ListBox::onRender()
 		m_scroller.setBounds(0, m_items.size()-getHeight()/lineHeight, (double)getHeight()/(content_height));
 		content_y_offs = -(int)(m_scroller.getScrollPos()*lineHeight);
 	}
+
+	glEnable(GL_BLEND);
+
+	// draw the listbox background
+	glColor4f(1.0f,1.0f,1.0f,1.0f);
+	Component::drawImageWtBorders(m_bg, -m_activeArea.left, -m_activeArea.top,
+		getWidth()+m_activeArea.left + (m_bg.m_width-m_activeArea.right), 
+		getHeight()+m_activeArea.top + (m_bg.m_height-m_activeArea.bottom), 
+		m_resizableArea);
 	
 	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
 	display::maskRect(wpos.x-1, wpos.y, getWidth()+2-((bNeedsScrolling)? m_scroller.getWidth() : 0), getHeight()+1);
 
-	glEnable(GL_BLEND);
-
 	int w = getWidth()-((bNeedsScrolling)? m_scroller.getWidth()+1 : 0);
 	int h = getHeight();
 
-	// draw background
+/*	// draw background
 	if (m_style == STYLE_BUTTONS)
 		glColor4f(0,0,0,0.3);
 	else
@@ -109,7 +140,7 @@ void ListBox::onRender()
 		glVertex2f(0, h);
 		glVertex2f(0, 0);
 	glEnd();
-
+*/
 	// draw items
 	for (size_t i=0; i<m_items.size(); ++i)
 	{
@@ -117,6 +148,7 @@ void ListBox::onRender()
 		int bottom = top + lineHeight - 2;
 		int left = 2;
 		int right = w - 2;
+
 		Color textCl(0.2,0.2,0.2);
 		float textAlpha = 0.9;
 		if (!m_items[i].m_bEnabled)
@@ -161,8 +193,10 @@ void ListBox::onRender()
 		}
 
 		// add the offset from scrolling
-		top += content_y_offs;
-		bottom += content_y_offs;
+		top += content_y_offs + m_contentPadding.top;
+		bottom += content_y_offs + m_contentPadding.top;
+		left += m_contentPadding.left;
+		right -= m_contentPadding.right;
 
 		m_items[i].m_rect = Rect<int>(left, top, right, bottom);
 
@@ -216,7 +250,7 @@ void ListBox::onRender()
 
 	if (bNeedsScrolling) {
 		glColor4f(1,1,1,1);
-		m_scroller.frameRender();
+//		m_scroller.frameRender();
 	}
 }
 

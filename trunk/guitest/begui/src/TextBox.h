@@ -24,6 +24,7 @@
 #include "common.h"
 #include "Component.h"
 #include "EditableText.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -33,10 +34,16 @@ private:
 	EditableText m_text;
 	bool		m_bTextSelectable;
 
+	ResourceManager::ImageRef	m_bg;
+	Rect<int>					m_activeArea, m_resizableArea;
+	Rect<int>					m_textPadding;
+	Color						m_textColor;
+
 public:
 	TextBox();
 
-	virtual void create(int x, int y, int width, int height, bool bEditable=true, bool bMultiline=true);
+	virtual void create(int x, int y, int width, int height, bool bEditable=true, bool bMultiline=true,
+		const std::string &style_name = "std");
 
 	virtual void onUpdate();
 	virtual void onRender();	
@@ -49,6 +56,7 @@ public:
 	bool		isEditable() const					{ return m_text.isEditable(); }
 	bool		isMultiline() const					{ return m_text.isMultiLine(); }
 	std::string	getSelectedText() const;
+	std::string getText() const						{ return m_text.getText(); }
 
 };
 

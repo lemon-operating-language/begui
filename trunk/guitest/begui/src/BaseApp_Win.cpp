@@ -48,7 +48,7 @@ HDC hMemDC = 0;
 LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);	// Declaration For WndProc
 
 BaseApp_Win::BaseApp_Win() : 
-	m_bLayeredWindow(true), 
+	m_bLayeredWindow(false), 
 	m_bOffscreenRendering(false),
 	m_bSyncRendering(true)
 {
