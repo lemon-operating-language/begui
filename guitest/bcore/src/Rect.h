@@ -9,7 +9,7 @@ public:
 	T left, right, top, bottom;
 
 	Rect() { };
-	Rect(const T& _left, const T& _right, const T& _top, const T& _bottom) : left(_left), 
+	Rect(const T& _left, const T& _top, const T& _right, const T& _bottom) : left(_left), 
 							right(_right), top(_top), bottom(_bottom) { }
 	inline T getWidth() const	{ return right - left; }
 	inline T getHeight() const	{ return bottom - top; }
