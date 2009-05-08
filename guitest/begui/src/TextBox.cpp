@@ -26,20 +26,33 @@
 using namespace begui;
 
 TextBox::TextBox() : //m_bEditable(false), m_bMultiline(false),
-	m_bTextSelectable(true)//, m_selStart(0), m_selEnd(0),
-	//m_cursorPos(0),
-	//m_cursorSteps(0)
+	m_bTextSelectable(true),
+	m_textPadding(0,0,0,0),
+	m_textColor(0.1f,0.1f,0.1f)
 {
 }
 
-void TextBox::create(int x, int y, int width, int height, bool bEditable, bool bMultiline)
+void TextBox::create(int x, int y, int width, int height, bool bEditable, bool bMultiline,
+					 const std::string &style_name)
 {
 	m_left = x;
 	m_right = x+width;
 	m_top = y;
 	m_bottom = y+height;
 
-	m_text.create(2,0,width, bMultiline, bEditable);
+	// load the textbox stylesheet
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("TextBox").style(style_name);
+	m_bg = ResourceManager::inst()->loadImage(style.get_img("face"));
+	m_activeArea = style.get_rect("active_area");
+	m_resizableArea = style.get_rect("resizable_area");
+	if (style.hasProp("text_padding"))
+		m_textPadding = style.get_rect("text_padding");
+	if (style.hasProp("text_color"))
+		m_textColor = style.get_c("text_color");
+
+	// create the text object
+	m_text.create(m_textPadding.left, m_textPadding.top, width-m_textPadding.right, bMultiline, bEditable);
+	m_text.setTextColor(m_textColor, (bEditable)?0.9f:0.5f);
 	m_text.setText("aa aaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
 }
 
@@ -60,7 +73,7 @@ void TextBox::onRender()
 	int h = getHeight();
 
 	// render the textbox background
-	glBegin(GL_QUADS);
+	/*glBegin(GL_QUADS);
 		for (int ln=0; ln<=(m_bottom - m_top)/pFont->getLineHeight(); ++ln)
 		{
 			if (m_text.isEditable())
@@ -93,13 +106,20 @@ void TextBox::onRender()
 		glVertex2f(0, h);
 		glVertex2f(0, h);
 		glVertex2f(0, 0);
-	glEnd();
+	glEnd();*/
 
+	// render the background
+	glColor4f(1,1,1,1);
+	Component::drawImageWtBorders(m_bg, -m_activeArea.left, -m_activeArea.top, 
+		getWidth()+m_activeArea.left + (m_bg.m_width-m_activeArea.right), 
+		getHeight()+m_activeArea.top + (m_bg.m_height-m_activeArea.bottom), 
+		m_resizableArea);
+
+	// render the text
 	if (m_text.isEditable())
-		glColor4f(0,0,0,0.5);
+		glColor4f(m_textColor.r*255, m_textColor.g*255, m_textColor.b*255, 0.5f);
 	else
-		glColor4f(0,0,0,0.2);
-
+		glColor4f(m_textColor.r*255, m_textColor.g*255, m_textColor.b*255, 0.2f);
 	m_text.renderString();
 
 	display::unmask();

@@ -24,6 +24,7 @@
 #include "common.h"
 #include "ListBox.h"
 #include "Container.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -32,17 +33,21 @@ class ComboBox : public Container
 protected:
 	ListBox				m_listbox;
 	int					m_curItem;
-	EditableText		m_text;
+	std::string			m_text;
 	bool				m_bEditable;	// text in the text area is editable
 
 	bool				m_bIsOpen;	// true if the list is open
-	int					m_btnW, m_btnH;	// dimensions of the button to extend the list
+
+	ResourceManager::ImageRef	m_face, m_expandIcon;
+	Rect<int>					m_activeArea, m_resizableArea;
+	Color						m_textColor;
+	Vector2i					m_textPos;
 
 public:
 	ComboBox();
 	virtual ~ComboBox();
 
-	virtual void create(int x, int y, int width, int list_height);
+	virtual void create(int x, int y, int width, int list_height, const std::string &style_name = "std");
 
 	// event handlers
 	void handleOnSelect(const Functor1<int> &onSelect);

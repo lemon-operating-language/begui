@@ -25,7 +25,8 @@
 
 using namespace begui;
 
-ComboBox::ComboBox() : m_bIsOpen(false), m_bEditable(false), m_curItem(0)
+ComboBox::ComboBox() : m_bIsOpen(false), m_bEditable(false), m_curItem(0), 
+	m_textPos(0,0), m_textColor(255,255,255)
 {
 }
 
@@ -33,23 +34,43 @@ ComboBox::~ComboBox()
 {
 }
 
-void ComboBox::create(int x, int y, int width, int list_height)
+void ComboBox::create(int x, int y, int width, int list_height, const std::string &style_name)
 {
-	m_btnW = 14;
-	m_btnH = 14;
+	// load the combo box style sheet
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("ComboBox").style(style_name);
+	m_face = ResourceManager::inst()->loadImage(style.get_img("face"));
+	m_expandIcon = ResourceManager::inst()->loadImage(style.get_img("expand_icon"));
+	m_activeArea = style.get_rect("active_area");
+	m_resizableArea = style.get_rect("resizable_area");
+	m_textColor = style.get_c("text_color");
+	if (style.hasProp("text_pos_x"))
+		m_textPos.x = style.get_i("text_pos_x");
+	else
+		m_textPos.x = 0;
+	if (style.hasProp("text_pos_y"))
+		m_textPos.y = style.get_i("text_pos_y");
+	else
+		m_textPos.y = 0;
+	int height;
+	if (style.hasProp("default_height"))
+		height = style.get_i("default_height");
+	else
+		height = m_activeArea.getHeight();
+	
+	// set the component dimensions
 	setPos(x,y);
-	setSize(width, m_btnH);
+	setSize(width, height);
 
-	m_listbox.create(0, m_btnH, width-m_btnW, list_height, ListBox::SINGLE_SELECT, ListBox::STYLE_FLAT);
+	m_listbox.create(0, height+2, width, list_height, ListBox::SINGLE_SELECT, ListBox::STYLE_FLAT);
 	m_listbox.setHighlightOnMouseOver(true);
+	m_listbox.setAutoHeight(true);
 	m_listbox.handleOnItemClick(makeFunctor(*this, &ComboBox::onItemClick));
 	m_bIsOpen = false;
 	m_curItem = 0;
 	
 	Font *pFont = FontManager::getCurFont();
 	ASSERT(pFont);
-	m_text.create(2, m_btnH-pFont->getLineHeight()-3, false, m_bEditable, m_bEditable);
-	m_text.setText("<select>");
+	m_text = "<select>";
 }
 
 void ComboBox::onUpdate()
@@ -61,69 +82,27 @@ void ComboBox::onRender()
 	Font *pFont = FontManager::getCurFont();
 	ASSERT(pFont);
 	int lineHeight = pFont->getLineHeight()+2;
-
-	int w = getWidth()-m_btnW;
-	int h = (m_btnH > lineHeight) ? m_btnH : lineHeight;
-	int bottom = getHeight();
 	
 	glEnable(GL_BLEND);
 
-	int tL = 369;
-	int tT = 2;
-	int tR = tL + 16;
-	int tB = tT + 16;
+	// draw the background
+	Component::drawImageWtBorders(m_face, -m_activeArea.left, -m_activeArea.top,
+		getWidth()+m_activeArea.left + (m_face.m_width-m_activeArea.right), 
+		getHeight()+m_activeArea.top + (m_face.m_height-m_activeArea.bottom), 
+		m_resizableArea);
 
-	// draw background
-	glBegin(GL_QUADS);
-		glColor4f(1,1,1,0.7);
-		glVertex2f(0, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, bottom);
-		glVertex2f(0, bottom);
-		
-		/*glColor4f(0,0,0,0.7);
-		glVertex2f(w+1, 0);
-		glVertex2f(w+1+m_btnW, 0);
-		glVertex2f(w+1+m_btnW, bottom);
-		glVertex2f(w+1, bottom);*/
-	glEnd();
-		
-	// set the texture of a window
-	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
-	pTex->set();
-	glBegin(GL_QUADS);
-		glColor4f(1,1,1,1);
-		glTexCoord2f(tL/512.0, tT/512.0);	glVertex2f(w+1, 0);
-		glTexCoord2f(tR/512.0, tT/512.0);	glVertex2f(w+1+m_btnW, 0);
-		glTexCoord2f(tR/512.0, tB/512.0);	glVertex2f(w+1+m_btnW, bottom);
-		glTexCoord2f(tL/512.0, tB/512.0);	glVertex2f(w+1, bottom);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	// draw a line frame around the list box
-	glColor4f(0,0,0,0.4);
-	glBegin(GL_LINES);
-		glVertex2f(0, 1);
-		glVertex2f(w, 1);
-		glVertex2f(w, 1);
-		glVertex2f(w, bottom);
-		glVertex2f(w, bottom);
-		glVertex2f(0, bottom);
-		glVertex2f(0, bottom);
-		glVertex2f(0, 1);
-	glEnd();
+	// draw the icon
+	Component::drawImage(m_expandIcon, getWidth() - m_expandIcon.m_width - 5,
+		getHeight()/2 - m_expandIcon.m_height/2);
 
-	if (m_bEditable)
-		m_text.setTextColor(Color(0,0,0), 0.4f);
-	else
-		m_text.setTextColor(Color(0.5f,0.5f,0.5f), 0.8f);
-	m_text.renderString();
+	glColor4f(m_textColor.r*255, m_textColor.g*255, m_textColor.b*255, 1.0f);
+	pFont->renderString(m_textPos.x, m_textPos.y, m_text);
 }
 
 bool ComboBox::onMouseDown(int x, int y, int button)
 {
 	// if the expand button was clicked:
-	if (x >= m_right-m_btnW && x<=m_right && y>=m_top && y<=m_top+m_btnH) {
+	if (x>=m_left && x<=m_right && y>=m_top && y<=m_bottom) {
 		if (!m_bIsOpen) {
 			m_bIsOpen = true;
 			addComponent(&m_listbox);
@@ -172,7 +151,8 @@ void ComboBox::onItemClick(int i)
 {
 	// set the new selected item
 	if (i >= 0) {
-		m_text.setText(m_listbox.itemText(i));
+		//m_text.setText(m_listbox.itemText(i));
+		m_text = m_listbox.itemText(i);
 		m_curItem = i;
 	}
 
