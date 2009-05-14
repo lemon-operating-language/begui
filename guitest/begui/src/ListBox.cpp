@@ -29,7 +29,8 @@ ListBox::ListBox() :
 	m_curItem(0), m_prevItem(-1), m_selectMode(MULTI_SELECT), m_style(STYLE_FLAT),
 	m_bHighlightMouseOver(false), m_mouseOverItem(-1),
 	m_textColor(0,0,0),
-	m_contentPadding(0,0,0,0)
+	m_contentPadding(0,0,0,0),
+	m_scrollBarPadding(0,0,0,0)
 {
 }
 
@@ -55,10 +56,15 @@ void ListBox::create(int x, int y, int width, int height, SelectionMode selMode,
 		m_textColor = style.get_c("text_color");
 	if (style.hasProp("padding"))
 		m_contentPadding = style.get_rect("padding");
+	if (style.hasProp("scrollbar_padding"))
+		m_scrollBarPadding = style.get_rect("scrollbar_padding");
 
 //	m_scroller.create(width-ScrollBar::SCROLL_WIDTH, 0, height, ScrollBar::SCROLL_VERTICAL);
-	m_scroller.create(width, 0, height, ScrollBar::SCROLL_VERTICAL);
-	m_scroller.setPos(width-m_scroller.getWidth(),0);
+	m_scroller.create(width, m_scrollBarPadding.top, 
+		height-m_scrollBarPadding.top-m_scrollBarPadding.bottom, 
+		ScrollBar::SCROLL_VERTICAL);
+	m_scroller.setPos(width-m_scroller.getWidth()-m_scrollBarPadding.right, 
+		m_scroller.getTop());
 }
 
 void ListBox::onUpdate()
@@ -94,7 +100,9 @@ void ListBox::onRender()
 	bool bNeedsScrolling = (content_height > getHeight());
 	int content_y_offs = 0;
 	if (bNeedsScrolling) {
-		m_scroller.setBounds(0, m_items.size()-getHeight()/lineHeight, (double)getHeight()/(content_height));
+		m_scroller.setBounds(0, 
+			m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/lineHeight, 
+			(double)(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/(content_height));
 		content_y_offs = -(int)(m_scroller.getScrollPos()*lineHeight);
 	}
 
@@ -108,7 +116,9 @@ void ListBox::onRender()
 		m_resizableArea);
 	
 	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
-	display::maskRect(wpos.x-1, wpos.y, getWidth()+2-((bNeedsScrolling)? m_scroller.getWidth() : 0), getHeight()+1);
+	display::maskRect(wpos.x-1, wpos.y+m_contentPadding.top, 
+		getWidth()+2-((bNeedsScrolling)? m_scroller.getWidth() : 0), 
+		getHeight()-m_contentPadding.bottom-m_contentPadding.top+1);
 
 	int w = getWidth()-((bNeedsScrolling)? m_scroller.getWidth()+1 : 0);
 	int h = getHeight();
@@ -250,7 +260,7 @@ void ListBox::onRender()
 
 	if (bNeedsScrolling) {
 		glColor4f(1,1,1,1);
-//		m_scroller.frameRender();
+		m_scroller.frameRender();
 	}
 }
 

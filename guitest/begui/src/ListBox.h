@@ -71,6 +71,7 @@ protected:
 	Rect<int>					m_activeArea, m_resizableArea;
 	Rect<int>					m_selectionActiveArea, m_selectionResizableArea;
 	Rect<int>					m_contentPadding;
+	Rect<int>					m_scrollBarPadding;
 	Color						m_textColor;
 	bool						m_bAutoHeight;
 	int							m_maxHeight;

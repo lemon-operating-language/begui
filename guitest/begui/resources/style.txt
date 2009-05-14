@@ -19,56 +19,27 @@ class Button {
 	}
 	
 	style scroller_btn_down {
-		image face_up = 30,134,61,166, widgets2.png
-		int default_height = 25 #31
-		int default_width = 25 #32
-		int padding_left = 4
-		int padding_top = 4
-		int padding_right = 4
-		int padding_bottom = 3
-		rect resizable_area = 0,0,0,0
+		image face_up = 144,76,163,96, gui2_widgets.png
+		rect active_area = 2,2,16,18
+		rect resizable_area = 10,10,11,11
 	}
 	style scroller_btn_up {
-		image face_up = 30,166,61,198, widgets2.png
-		int default_height = 25 #31
-		int default_width = 25 #32
-		int padding_left = 4
-		int padding_top = 4
-		int padding_right = 4
-		int padding_bottom = 3
-		rect resizable_area = 0,0,0,0
+		image face_up = 144,53,163,73, gui2_widgets.png
+		rect active_area = 2,2,16,18
+		rect resizable_area = 10,10,11,11
 	}
 	style scroller_btn_left {
 		image face_up = 30,198,61,230, widgets2.png
-		int default_height = 25 #31
-		int default_width = 25 #32
-		int padding_left = 4
-		int padding_top = 4
-		int padding_right = 4
-		int padding_bottom = 3
 		rect resizable_area = 0,0,0,0
 	}
 	style scroller_btn_right {
 		image face_up = 30,231,61,263, widgets2.png
-		int default_height = 31
-		int default_width = 32
-		int padding_left = 4
-		int padding_top = 4
-		int padding_right = 4
-		int padding_bottom = 3
 		rect resizable_area = 0,0,0,0
 	}
 	style scroller_slider {
-		image face_up = 0,131,31,197, widgets2.png
-		int default_height = 67
-		int default_width = 32
-		int padding_left = 1
-		int padding_top = 4
-		int padding_right = 1
-		int padding_bottom = 4
-		int reszTop = 10
-		int reszBottom = 51
-		rect resizable_area = 0,0,0,0
+		image face_up = 144,1,163,51, gui2_widgets.png
+		rect active_area = 3,1,16,42
+		rect resizable_area = 5,5,12,39
 	}
 	
 	# Styles of the standard buttons for a main window caption
@@ -103,7 +74,7 @@ class ScrollBar {
 	style std_old {
 	}
 	style std {
-		image bg = 1,198,15,355, widgets2.png
+		image bg = 168,2,181,129, gui2_widgets.png
 	}
 }
 
@@ -156,12 +127,14 @@ class ListBox {
 		rect active_area = 0,0,118,158
 		rect resizable_area = 8,8,109,149
 		rect padding = 15,4,15,4
+		rect scrollbar_padding = 0, 14, 14, 14	#padding between the edges of the scrollbar and the edges of the listbox. Left is not used
 	}
 	style std_shadow {
 		image face = 184,0,311,169, gui2_widgets.png
 		rect active_area = 4,1,122,159
 		rect resizable_area = 12,9,113,150
 		rect padding = 5,4,5,4
+		rect scrollbar_padding = 0, 10, 10, 10	#padding between the edges of the scrollbar and the edges of the listbox. Left is not used
 	}
 }
 
@@ -209,5 +182,23 @@ class Slider {
 		image label_bg = 344,183,407,198, gui2_widgets.png
 		rect label_active_area = 19,0,63,15
 		rect label_resizable_area = 25,3,54,12
+	}
+}
+
+class GroupBox {
+	style std_neat {
+		image bg = 1,342,152,510, gui2_widgets.png
+		rect resizable_area = 7,7,137,155
+		rect active_area = 0,0,151,161
+	}
+	style std_3d {
+		image bg = 309,332,466,511, gui2_widgets.png
+		rect resizable_area = 10,9,146,162
+		rect active_area = 3,2,154,170
+	}
+	style std {
+		image bg = 154,341,307,511, gui2_widgets.png
+		rect resizable_area = 8,8,138,156
+		rect active_area = 0,0,153,163
 	}
 }

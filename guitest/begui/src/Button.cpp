@@ -77,7 +77,7 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 	else {
 		if (style.hasProp("default_width"))
 			m_right = x+style.get_i("default_width");
-		else
+		else if (title.length() > 0)
 		{
 			m_bAutoSzX = true;
 			int cw = 40 + Font::stringLength(title) + m_iconSzX;
@@ -85,6 +85,8 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 				cw = 80;
 			m_right = x + cw;
 		}
+		else
+			m_right = x+m_faces[UP].m_width;
 	}
 
 	if (h > 0) {
@@ -92,9 +94,14 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 		m_bottom = y+h;
 	}
 	else {
-		m_bAutoSzY = true;
-		int default_height = style.get_i("default_height");
-		m_bottom = y+default_height;
+		if (style.hasProp("default_height"))
+		{
+			m_bAutoSzY = true;
+			int default_height = style.get_i("default_height");
+			m_bottom = y+default_height;
+		}
+		else
+			m_bottom = y+m_faces[UP].m_height;
 	}
 }
 
@@ -239,4 +246,11 @@ void Button::setFace(State state, const ResourceManager::ImageRef &img)
 void Button::setResizableArea(const Rect<int> &resizable_area)
 {
 	m_resizableArea = resizable_area;
+}
+
+Rect<int> Button::getActiveArea() const
+{
+	return Rect<int>(getLeft() + m_activeArea.left, getTop() + m_activeArea.top,
+		getRight() - (m_faces[UP].m_width-m_activeArea.right),
+		getBottom() - (m_faces[UP].m_height-m_activeArea.bottom));
 }
