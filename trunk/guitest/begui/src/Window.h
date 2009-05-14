@@ -23,36 +23,100 @@
 
 #include "common.h"
 #include "Container.h"
+#include "ResourceManager.h"
+#include "Button.h"
 
 namespace begui {
+	
+class Menu;
 
 class Window : public Container
 {
-private:
-	std::string				m_title;
+public:
+	enum Style {
+		MULTIPLE,				// a frame window with multiple childern
+	//	MULTIPLE_TRANSPARENT,	// transparent main window (mac-style)
+		SINGLE,					// a frame window containing controls only
+		TOOLBOX
+	};
+	enum State {
+		VISIBLE,
+		MINIMIZED,
+		MAXIMIZED,
+		FULLSCREEN
+	};
+	enum Event {
+		MINIMIZE,
+		MAXIMIZE,
+		RESTORE,
+		CLOSE
+	};
 
-	bool			m_bResizing;
-	bool			m_bMoving;
+protected:
+	std::string		m_title;
+	Style			m_style;	// the style of the frame window (single/multiple doc)
+	Menu			*m_pMenu;
 	bool			m_bResizable;
 	bool			m_bMovable;
-	bool			m_bLButtonDown;
+	bool			m_bHasBorders;
+	bool			m_bHasCaption;
+
+	ResourceManager::ImageRef	m_windowFace, m_captionFace;
+	Rect<int>	m_windowActiveArea, m_captionActiveArea;
+	Rect<int>	m_windowResizableArea, m_captionResizableArea;
+	Button		m_closeBtn, m_minBtn, m_maxBtn;
+	int			m_captionTextYPos;
+	int			m_captionBarWidth;
+	Color		m_captionTextColor;
+	int			m_captionTextPadLeft;
+	Rect<int>	m_clientArea;
+	Rect<int>	m_borderSize;
+
+	Container	m_contents;
+	
+	// window current state
+	State			m_state;
+	bool			m_bResizing;
+	bool			m_bMoving;
 
 public:
 	Window();
 	virtual ~Window();
 
-	void create(int left, int top, int width, int height, const std::string &title);
+	virtual void create(int left, int top, int width, int height, const std::string &title, 
+						const std::string &style_name = "std");
+	virtual void addComponent(Component* pC)	{ m_contents.addComponent(pC); }
 
-	void setMovable(bool bMovable)		{ m_bMovable = bMovable; }
-	void setResizable(bool bResizable)	{ m_bResizable = bResizable; }
+	virtual void setMovable(bool bMovable)		{ m_bMovable = bMovable; }
+	virtual void setResizable(bool bResizable)	{ m_bResizable = bResizable; }
+	virtual void setStyle(Style style)			{ m_style = style; }
+	virtual void setClientAreaSize(int w, int h);
 	
 	virtual void onCreate() { };
+	virtual void frameUpdate();
+	virtual void frameRender();
 	virtual void onRender();
 
-	virtual void onMouseDownEx(int x, int y);
-	virtual void onMouseMoveEx(int x, int y, int prevx, int prevy);
-	virtual void onMouseUpEx(int x, int y);
+	virtual void minimize();
+	virtual void maximize();
+	virtual void restore();
+
+	virtual bool onMouseDown(int x, int y, int button);
+	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
+	virtual bool onMouseUp(int x, int y, int button);
 	virtual bool isPtInside(int x, int y);
+
+	//
+	virtual Menu*		createMainMenu();
+	inline Menu&		getMenu()				{ return *m_pMenu; }
+	inline Rect<int>	getClientArea() const	{ return m_clientArea; }
+	inline Style		getStyle() const		{ return m_style; }
+	inline State		getState() const		{ return m_state; }
+
+protected:
+	virtual void	onCaptionBtn(int id);
+
+	virtual void	calcClientArea();
 };
 
 };

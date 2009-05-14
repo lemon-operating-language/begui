@@ -32,45 +32,26 @@ class BaseApp_Win
 private:
 	static BaseApp_Win	*m_pInst;
 
-	bool	m_bLayeredWindow;
-	bool	m_bOffscreenRendering;
 	bool	m_bSyncRendering;
-	RenderPass m_frameRenderPass;
 
 public:
-	int run(const std::string &title, size_t width, size_t height, 
-			FrameWindow::Style frame_style=FrameWindow::MULTIPLE);
+	virtual bool initialize(const std::string &title, size_t width, size_t height, 
+						Window::Style frame_style=Window::MULTIPLE);
+	virtual int run();
 	void setSynchronousRendering(bool bSyncRendering)	{ m_bSyncRendering = bSyncRendering; }
-
-	void minimizeApp();
-	void maximizeApp();
-	void restoreApp();
 
 	static BaseApp_Win* inst()	{ if (!m_pInst) m_pInst = new BaseApp_Win(); return m_pInst; }
 
-	LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-	HWND		getHWND();
-	HINSTANCE	getHINSTANCE();
+	// overridables
+	virtual bool onCreate() { return true; }
 
 protected:
 	BaseApp_Win();
 	virtual ~BaseApp_Win();
-
-	bool coreInitialize();
-	bool createGLWindow(const char* title, int width, int height, int bits, bool fullscreenflag,
-						FrameWindow::Style wnd_style);
-	void killGLWindow();
-	//void setLayeredWindow(bool bLayered)				{ m_bLayeredWindow = bLayered; }
 	
-	virtual bool initialize();
 	virtual void resize(int width, int height);
 	virtual void updateFrame();
 	virtual void renderFrame();
-
-	bool setupOffscreenPass(int width, int height);
-
-	virtual void handleWindowEvent(FrameWindow::Event evt);
 };
 
 };

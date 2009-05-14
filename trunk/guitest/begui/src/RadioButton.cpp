@@ -27,11 +27,13 @@
 using namespace begui;
 
 RadioButton::RadioButton() : m_state(RadioButton::NOT_SELECTED), m_pCallback(0), m_bHover(false),
-	m_id(-1), m_bIsRadio(true)
+	m_id(-1), m_bIsRadio(true),
+	m_activeArea(0,0,0,0)
 {
 }
 
-void RadioButton::create(int x, int y, const std::string &title, int id, void (*callback)(int), bool bIsRadio)
+void RadioButton::create(int x, int y, const std::string &title, int id, void (*callback)(int), 
+						 const std::string &style_name, bool bIsRadio)
 {
 	m_title = title;
 	m_state = RadioButton::NOT_SELECTED;
@@ -39,10 +41,20 @@ void RadioButton::create(int x, int y, const std::string &title, int id, void (*
 	m_id = id;
 	m_bHover = false;
 
-	m_left = x;
-	m_right = x + 18 + Font::stringLength(title);
-	m_top = y;
-	m_bottom = y+18;
+	// load style
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("RadioButton").style(style_name);
+	ASSERT(style.hasProp("face_up"));
+	m_faces[SELECTED] = ResourceManager::inst()->loadImage(style.get_img("face_up"));
+	ASSERT(style.hasProp("face_down"));
+	m_faces[NOT_SELECTED] = ResourceManager::inst()->loadImage(style.get_img("face_down"));
+	if (style.hasProp("active_area"))
+		m_activeArea = style.get_rect("active_area");
+	else
+		m_activeArea = Rect<int>(0,0,m_faces[SELECTED].m_width, m_faces[SELECTED].m_height);
+
+	setPos(x,y);
+	m_right = x + m_faces[SELECTED].m_width/2 + Font::stringLength(title);
+	m_bottom = y + m_faces[SELECTED].m_height;
 	m_bIsRadio = bIsRadio;
 }
 
@@ -52,44 +64,17 @@ void RadioButton::onUpdate()
 
 void RadioButton::onRender()
 {
-	// set the texture of a window
-	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
-	pTex->set();
-	
+	ResourceManager::ImageRef &img = m_faces[m_state];
+	ASSERT(img.m_texture);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// find the position
-	int tL=444;
-	switch (m_state)
-	{
-	case RadioButton::SELECTED: tL = 444; break;
-	case RadioButton::NOT_SELECTED: tL = 426; break;
-	case RadioButton::INACTIVE: tL = 462; break;
-	}
-	int tR = tL+18;
-	int tT = 3;
-	int tB=tT+18;
-
-	// render the icon
 	glColor4f(1,1,1,1);
-	if (m_bHover && m_state != RadioButton::INACTIVE)
-		glColor4f(1,1,1,0.8);
-	glBegin(GL_QUADS);
-		glTexCoord2f(tL/512.0, tT/512.0);	glVertex3f(0, 0, 0);
-		glTexCoord2f(tR/512.0, tT/512.0);	glVertex3f(18, 0, 0);
-		glTexCoord2f(tR/512.0, tB/512.0);	glVertex3f(18, 18, 0);
-		glTexCoord2f(tL/512.0, tB/512.0);	glVertex3f(0, 18, 0);
-	glEnd();
-		
-	glDisable(GL_BLEND);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	Component::drawImage(img, -m_activeArea.left, -m_activeArea.top);
 
 	// render the text
-	glColor3f(0.3,0.3,0.3);
+	glColor4f(0.3f,0.3f,0.3f,1);
 	if (m_state == RadioButton::INACTIVE)
-		glColor3f(0.6, 0.6, 0.6);
-	Font::renderString(23, getHeight()-5, m_title);
+		glColor4f(0.6f, 0.6f, 0.6f, 1);
+	Font::renderString(m_activeArea.getWidth() + 6, FontManager::getCurFont()->getLineHeight()-1, m_title);
 }
 
 bool RadioButton::onMouseDown(int x, int y, int button)
@@ -158,9 +143,9 @@ void RadioButton::onKeyUp(int key)
 
 bool RadioButton::isPtInside(int x, int y)
 {
-	if (x<m_left || x>m_left+18)
+	if (x<m_left || x>m_left+m_activeArea.getWidth())
 		return false;
-	if (y<m_top || y>m_top+18)
+	if (y<m_top || y>m_top+m_activeArea.getHeight())
 		return false;
 	return true;
 }

@@ -263,3 +263,19 @@ void Component::drawImageWtBorders(begui::ResourceManager::ImageRef &image, int 
 	
 	glDisable(GL_TEXTURE_2D);
 }
+
+float Component::getHierarchyAlpha() const
+{
+	float alpha = m_alpha;
+	Component *pParent = m_pParent;
+	while (pParent) {
+		alpha = alpha*pParent->m_alpha;
+		pParent = pParent->getParent();
+	}
+	return alpha;
+}
+
+void Component::setAlpha(float alpha)
+{
+	m_alpha = alpha;
+}

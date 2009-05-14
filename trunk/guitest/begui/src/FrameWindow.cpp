@@ -22,24 +22,190 @@
 #include "FrameWindow.h"
 #include "ResourceManager.h"
 #include "Font.h"
+#include "util.h"
+#ifdef _WIN32
+	#include "FrameWindow_Win32.h"
+#endif
 
 using namespace begui;
 
+// static singleton instance
+FrameWindow *FrameWindow::m_pInst = 0;
+
+int g_lastXPos = 0;
+int g_lastYPos = 0;
+
+FrameWindow::FrameWindow()
+{
+	m_options.bOwnDraw = true;
+	m_options.bFullScreen = false;
+	m_options.nColorBits = 16;
+	m_options.nDepthBits = 16;
+	m_options.nStencilBits = 0;
+
+	// default style for a frame window
+	setStyle(Window::MULTIPLE);
+}
+
+FrameWindow::~FrameWindow()
+{
+	free();
+}
+
+FrameWindow* FrameWindow::inst()
+{
+	if (m_pInst)
+		return m_pInst;
+#ifdef _WIN32
+	m_pInst = new FrameWindow_Win32;
+#endif
+	ASSERT(m_pInst);
+	return m_pInst;
+}
+
+void FrameWindow::create(int left, int top, int width, int height, const std::string &title, const Options *opt,
+						 const std::string &style_name)
+{
+	// set the various options for the created window
+	if (opt) {
+		m_options = *opt;
+	}
+	else {
+		m_options.bOwnDraw = true;
+		m_options.bFullScreen = false;
+		m_options.nColorBits = 16;
+		m_options.nDepthBits = 16;
+		m_options.nStencilBits = 0;
+	}
+
+	// create the OpenGL window
+	try {
+		createGLWindow(left, top, width, height, title, m_options);
+	}
+	catch (std::exception e) {
+		Console::error("Failed to create OpenGL window: " + (std::string)e.what() + "\n");
+		return;
+	}
+
+	// only if the window is own-drawn does it have borders and caption
+	m_bHasBorders = m_bHasCaption = m_options.bOwnDraw;
+	m_bMovable = m_options.bOwnDraw;
+
+	Window::create(left, top, width, height, title, style_name);
+}
+
+void FrameWindow::free()
+{
+	// release the OpenGL window
+	freeGLWindow();
+}
+
+void FrameWindow::frameRender()
+{
+	resetViewport();
+
+	Window::frameRender();
+}
+
+void FrameWindow::setPos(int x, int y)
+{
+	Window::setPos(x,y);
+}
+
+void FrameWindow::setSize(int w, int h)
+{
+	Window::setSize(w,h);
+}
+
+void FrameWindow::resetViewport()
+{
+	// Setup and orthogonal, pixel-to-pixel projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(m_left, m_right, m_bottom, m_top, 0.0, 1.0);
+
+	// Setup the viewport
+	if (m_options.bOwnDraw)
+		glViewport(0,0,getWidth(),getHeight());
+	else
+		glViewport(m_left, -m_top, getWidth(), getHeight());
+}
+
+void FrameWindow::showModalDialog(begui::Dialog *dlg)
+{
+}
+
+void FrameWindow::closeModalDialog()
+{
+}
+
+bool FrameWindow::onMouseDown(int x, int y, int button)
+{
+	if (m_options.bOwnDraw) {
+		x += m_left;
+		y += m_top;
+		g_lastXPos = x;
+		g_lastYPos = y;
+	}
+	return Window::onMouseDown(x,y,button);
+}
+
+bool FrameWindow::onMouseMove(int x, int y, int prevx, int prevy)
+{
+	if (m_options.bOwnDraw) {
+		x += m_left;
+		y += m_top;
+		prevx = g_lastXPos;
+		prevy = g_lastYPos;
+		g_lastXPos = x;
+		g_lastYPos = y;
+	}
+	return Window::onMouseMove(x,y,prevx,prevy);
+}
+
+bool FrameWindow::onMouseUp(int x, int y, int button)
+{
+	if (m_options.bOwnDraw) {
+		x += m_left;
+		y += m_top;
+	}
+	return Window::onMouseUp(x,y,button);
+}
+
+void FrameWindow::calcClientArea()
+{
+	if (m_options.bOwnDraw) {
+		Window::calcClientArea();
+	}
+	else {
+		// ISSUE: doesnt take into account the OS's borders, which should be subtracted from the 
+		// width and height. Doesnt matter know, might need to be fixed later though.
+		m_clientArea = Rect<int>(0,0,getWidth(),getHeight());
+	}
+}
+
+
+void FrameWindow::onCaptionBtn(int id)
+{
+	switch (id) {
+		case 101:
+			// close btn
+			//m_onClose(CLOSE);
+			exit(0);
+			break;
+		default:
+			Window::onCaptionBtn(id);
+	}
+}
+
+/*
 // Singleton instance
 FrameWindow *FrameWindow::m_pInstance;
 
 FrameWindow::FrameWindow() : 
 	m_pMenu(0), 
 	m_pModalDialog(0),
-	m_style(MULTIPLE),
 	m_bOwnDraw(true),
-	m_title("untitled"),
-	m_clientArea(0,0,0,0),
-	m_captionTextYPos(0),
-	m_captionBarWidth(100),
-	m_captionTextPadLeft(20),
-	m_borderSize(0,0,0,0),
-	m_state(VISIBLE)
 {
 }
 
@@ -57,53 +223,18 @@ bool FrameWindow::create(int width, int height, const std::string &title, Style 
 	m_title = title;
 	m_style = wnd_style;
 	m_bOwnDraw = bOwnDraw;
-	m_state = VISIBLE;
 
 	m_children.clear();
 
-	// load the window style
-	ResourceManager::Style style = ResourceManager::inst()->getClassDef("FrameWindow").style("std_owndraw");
-	ASSERT(style.hasProp("window_bg"));
-	m_windowFace = ResourceManager::inst()->loadImage(style.get_img("window_bg"));
-	ASSERT(style.hasProp("caption"));
-	m_captionFace = ResourceManager::inst()->loadImage(style.get_img("caption"));
-	ASSERT(style.hasProp("window_resizable_area"));
-	m_windowResizableArea = style.get_rect("window_resizable_area");
-	ASSERT(style.hasProp("caption_resizable_area"));
-	m_captionResizableArea = style.get_rect("caption_resizable_area");
-	ASSERT(style.hasProp("window_active_area"));
-	m_windowActiveArea = style.get_rect("window_active_area");
-	ASSERT(style.hasProp("caption_active_area"));
-	m_captionActiveArea = style.get_rect("caption_active_area");
-	ASSERT(style.hasProp("caption_y_pos"));
-	m_captionTextYPos = style.get_i("caption_y_pos");
-	ASSERT(style.hasProp("caption_text_color"));
-	m_captionTextColor = style.get_c("caption_text_color");
-	if (style.hasProp("border_size"))
-		m_borderSize = style.get_rect("border_size");
-	else
-		m_borderSize = Rect<int>(0,0,0,0);
 	
-	// update client area
-	calcClientArea();
 
-	// create the window caption buttons
-	if (m_bOwnDraw) {
-		m_closeBtn.create(300, 0, "", 101, makeFunctor(*this, &FrameWindow::onCaptionBtn), "std_wnd_close_btn");
-		Container::addComponent(&m_closeBtn);
-		m_maxBtn.create(300, 0, "", 102, makeFunctor(*this, &FrameWindow::onCaptionBtn), "std_wnd_max_btn");
-		Container::addComponent(&m_maxBtn);
-		m_minBtn.create(300, 0, "", 103, makeFunctor(*this, &FrameWindow::onCaptionBtn), "std_wnd_min_btn");
-		Container::addComponent(&m_minBtn);
-	}
+	
 	
 	// create the main menu
 	m_pMenu = new Menu();
 	m_pMenu->createMainMenu();
 	addComponent(m_pMenu);
 
-	// connect to the internal container
-	m_container.setParent(this);
 
 	return true;
 }
@@ -117,63 +248,10 @@ void FrameWindow::resize(int width, int height)
 	calcClientArea();
 }
 
-void FrameWindow::resetViewport()
-{
-	// Setup and orthogonal, pixel-to-pixel projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(m_left, m_right, m_bottom, m_top, 0.0, 1.0);
-
-	// Setup the viewport
-	glViewport(m_left, m_top, getWidth(), getHeight());
-}
-
-void FrameWindow::calcClientArea()
-{
-	if (m_bOwnDraw) {
-		// compute the client area of our window
-		m_clientArea.top = m_captionActiveArea.bottom-m_captionActiveArea.top + m_borderSize.top;
-		m_clientArea.left = m_borderSize.left;
-		m_clientArea.right = getWidth() - m_windowActiveArea.left 
-			- (m_windowFace.m_width - m_windowActiveArea.right)
-			- m_borderSize.right + 1;
-		m_clientArea.bottom = getHeight() - m_windowActiveArea.top - m_borderSize.top - m_borderSize.bottom;
-	}
-	else {
-		// ISSUE: doesnt take into account the OS's borders, which should be subtracted from the 
-		// width and height. Doesnt matter know, might need to be fixed later though.
-		m_clientArea = Rect<int>(0,0,getWidth(),getHeight());
-	}
-}
 
 void FrameWindow::frameUpdate()
 {
-	Container::frameUpdate();
 	
-	// update client area
-	calcClientArea();
-
-	// update the dummy container
-	m_container.setPos(m_clientArea.left, m_clientArea.top);
-	m_container.setSize(m_clientArea.getWidth(), m_clientArea.getHeight());
-	m_container.frameUpdate();
-
-	// update the size of the caption bar
-	if (m_bOwnDraw) {
-		m_captionBarWidth = m_captionFace.m_width;
-		int title_w = FontManager::getCurFont()->stringLength(m_title);
-		if (m_captionBarWidth < title_w + 2*m_captionTextPadLeft)
-			m_captionBarWidth = title_w + 2*m_captionTextPadLeft;
-
-		// update the positions of the buttons
-		m_closeBtn.setPos(m_captionBarWidth - (m_captionFace.m_width - m_captionActiveArea.right)
-						- m_captionActiveArea.left - m_closeBtn.getWidth(), 4);
-		m_maxBtn.setPos(m_captionBarWidth - (m_captionFace.m_width - m_captionActiveArea.right)
-						- m_captionActiveArea.left - m_closeBtn.getWidth() - m_maxBtn.getWidth() +2, 4);
-		m_minBtn.setPos(m_captionBarWidth - (m_captionFace.m_width - m_captionActiveArea.right)
-						- m_captionActiveArea.left - m_closeBtn.getWidth() - m_maxBtn.getWidth() 
-						- m_minBtn.getWidth() +4, 4);
-	}
 }
 
 void FrameWindow::frameRender()
@@ -220,6 +298,13 @@ void FrameWindow::frameRender()
 
 	// render the contents of the window
 	Container::frameRender();
+
+	// setup the translation
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glTranslatef(getLeft(), getTop(), 0.0f);
+
+	// render the contents of the sub-container
 	m_container.frameRender();
 
 	// Render the modal dialog, if any
@@ -238,6 +323,10 @@ void FrameWindow::frameRender()
 
 		m_pModalDialog->frameRender();
 	}
+	
+	// Reset the coordinate system
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 }
 
 void FrameWindow::onRender()
@@ -246,26 +335,52 @@ void FrameWindow::onRender()
 
 bool FrameWindow::onMouseDown(int x, int y, int button)
 {
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+	x = lP.x;
+	y = lP.y;
+
 	if (m_pModalDialog)
 	{
 		m_pModalDialog->onMouseDown(x,y, button);
 		return true;
 	}
+	
 	// if contained controls dont handle the mouse event,
 	// handle it from this control
 	if (!m_container.onMouseDown(x,y,button))
-		return Container::onMouseDown(x,y, button);
-	return false;
+		if (!Container::onMouseDown(x,y, button)) {
+			// check if the caption was clicked
+			if (m_bOwnDraw && button == MOUSE_BUTTON_LEFT && m_captionActiveArea.contains(lP.x,lP.y)) {
+				m_bDragging = true;
+			}
+			return false;
+		}
+	return true;
 }
 
 bool FrameWindow::onMouseMove(int x, int y, int prevx, int prevy)
 {
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+	Vector2i lPp = parentToLocal(Vector2i(prevx,prevy));
+	x = lP.x;
+	y = lP.y;
+	prevx = lPp.x;
+	prevy = lPp.y;
+
 	if (m_pModalDialog)
 	{
 		if (m_pModalDialog->isPtInside(x,y))
 			m_pModalDialog->onMouseMove(x,y,prevx,prevy);
 		return true;
 	}
+	
+	// handle dragging of the window
+	if (m_bDragging && input::isMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+		setPos(getLeft()+(x-prevx), getTop()+(y-prevy));
+		Console::print("new pos = %d, %d\n", getLeft(), getTop());
+		return true;
+	}
+
 	// if contained controls dont handle the mouse event,
 	// handle it from this control
 	if (!m_container.onMouseMove(x,y,prevx,prevy))
@@ -275,11 +390,18 @@ bool FrameWindow::onMouseMove(int x, int y, int prevx, int prevy)
 
 bool FrameWindow::onMouseUp(int x, int y, int button)
 {
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+	x = lP.x;
+	y = lP.y;
+
 	if (m_pModalDialog)
 	{
 		m_pModalDialog->onMouseUp(x,y,button);
 		return true;
 	}
+	
+	m_bDragging = false;
+
 	// if contained controls dont handle the mouse event,
 	// handle it from this control
 	if (!m_container.onMouseUp(x,y,button))
@@ -318,31 +440,6 @@ void FrameWindow::closeModalDialog()
 	m_pModalDialog = 0;
 }
 
-void FrameWindow::onCaptionBtn(int id)
-{
-	switch (id) {
-		case 101:
-			// close btn
-			m_onClose(CLOSE);
-			exit(0);
-			break;
-		case 102:
-			if (m_state == MAXIMIZED) {
-				m_state = VISIBLE;
-				m_onRestore(RESTORE);
-			}
-			else {
-				m_state = MAXIMIZED;
-				m_onMaximize(MAXIMIZE);
-			}
-			break;
-		case 103:
-			m_state = MINIMIZED;
-			m_onMinimize(MINIMIZE);
-			break;
-	}
-}
-
 void FrameWindow::setEventHook(begui::FrameWindow::Event evt, const Functor1<Event> &fun)
 {
 	switch (evt) {
@@ -351,4 +448,4 @@ void FrameWindow::setEventHook(begui::FrameWindow::Event evt, const Functor1<Eve
 		case FrameWindow::RESTORE: m_onRestore = fun; break;
 		case FrameWindow::CLOSE: m_onClose = fun; break;
 	}
-}
+}*/

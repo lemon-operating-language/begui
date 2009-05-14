@@ -61,7 +61,7 @@ void ComboBox::create(int x, int y, int width, int list_height, const std::strin
 	setPos(x,y);
 	setSize(width, height);
 
-	m_listbox.create(0, height+2, width, list_height, ListBox::SINGLE_SELECT, ListBox::STYLE_FLAT);
+	m_listbox.create(0, height+2, width, list_height, ListBox::SINGLE_SELECT, ListBox::STYLE_FLAT, "std_shadow");
 	m_listbox.setHighlightOnMouseOver(true);
 	m_listbox.setAutoHeight(true);
 	m_listbox.handleOnItemClick(makeFunctor(*this, &ComboBox::onItemClick));
@@ -145,6 +145,13 @@ bool ComboBox::isPtInside(int x, int y)
 	if (x<m_left || x>m_right || y<m_top || y>m_bottom)
 		return false;
 	return true;
+}
+
+void ComboBox::onDeactivate()
+{
+	// close the listbox
+	m_bIsOpen = false;
+	remComponent(&m_listbox);
 }
 
 void ComboBox::onItemClick(int i)

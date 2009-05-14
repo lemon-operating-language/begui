@@ -30,7 +30,7 @@ private:
 	static Application	*m_pInst;
 
 public:
-	bool initialize();
+	virtual bool onCreate();
 	void onMenu(int id);
 
 	static Application* inst()	{ if (!m_pInst) m_pInst = new Application(); return m_pInst; }

@@ -54,6 +54,11 @@ void display::maskRect(int x, int y, int w, int h)
 	int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft();
 	int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop();
 
+	if (FrameWindow::inst()->getOptions().bOwnDraw) {
+		x -= FrameWindow::inst()->getLeft();
+		y -= FrameWindow::inst()->getTop();
+	}
+
 	glScissor(x,fh-y-h+1,w,h);
 	glEnable(GL_SCISSOR_TEST);
 

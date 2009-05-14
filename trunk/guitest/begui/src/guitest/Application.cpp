@@ -50,16 +50,16 @@ void ChildWnd1::onCreate()
 	m_combobox.addItem("item 4");
 	m_combobox.disableItem(2);
 	addComponent(&m_combobox);
+
+	// change the size of the window, so that the client area is large
+	// enough to hold the contents
+	setClientAreaSize(420, 380);
 }
 
-bool Application::initialize()
+bool Application::onCreate()
 {
-	// initialize the main window
-	if (!BaseApp_Win::initialize())
-		return false;
-
 	// Get a pointer to the menu of the main window
-	Menu &menu = FrameWindow::inst()->getMenu();
+	Menu &menu = *FrameWindow::inst()->createMainMenu();
 
 	// Create a new drop down menu
 	Menu *pFileMenu = menu.addMenuItem("File", 1, makeFunctor(*this, &Application::onMenu));
@@ -79,7 +79,7 @@ bool Application::initialize()
 	pMenu2->addMenuItem("Item 2", 202, makeFunctor(*this, &Application::onMenu));
 
 	// create a child window
-	m_wnd1.create(30, 50, 420, 400, "test");
+	m_wnd1.create(30, 50, 420, 400, "child window");
 	FrameWindow::inst()->addComponent(&m_wnd1);
 
 	return true;
@@ -93,7 +93,10 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	// Uncomment this line to have a console for text output
 	Console::create();
 
-	return Application::inst()->run("beGUI test", 800, 600, FrameWindow::MULTIPLE);
+	if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE))
+		return false;
+
+	return Application::inst()->run();
 }
 
 void Application::onMenu(int id)

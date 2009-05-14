@@ -109,6 +109,7 @@ void TextBox::onRender()
 	glEnd();*/
 
 	// render the background
+	glEnable(GL_BLEND);
 	glColor4f(1,1,1,1);
 	Component::drawImageWtBorders(m_bg, -m_activeArea.left, -m_activeArea.top, 
 		getWidth()+m_activeArea.left + (m_bg.m_width-m_activeArea.right), 

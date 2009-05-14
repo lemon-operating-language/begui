@@ -49,6 +49,7 @@ public:
 	virtual void onMouseUpEx(int x, int y) { };
 	virtual void onKeyDownEx(int key) { };
 	virtual void onKeyUpEx(int key) { };
+	virtual void onRender() { };
 
 	virtual void frameUpdate();
 	virtual void frameRender();
