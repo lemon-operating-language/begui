@@ -120,9 +120,9 @@ void ScrollBar::onUpdate()
 	if (m_percVisible > 1)
 		m_percVisible = 1;
 	if (m_percVisible > 0)
-		m_sliderLen = runArea * m_percVisible;
+		m_sliderLen = (int)(runArea * m_percVisible);
 	else
-		m_sliderLen = (runArea > 20) ? 20 : 0.8*runArea;
+		m_sliderLen = (int)((runArea > 20) ? 20 : 0.8*runArea);
 
 	//m_sliderLen += m_sliderOffs1-m_sliderOffs2;
 
@@ -130,7 +130,7 @@ void ScrollBar::onUpdate()
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
 		m_slider.setPos(m_slider.getLeft(), 
 			m_decBtn.getActiveArea().bottom -slActBorders.top + 
-			(runArea - m_sliderLen)*(m_curPos-m_minPos)/(m_maxPos-m_minPos));
+			(int)((runArea - m_sliderLen)*(m_curPos-m_minPos)/(m_maxPos-m_minPos)) );
 
 		m_slider.setSize(m_slider.getWidth(), (m_sliderLen - slActBorders.top + slActBorders.bottom));
 	}
@@ -241,50 +241,56 @@ bool ScrollBar::onMouseDown(int x, int y, int button)
 	if (m_curPos > m_maxPos)
 		m_curPos = m_maxPos;*/
 
-	return Container::onMouseDown(x,y,button);
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+	if (m_slider.isPtInside(lP.x,lP.y))
+	{
+		m_sliderDragStart = y;
+		m_sliderDragStartVal = m_curPos;
+		
+		m_slider.getMouseFocus();
+		m_pActiveComponent = &m_slider;
+		m_slider.onMouseDown(lP.x, lP.y, button);
+	}
+	else if (Container::onMouseDown(x,y,button))
+	{
+		return true;
+	}
+	else
+	{
+		// check if background area was clicked
+		
+		m_curPos = (m_maxPos - m_minPos)*(lP.y - m_decBtn.getBottom() - m_sliderLen/2) 
+					/ (m_incBtn.getTop() - m_decBtn.getBottom() - m_sliderLen);
+		if (m_curPos < m_minPos)
+			m_curPos = m_minPos;
+		if (m_curPos > m_maxPos)
+			m_curPos = m_maxPos;
+	}
+	
+	return false;
 }
 
 bool ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
 {
-/*	int w = SCROLL_WIDTH-2;
-	int h = SCROLL_WIDTH-2;
-	
-	x-=m_left;
-	y-=m_top;
-	prevx-=m_left;
-	prevy-=m_top;
-	
-	if (m_sliderDragStart != -1)
+	const int DRAG_MARGIN = 30;	// extra margins on the sides, where the drag is still considered valid
+
+	if (m_sliderDragStart > -1)
 	{
-		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
-		{
-			if (x <= -20 || x > w+20) {
-				m_sliderDragStart = -1;
-				m_curPos = m_sliderDragStartVal;
-				return;
-			}
-
-			m_curPos = m_sliderDragStartVal + (m_maxPos - m_minPos)*(y - m_sliderDragStart)/(getHeight() - 2*h - 4 - m_sliderLen);
-			if (m_curPos < m_minPos)
-				m_curPos = m_minPos;
-			if (m_curPos > m_maxPos)
-				m_curPos = m_maxPos;
+		if (x <= getLeft()-DRAG_MARGIN || x > getRight()+DRAG_MARGIN) {
+			m_curPos = m_sliderDragStartVal;
+			return false;
 		}
-		else
-		{
-			if (y <= -20 || y > h+20) {
-				m_sliderDragStart = -1;
-				m_curPos = m_sliderDragStartVal;
-				return;
-			}
 
-			m_curPos = m_sliderDragStartVal + (m_maxPos - m_minPos)*(x - m_sliderDragStart)/(getWidth() - 2*w - 4 - m_sliderLen);
-			if (m_curPos < m_minPos)
-				m_curPos = m_minPos;
-			if (m_curPos > m_maxPos)
-				m_curPos = m_maxPos;
-		}
-	}*/
+		m_curPos = m_sliderDragStartVal + (m_maxPos - m_minPos)*(y - m_sliderDragStart)
+				/(m_incBtn.getTop() - m_decBtn.getBottom() - m_sliderLen);
+		if (m_curPos < m_minPos)
+			m_curPos = m_minPos;
+		if (m_curPos > m_maxPos)
+			m_curPos = m_maxPos;
+
+		return true;
+	}
+
 	return Container::onMouseMove(x,y,prevx,prevy);
 }
 

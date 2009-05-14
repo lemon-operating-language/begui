@@ -35,6 +35,9 @@ public:
 	
 	LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+	HWND	getHWnd() const			{ return m_hWnd; }
+	HINSTANCE getHInstance() const	{ return m_hInstance; }
+
 protected:
 	FrameWindow_Win32();
 

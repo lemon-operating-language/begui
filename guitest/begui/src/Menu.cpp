@@ -101,7 +101,7 @@ Menu* Menu::addMenuItem(const std::string &title, int id, Functor1<int> &callbac
 	else
 	{
 		int w = Font::stringLength(title);
-		menu->m_left = m_left+5;
+		menu->m_left = 5;//m_left+5;
 		menu->m_right = menu->m_left + w + 10;
 		menu->m_top = 5 + m_bottom + (int)m_menuItems.size()*16;
 		menu->m_bottom = menu->m_top + 13;
@@ -170,13 +170,6 @@ void Menu::onRender()
 
 	if (m_isMainMenu)
 	{
-	/*	glBegin(GL_QUADS);
-			// top-left corner
-			glTexCoord2f(510.0/512, 0);	glVertex3f(0, 0, 0);
-			glTexCoord2f(511.0/512, 0);	glVertex3f(w, 0, 0);
-			glTexCoord2f(511.0/512, 25.0/512);	glVertex3f(w, h, 0);
-			glTexCoord2f(510.0/512, 25.0/512);	glVertex3f(0, h, 0);
-		glEnd();*/
 		Component::drawImageWtBorders(m_menuFace, 0, 0, w, m_menuFace.m_height, m_menuFaceResizableArea);
 	}
 	else
@@ -196,7 +189,8 @@ void Menu::onRender()
 			int wtT = 76;		// top
 			int wtB = 504;		// bottom
 			int offs = 32;	// the size of the border
-			int left = m_left - 12;
+		//	int left = m_left - 12;
+			int left = -12;
 			int top = m_bottom + 3;
 			int right = left + m_contentWidth;
 			int bottom = top + m_contentHeight;
@@ -216,7 +210,7 @@ void Menu::onRender()
 		if (m_itemOpen || !m_isMainMenu)
 			glColor3f(0.9f, 0.5f, 0);
 		else
-			glColor3f(0.6, 0.6, 0.6);
+			glColor3f(0.6f, 0.6f, 0.6f);
 		int hl_right = mi->m_right;
 		if (!m_isMainMenu)
 			hl_right = mi->m_left + m_contentWidth - 40;
@@ -226,10 +220,10 @@ void Menu::onRender()
 			glVertex3f(mi->m_right, mi->m_bottom, 0);
 			glVertex3f(mi->m_left, mi->m_bottom, 0);
 			
-			glColor4f(0.9, 0.5, 0, 1); glVertex3f(mi->m_right, mi->m_top, 0);
-			glColor4f(0.7, 0.4, 0, 1); glVertex3f(hl_right, mi->m_top, 0);
-			glColor4f(0.7, 0.4, 0, 1); glVertex3f(hl_right, mi->m_bottom, 0);
-			glColor4f(0.9, 0.5, 0, 1); glVertex3f(mi->m_right, mi->m_bottom, 0);
+			glColor4f(0.9f, 0.5f, 0, 1); glVertex3f(mi->m_right, mi->m_top, 0);
+			glColor4f(0.7f, 0.4f, 0, 1); glVertex3f(hl_right, mi->m_top, 0);
+			glColor4f(0.7f, 0.4f, 0, 1); glVertex3f(hl_right, mi->m_bottom, 0);
+			glColor4f(0.9f, 0.5f, 0, 1); glVertex3f(mi->m_right, mi->m_bottom, 0);
 		glEnd();
 	}
 	
@@ -241,9 +235,9 @@ void Menu::onRender()
 		// set the text color
 		glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, 1.0f);
 		if (m_menuItems[i]->m_bSeparator)
-			glColor3f(0.6,0.6,0.6);
+			glColor3f(0.6f,0.6f,0.6f);
 		else if (!m_menuItems[i]->isEnabled())
-			glColor3f(0.5, 0.5, 0.5);
+			glColor3f(0.5f, 0.5f, 0.5f);
 		else if (i == m_activeItem)
 			glColor3f(1,1,1);
 

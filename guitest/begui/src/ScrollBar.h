@@ -71,6 +71,8 @@ public:
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 
+	bool isDragging() const		{ return m_sliderDragStart > -1; }
+
 private:
 	void handleClick(int id);
 };

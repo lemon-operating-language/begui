@@ -330,10 +330,10 @@ bool ListBox::onMouseMove(int _x, int _y, int _prevx, int _prevy)
 	int prevx = _prevx-m_left;
 	int prevy = _prevy-m_top;
 
-	if (m_scroller.isPtInside(x, y)) {
-		m_scroller.onMouseMove(x, y, prevx, prevy);
+	// update the scrollbar
+	m_scroller.onMouseMove(x, y, prevx, prevy);
+	if (m_scroller.hasMouseFocus())
 		return true;
-	}
 	
 	// find the item under the mouse cursor
 	if (x>=0 && x<getWidth() && y>=0 && y<getHeight()) {
@@ -355,10 +355,9 @@ bool ListBox::onMouseUp(int x, int y, int button)
 {
 	x -= m_left;
 	y -= m_top;
-	if (m_scroller.isPtInside(x,y)) {
-		m_scroller.onMouseUp(x, y, button);
-		return true;
-	}
+
+	m_scroller.onMouseUp(x, y, button);
+	
 	return false;
 }
 
