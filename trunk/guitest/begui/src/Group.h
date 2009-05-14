@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "Container.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -32,18 +33,21 @@ public:
 	enum Frame {
 		NO_FRAME,
 		SQUARE,
-		ROUNDED
+		CUSTOM
 	};
 
 private:
 	std::string m_title;
 	Frame	m_frameStyle;
-	Color	m_frameColor;
+	Color	m_frameColor, m_textColor;
+	ResourceManager::ImageRef	m_bg;
+	Rect<int>					m_resizableArea, m_activeArea;
 
 public:
 	Group();
 
-	void create(int left, int top, int width, int height, const std::string &title="");
+	// special styles supported: "std_none" for an invisible group box, and "std_rect" for a simple rectangle
+	void create(int left, int top, int width, int height, const std::string &title="", const std::string &style_name="std");
 	virtual void onRender();
 	virtual bool isPtInside(int x, int y);
 };

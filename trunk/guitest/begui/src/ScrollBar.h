@@ -45,15 +45,11 @@ private:
 	double	m_sliderDragStartVal;
 
 	int		m_sliderLen;
+	int		m_barSize;	// the width/height of the bar for a vertical/horizontal bar correspondingly
 
 	const static int STEPS_PER_PAGE = 4;
 
-	int		m_barSize;	// the width/height of the bar for a vertical/horizontal bar correspondingly
-	int		m_buttonWidth, m_buttonHeight;	// the dimensions of the arrow buttons of the scrollbar
-	int		m_sliderWidth;	// the size of the handle
-
 	Button	m_incBtn, m_decBtn, m_slider;
-	int		m_sliderOffs1, m_sliderOffs2;
 	ResourceManager::ImageRef m_barBg;
 
 public:

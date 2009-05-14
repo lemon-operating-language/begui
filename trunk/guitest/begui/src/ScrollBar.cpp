@@ -30,12 +30,7 @@ ScrollBar::ScrollBar() : m_scrollDir(SCROLL_VERTICAL),
 	m_sliderDragStart(-1),
 	m_percVisible(-1),
 	m_sliderLen(20),
-	m_barSize(18),
-	m_buttonWidth(18),
-	m_buttonHeight(18),
-	m_sliderWidth(18),
-	m_sliderOffs1(0),
-	m_sliderOffs2(0)
+	m_barSize(18)
 {
 }
 
@@ -49,16 +44,6 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 	// set the dimensions of the component
 	m_left = x;
 	m_top = y;
-	if (dir == ScrollBar::SCROLL_HORIZONTAL)
-	{
-		m_right = x+length;
-		m_bottom = y+m_barSize;
-	}
-	else
-	{
-		m_right = x+m_barSize;
-		m_bottom = y+length;
-	}
 
 	// set properties
 	m_scrollDir = dir;
@@ -69,6 +54,19 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 	// get the style of the scrollbar
 	ResourceManager::Style barstyle = ResourceManager::inst()->getClassDef("ScrollBar").style(style_name);
 	m_barBg = ResourceManager::inst()->loadImage(barstyle.get_img("bg"));
+	
+	if (dir == ScrollBar::SCROLL_HORIZONTAL)
+	{
+		m_barSize = m_barBg.m_height;
+		m_right = x+length;
+		m_bottom = y+m_barSize;
+	}
+	else
+	{
+		m_barSize = m_barBg.m_width;
+		m_right = x+m_barSize;
+		m_bottom = y+length;
+	}
 
 	// create the buttons
 	if (dir == ScrollBar::SCROLL_HORIZONTAL) {
@@ -84,38 +82,28 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 		m_slider.create(0, 0, "", 103, Functor1<int>(), "scroller_slider");
 	}
 	else {
-		int xCenter = 0;
-		ResourceManager::Style bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_btn_up");
-		m_sliderOffs1 = bstyle.get_i("padding_bottom");
-		m_incBtn.create(-bstyle.get_i("padding_left"), -bstyle.get_i("padding_top"), 
-						"", 101, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_up");
+		m_incBtn.create(0, 0, "", 101, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_down");
+		Rect<int> actBorders = m_incBtn.getActiveBorders();
+		m_incBtn.setPos(-actBorders.left, getHeight()-m_incBtn.getActiveArea().getHeight());
 		
-		// use the top button to define the center of the scroll bar
-		xCenter = bstyle.get_i("default_width")/2 - bstyle.get_i("padding_left");
+		
+		m_decBtn.create(0, 0, "", 102, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_up");
+		actBorders = m_decBtn.getActiveBorders();
+		m_decBtn.setPos(-actBorders.left, -actBorders.top);
+		
+		m_slider.create(0, 0, "", 103, Functor1<int>(), "scroller_slider");
 
-		bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_btn_down");
-		m_sliderOffs2 = -bstyle.get_i("padding_top");
-		m_decBtn.create(-bstyle.get_i("padding_left"), 
-						getHeight()+bstyle.get_i("padding_bottom")-bstyle.get_i("default_height"), 
-						"", 102, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_down");
-		
-		bstyle = ResourceManager::inst()->getClassDef("Button").style("scroller_slider");
-		m_sliderOffs1 += bstyle.get_i("padding_top");
-		m_sliderOffs2 += -bstyle.get_i("padding_bottom");
-		m_slider.create(xCenter-(bstyle.get_i("default_width")/2-bstyle.get_i("padding_left")), 
-						-m_sliderOffs1, 
-						"", 
-						103, 
-						Functor1<int>(), "scroller_slider");
+		int sl_w = m_slider.getActiveArea().getWidth();
+		int btn1_w = m_decBtn.getActiveArea().getWidth();
+		int btn2_w = m_incBtn.getActiveArea().getWidth();
+		int center_x = getWidth()/2;
+		m_slider.setPos(center_x - sl_w/2, m_slider.getTop());
+		m_decBtn.setPos(center_x - btn1_w/2, m_decBtn.getTop());
+		m_incBtn.setPos(center_x - btn2_w/2, m_incBtn.getTop());
 	}
+	addComponent(&m_slider);
 	addComponent(&m_incBtn);
 	addComponent(&m_decBtn);
-	addComponent(&m_slider);
-/*	if (dir == ScrollBar::SCROLL_HORIZONTAL)
-		m_decBtn.create(m_right,y, "", 101, Functor1<int>(), "std");
-	else
-		m_decBtn.create(x,m_bottom, "", 101, Functor1<int>(), "std");
-	m_slider.create(x,y, "", 101, Functor1<int>(), "std");*/
 }
 
 void ScrollBar::onUpdate()
@@ -123,10 +111,10 @@ void ScrollBar::onUpdate()
 	// update the position and size of the slider
 	int runArea = 0;
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
-		runArea = m_decBtn.getBottom() - m_incBtn.getTop();
+		runArea = m_incBtn.getActiveArea().top - m_decBtn.getActiveArea().bottom;
 	}
 	else {
-		runArea = m_decBtn.getRight() - m_incBtn.getLeft();
+		runArea = m_incBtn.getActiveArea().left - m_decBtn.getActiveArea().right;
 	}
 
 	if (m_percVisible > 1)
@@ -136,11 +124,15 @@ void ScrollBar::onUpdate()
 	else
 		m_sliderLen = (runArea > 20) ? 20 : 0.8*runArea;
 
-	m_sliderLen += m_sliderOffs1-m_sliderOffs2;
+	//m_sliderLen += m_sliderOffs1-m_sliderOffs2;
 
+	Rect<int> slActBorders = m_slider.getActiveBorders();
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
-		m_slider.setPos(m_slider.getLeft(), m_incBtn.getBottom() + (runArea - m_sliderLen/2)*m_curPos - m_sliderOffs1);
-		m_slider.setSize(m_slider.getWidth(), m_sliderLen);
+		m_slider.setPos(m_slider.getLeft(), 
+			m_decBtn.getActiveArea().bottom -slActBorders.top + 
+			(runArea - m_sliderLen)*(m_curPos-m_minPos)/(m_maxPos-m_minPos));
+
+		m_slider.setSize(m_slider.getWidth(), (m_sliderLen - slActBorders.top + slActBorders.bottom));
 	}
 	else {
 	}
@@ -150,9 +142,17 @@ void ScrollBar::onUpdate()
 
 void ScrollBar::onRender()
 {
-	Component::drawImage(m_barBg, (m_incBtn.getWidth() - m_barBg.m_width)/2 + m_incBtn.getLeft()+1 , 
-					 m_incBtn.getBottom() - m_incBtn.getHeight()/2, 
-					 m_barBg.m_width, getHeight());
+	//Component::drawImage(m_barBg, (m_incBtn.getWidth() - m_barBg.m_width)/2 + m_incBtn.getLeft()+1 , 
+	//				 m_incBtn.getBottom() - m_incBtn.getHeight()/2, 
+	//				 m_barBg.m_width, getHeight());
+	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
+		int center_x = getWidth()/2;
+		Component::drawImage(m_barBg, 
+			center_x - m_barBg.m_width/2, 
+			m_decBtn.getActiveArea().bottom-3, 
+			0, 
+			m_incBtn.getActiveArea().top-m_decBtn.getActiveArea().bottom+6);
+	}
 }
 	
 bool ScrollBar::onMouseDown(int x, int y, int button)
@@ -378,12 +378,12 @@ void ScrollBar::handleClick(int id)
 		pageStep = (m_maxPos - m_minPos)*m_percVisible;
 
 	switch (id) {
-		case 101:
+		case 102:
 			m_curPos -= pageStep/STEPS_PER_PAGE;
 			if (m_curPos < m_minPos)
 				m_curPos = m_minPos;
 			break;
-		case 102:
+		case 101:
 			m_curPos += pageStep/STEPS_PER_PAGE;
 			if (m_curPos > m_maxPos)
 				m_curPos = m_maxPos;
