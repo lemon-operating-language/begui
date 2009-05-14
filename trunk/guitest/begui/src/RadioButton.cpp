@@ -67,7 +67,10 @@ void RadioButton::onRender()
 	ResourceManager::ImageRef &img = m_faces[m_state];
 	ASSERT(img.m_texture);
 	glEnable(GL_BLEND);
-	glColor4f(1,1,1,1);
+	if (m_bHover)
+		glColor4f(1,1,1,0.7f);
+	else
+		glColor4f(1,1,1,1);
 	Component::drawImage(img, -m_activeArea.left, -m_activeArea.top);
 
 	// render the text

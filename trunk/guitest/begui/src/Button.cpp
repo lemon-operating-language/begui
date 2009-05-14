@@ -254,3 +254,8 @@ Rect<int> Button::getActiveArea() const
 		getRight() - (m_faces[UP].m_width-m_activeArea.right),
 		getBottom() - (m_faces[UP].m_height-m_activeArea.bottom));
 }
+
+bool Button::isPtInside(int x, int y)
+{
+	return getActiveArea().contains(x,y);
+}

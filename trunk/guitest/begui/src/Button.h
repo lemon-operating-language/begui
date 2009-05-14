@@ -88,6 +88,9 @@ public:
 	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
+
+	virtual bool isPtInside(int x, int y);
+
 };
 
 };
