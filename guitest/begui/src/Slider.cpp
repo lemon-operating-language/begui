@@ -37,14 +37,48 @@ Slider::Slider() : m_pCallback(0),
 	m_pBoundValue(0),
 	m_bDispPercentage(false),
 	m_valuePrintFormat("%.2f"),
-	m_bIsEnabled(true)
+	m_bIsEnabled(true),
+	m_sliderTextColor(1,1,1),
+	m_labelTextColor(0.4f,0.4f,0.4f),
+	m_sliderResizableArea(0,0,0,0),
+	m_labelResizableArea(0,0,0,0)
 {
 }
 
-void Slider::create(int x, int y, int width, int id, void (*callback)(int id))
+void Slider::create(int x, int y, int width, int id, void (*callback)(int id),
+					const std::string &style_name)
 {
 	m_pCallback = callback;
 	m_id = id;
+
+	// load the slider style
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("Slider").style(style_name);
+	ASSERT(style.hasProp("slider_bg"));
+	m_sliderBg = ResourceManager::inst()->loadImage(style.get_img("slider_bg"));
+	if (style.hasProp("label_bg"))
+		m_labelBg = ResourceManager::inst()->loadImage(style.get_img("label_bg"));
+	if (style.hasProp("marker"))
+		m_marker = ResourceManager::inst()->loadImage(style.get_img("marker"));
+	if (style.hasProp("slider_resizable_area"))
+		m_sliderResizableArea = style.get_rect("slider_resizable_area");
+	if (style.hasProp("slider_active_area"))
+		m_sliderActiveArea = style.get_rect("slider_active_area");
+	else
+		m_sliderActiveArea = Rect<int>(0,0,m_sliderBg.m_width, m_sliderBg.m_height);
+	if (style.hasProp("label_active_area"))
+		m_labelActiveArea = style.get_rect("label_active_area");
+	else
+		m_labelActiveArea = Rect<int>(0,0,m_sliderBg.m_width, m_sliderBg.m_height);
+	if (style.hasProp("label_resizable_area"))
+		m_labelResizableArea = style.get_rect("label_resizable_area");
+	if (style.hasProp("marker_active_area"))
+		m_markerActiveArea = style.get_rect("marker_active_area");
+	else
+		m_markerActiveArea = Rect<int>(0,0,m_marker.m_width, m_marker.m_height);
+	if (style.hasProp("slider_text_color"))
+		m_sliderTextColor = style.get_c("slider_text_color");
+	if (style.hasProp("label_text_color"))
+		m_labelTextColor = style.get_c("label_text_color");
 
 	m_left = x;
 	m_right = x + width;
@@ -94,9 +128,36 @@ void Slider::onRender()
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+	Font *pFont = FontManager::getCurFont();
+	int text_y = pFont->getLineHeight() - 1;
+	int r_text_x = w - 2;
+	
+	char curValStr[64];
+	sprintf(curValStr, "%.3f", m_curValue);
+
+	// render the label bg
+	glColor4f(1,1,1,1);
+	int label_w = m_labelActiveArea.left + pFont->stringLength(curValStr) + (m_labelBg.m_width - m_labelActiveArea.right) + 8;
+	Component::drawImageWtBorders(m_labelBg, w-m_labelActiveArea.left,
+		-m_labelActiveArea.top,
+		label_w, -1,
+		m_labelResizableArea);
+	
+	// render the current value next to the slider
+	if (m_bShowValue)
+	{
+		glColor4f(m_labelTextColor.r, m_labelTextColor.g, m_labelTextColor.b, 0.8f);
+		Font::renderString(w+3, text_y+1, curValStr);
+	}
 
 	// render the slider
-	if (!m_bIsEnabled)
+	glColor4f(1,1,1,1);
+	Component::drawImageWtBorders(m_sliderBg, -m_sliderActiveArea.left,
+		-m_sliderActiveArea.top, 
+		w+(m_sliderBg.m_width - m_sliderActiveArea.right), 
+		m_sliderBg.m_height, m_sliderResizableArea);
+/*	if (!m_bIsEnabled)
 		glColor4f(1,1,1, 0.5);
 	else
 		glColor4f(1,1,1,1);
@@ -147,11 +208,11 @@ void Slider::onRender()
 		glVertex3f(spos, h-1, 0);
 		glVertex3f(spos, 1, 0);
 	glEnd();
-
+*/
 	// if using steps, draw them
 	if (m_nSteps > 0 && m_bShowSteps)
 	{
-		glColor4f(0.3, 0.3, 0.3, 0.2);
+		glColor4f(0.3f, 0.3f, 0.3f, 0.2f);
 		glBegin(GL_LINES);
 		int steps = m_nSteps;
 		if (steps > 50)
@@ -159,28 +220,28 @@ void Slider::onRender()
 		for (int i=0; i<steps; ++i)
 		{
 			int lx = i*w/steps;
-			glVertex3f(lx, 1, 0);
+			glVertex3f(lx, 2, 0);
 			glVertex3f(lx, h-2, 0);
 		}
 		glEnd();
 	}
 	
 	// render the min/max values
-	glColor4f(0.3, 0.3, 0.3, 0.8);
+	glColor4f(m_sliderTextColor.r, m_sliderTextColor.g, m_sliderTextColor.b, 0.8f);
 	char valStr[64];
 	if (m_bDispPercentage)
 	{
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_min*100);
-		Font::renderString(5, h-3, valStr);
+		Font::renderString(5, text_y, valStr);
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_max*100);
-		Font::renderString(w - Font::stringLength(valStr)-5, h-3, valStr);
+		Font::renderString(r_text_x - Font::stringLength(valStr)-5, text_y, valStr);
 	}
 	else
 	{
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_min);
-		Font::renderString(5, h-3, valStr);
+		Font::renderString(5, text_y, valStr);
 		sprintf(valStr, m_valuePrintFormat.c_str(), m_max);
-		Font::renderString(w - Font::stringLength(valStr)-5, h-3, valStr);
+		Font::renderString(r_text_x - Font::stringLength(valStr)-5, text_y, valStr);
 	}
 	
 	// render the marker
@@ -202,14 +263,6 @@ void Slider::onRender()
 	}
 	
 	glDisable(GL_BLEND);
-	
-	// render the current value next to the slider
-	if (m_bShowValue)
-	{
-		glColor4f(0.3, 0.3, 0.3, 0.8);
-		sprintf(valStr, "%.3f", m_curValue);
-		Font::renderString(w+5, h-3, valStr);
-	}
 }
 
 bool Slider::onMouseDown(int x, int y, int button)

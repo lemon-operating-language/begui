@@ -23,6 +23,7 @@
 
 #include "common.h"
 #include "Component.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -44,10 +45,16 @@ private:
 
 	double		*m_pBoundValue;
 
+	ResourceManager::ImageRef	m_sliderBg, m_labelBg, m_marker;
+	Rect<int>	m_sliderActiveArea, m_sliderResizableArea;
+	Rect<int>	m_markerActiveArea;
+	Rect<int>	m_labelActiveArea, m_labelResizableArea;
+	Color		m_sliderTextColor, m_labelTextColor;
+
 public:
 	Slider();
 
-	void create(int x, int y, int width, int id=0, void (*callback)(int id)=0);
+	void create(int x, int y, int width, int id=0, void (*callback)(int id)=0, const std::string &style_name = "std");
 	void setBounds(double min, double max, double initVal, int nSteps=0);
 
 	void bindValue(double *val);	// create a 'live' variable for the slider's current value

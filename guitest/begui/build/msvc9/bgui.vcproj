@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="bgui"
 	ProjectGUID="{E606B0E9-AB15-4507-B484-C7EEC27FC768}"
 	RootNamespace="bgui"
@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\FrameWindow_Win32.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\Group.cpp"
 				>
 			</File>
@@ -340,6 +344,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\FrameWindow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\FrameWindow_Win32.h"
 				>
 			</File>
 			<File

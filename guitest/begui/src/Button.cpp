@@ -68,7 +68,7 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 	if (style.hasProp("active_area"))
 		m_activeArea = style.get_rect("active_area");
 	else
-		;//m_activeArea = 
+		m_activeArea = Rect<int>(0,0,m_faces[UP].m_width, m_faces[UP].m_height);
 
 	if (w > 0) {
 		m_bAutoSzX = false;

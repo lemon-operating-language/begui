@@ -42,8 +42,13 @@ public:
 	void beginPass();
 	void endPass();
 	
-	Texture* getFrameData()		{ return m_pFrameTexture; }
-	Texture* getDepthData()		{ return m_pDepthTex; }
+	Texture*	getFrameData()			{ return m_pFrameTexture; }
+	Texture*	getDepthData()			{ return m_pDepthTex; }
+	PixelFormat	getPixelFormat() const	{ return m_format; }
+	int			getWidth() const		{ return m_width; }
+	int			getHeight() const		{ return m_height; }
+	bool		isGenMipmapsEnabled() const	{ return m_bGenMipmaps; }
+	bool		isUsingPBuffer() const		{ return m_bUsePBuffer; }
 
 private:
 	void makePBufferCurrent();

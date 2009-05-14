@@ -22,6 +22,7 @@
 #pragma once
 
 #include "common.h"
+#include "../../bcore/src/Vector2i.h"
 
 namespace begui {
 
@@ -77,6 +78,7 @@ namespace input
 	void keyDown(int key);
 	void keyUp(int key);
 	bool isDoubleClick(int mouseButton);
+	Vector2i lastMousePos();
 };
 
 namespace system

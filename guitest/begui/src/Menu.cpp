@@ -147,8 +147,8 @@ void Menu::onUpdate()
 	// to a frame window
 	if (m_isMainMenu && Component::m_pParent) {
 		try {
-			FrameWindow::InternalContainer *pContainer = dynamic_cast<FrameWindow::InternalContainer*>(Component::m_pParent);
-			FrameWindow *pWnd = dynamic_cast<FrameWindow*>(pContainer->getParent());
+			Container *pContainer = dynamic_cast<Container*>(Component::m_pParent);
+			Window *pWnd = dynamic_cast<Window*>(pContainer->getParent());
 
 			if (pWnd) {
 				m_right = m_left + pWnd->getClientArea().getWidth();

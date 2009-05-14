@@ -113,6 +113,8 @@ bool Container::onMouseDown(int x, int y, int button)
 
 		// get the local coordinates inside the child component:
 		m_pActiveComponent->onMouseDown(lP.x, lP.y, button);
+
+		return true;
 	}
 	else
 	{
@@ -128,13 +130,7 @@ bool Container::onMouseMove(int x, int y, int prevx, int prevy)
 	Vector2i lP = parentToLocal(Vector2i(x,y));
 	Vector2i lPrevP = parentToLocal(Vector2i(prevx,prevy));
 
-	if ((m_pActiveComponent && !m_pActiveComponent->hasMouseFocus()) || !m_pActiveComponent)
-	{
-		for (int i=(int)m_children.size()-1; i>=0; --i)
-		{
-			m_children[i]->onMouseMove(lP.x, lP.y, lPrevP.x, lPrevP.y);
-		}
-	}
+	bool bHandled = false;
 
 	// call mouseMove of active component
 	// (without updating the active component)
@@ -144,13 +140,25 @@ bool Container::onMouseMove(int x, int y, int prevx, int prevy)
 		if (m_pActiveComponent->hasMouseFocus())
 		{
 			m_pActiveComponent->onMouseMove(lP.x, lP.y, lPrevP.x, lPrevP.y);
+			bHandled = true;
+			return true;
 		}
 	}
-	else
+
+	// call mousemove for all children (other than the active component)
+	for (int i=(int)m_children.size()-1; i>=0; --i)
 	{
-		// custom handling
-		onMouseMoveEx(x, y, prevx, prevy);
+		if (m_children[i] == m_pActiveComponent && m_pActiveComponent->hasMouseFocus())
+			continue;
+		if (m_children[i]->isPtInside(lP.x, lP.y) || m_children[i]->isPtInside(lPrevP.x, lPrevP.y)) {
+			m_children[i]->onMouseMove(lP.x, lP.y, lPrevP.x, lPrevP.y);
+			bHandled = true;
+		}
 	}
+
+	// custom handling
+	if (!bHandled)
+		onMouseMoveEx(lP.x, lP.y, lPrevP.x, lPrevP.y);
 
 	return false;
 }
@@ -164,11 +172,13 @@ bool Container::onMouseUp(int x, int y, int button)
 	if (m_pActiveComponent)
 	{
 		m_pActiveComponent->onMouseUp(lP.x, lP.y, button);
+		m_pActiveComponent->releaseMouseFocus();
+		return true;
 	}
 	else
 	{
 		// custom handling
-		onMouseUpEx(x, y);
+		onMouseUpEx(lP.x, lP.y);
 	}
 
 	return false;

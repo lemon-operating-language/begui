@@ -63,6 +63,7 @@ public:
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
 	virtual bool isPtInside(int x, int y);
+	virtual void onDeactivate();
 
 	// manage items
 	void		addItem(const std::string &item)	{ m_listbox.addItem(item); }

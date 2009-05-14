@@ -42,6 +42,8 @@ protected:
 	bool	m_bEnabled;
 	bool	m_bFixedZOrder;
 
+	TimeSeries<float>	m_alpha;
+
 public:
 	Component();
 
@@ -61,6 +63,10 @@ public:
 	bool isVisible() const		{ return m_bVisible; }
 	bool isActive() const		{ return m_bActive; }
 	bool isEnabled() const		{ return m_bEnabled; }
+
+	float	getAlpha() const		{ return m_alpha; }
+	void	setAlpha(float alpha);
+	float	getHierarchyAlpha() const;
 
 	bool hasMouseFocus() const	{ return m_bHasMouseFocus; }
 	bool hasKeybFocus() const	{ return m_bHasKeybFocus; }

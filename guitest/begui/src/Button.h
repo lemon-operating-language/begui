@@ -58,7 +58,6 @@ private:
 	ResourceManager::ImageRef	m_icon;
 	int							m_iconSzX, m_iconSzY;
 
-	//int				m_reszLeft, m_reszTop, m_reszRight, m_reszBottom;	// the resizable area
 	IconPlacement	m_iconPlacement;
 	Rect<int>		m_activeArea, m_resizableArea;
 

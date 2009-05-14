@@ -349,6 +349,7 @@ bool ListBox::onMouseUp(int x, int y, int button)
 		m_scroller.onMouseUp(x, y, button);
 		return true;
 	}
+	return false;
 }
 
 void ListBox::onKeyDown(int key)

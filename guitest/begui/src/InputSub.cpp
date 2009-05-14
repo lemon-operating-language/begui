@@ -129,3 +129,8 @@ void input::keyUp(int key)
 {
 	g_keyDown[key] = false;
 }
+
+Vector2i input::lastMousePos()
+{
+	return Vector2i(g_mousePosX, g_mousePosY);
+}

@@ -98,6 +98,7 @@ class Button {
 	}
 }
 
+##############################################################
 class ScrollBar {
 	style std_old {
 	}
@@ -106,11 +107,23 @@ class ScrollBar {
 	}
 }
 
-class FrameWindow {
+##############################################################
+class Window {
 	style std {
-		#not used
+		image window_bg = 0,74,423,511, gui2_wnd_texture.png
+		rect window_active_area = 18,12,401,412			#active area relative to the top left corner of the face
+		rect window_resizable_area = 26,20,393,404		#resizable area relative to the top left corner of the face
+		
+		image caption = 0,25,438,74, gui2_wnd_texture.png
+		rect caption_resizable_area = 23,30,412,30
+		rect caption_active_area = 17,12,419,35
+		int caption_y_pos = 16
+		color caption_text_color = 220,220,220
+		
+		rect border_size = 2,2,2,2	#width of the window border for each of the 4 sides
 	}
-	style std_owndraw {
+	
+	style std_framewnd {
 		image window_bg = 0,74,423,511, gui2_wnd_texture.png
 		rect window_active_area = 18,12,401,412			#active area relative to the top left corner of the face
 		rect window_resizable_area = 26,20,393,404		#resizable area relative to the top left corner of the face
@@ -125,6 +138,7 @@ class FrameWindow {
 	}
 }
 
+##############################################################
 class Menu {
 	style std {
 		image menubar_face = 1,1,56,26, gui2_wnd_texture.png
@@ -133,11 +147,12 @@ class Menu {
 	}
 }
 
+##############################################################
 class ListBox {
 	style std_simple {
 	}
 	style std {
-		image face = 1,1,119,159, gui3_widgets.png
+		image face = 1,1,119,159, gui2_widgets.png
 		rect active_area = 0,0,118,158
 		rect resizable_area = 8,8,109,149
 		rect padding = 15,4,15,4
@@ -171,5 +186,28 @@ class ComboBox {
 		int text_pos_y = 12
 	}
 	style std_small {
+	}
+}
+
+class RadioButton {
+	style std {
+		image face_up = 162,138,181,157, gui2_widgets.png
+		image face_down = 162,158,181,177, gui2_widgets.png
+		rect active_area = 2, 2, 16, 16
+	}
+}
+
+class Slider {
+	style std_old {
+	}
+	style std {
+		image slider_bg = 145,183,333,205, gui2_widgets.png
+		rect slider_active_area = 3,2,181,15
+		rect slider_resizable_area = 8,7,176,8
+		color slider_text_color = 255,255,255
+		color label_text_color = 80,80,80
+		image label_bg = 344,183,407,198, gui2_widgets.png
+		rect label_active_area = 19,0,63,15
+		rect label_resizable_area = 25,3,54,12
 	}
 }
