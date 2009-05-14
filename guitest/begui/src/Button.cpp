@@ -250,9 +250,9 @@ void Button::setResizableArea(const Rect<int> &resizable_area)
 
 Rect<int> Button::getActiveArea() const
 {
-	return Rect<int>(getLeft() + m_activeArea.left, getTop() + m_activeArea.top,
-		getRight() - (m_faces[UP].m_width-m_activeArea.right),
-		getBottom() - (m_faces[UP].m_height-m_activeArea.bottom));
+	return Rect<int>(getLeft(), getTop(),
+		getRight() - (m_faces[UP].m_width-m_activeArea.right) - m_activeArea.left,
+		getBottom() - (m_faces[UP].m_height-m_activeArea.bottom) - m_activeArea.top);
 }
 
 bool Button::isPtInside(int x, int y)

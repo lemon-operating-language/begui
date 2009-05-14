@@ -124,12 +124,10 @@ void ScrollBar::onUpdate()
 	else
 		m_sliderLen = (int)((runArea > 20) ? 20 : 0.8*runArea);
 
-	//m_sliderLen += m_sliderOffs1-m_sliderOffs2;
-
 	Rect<int> slActBorders = m_slider.getActiveBorders();
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
 		m_slider.setPos(m_slider.getLeft(), 
-			m_decBtn.getActiveArea().bottom -slActBorders.top + 
+			m_decBtn.getActiveArea().bottom + 1 +
 			(int)((runArea - m_sliderLen)*(m_curPos-m_minPos)/(m_maxPos-m_minPos)) );
 
 		m_slider.setSize(m_slider.getWidth(), (m_sliderLen - slActBorders.top + slActBorders.bottom));
@@ -142,9 +140,6 @@ void ScrollBar::onUpdate()
 
 void ScrollBar::onRender()
 {
-	//Component::drawImage(m_barBg, (m_incBtn.getWidth() - m_barBg.m_width)/2 + m_incBtn.getLeft()+1 , 
-	//				 m_incBtn.getBottom() - m_incBtn.getHeight()/2, 
-	//				 m_barBg.m_width, getHeight());
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
 		int center_x = getWidth()/2;
 		Component::drawImage(m_barBg, 
@@ -153,103 +148,25 @@ void ScrollBar::onRender()
 			0, 
 			m_incBtn.getActiveArea().top-m_decBtn.getActiveArea().bottom+6);
 	}
+	else
+		ASSERT(0);
 }
 	
 bool ScrollBar::onMouseDown(int x, int y, int button)
 {
-/*	int w = SCROLL_WIDTH-2;
-	int h = SCROLL_WIDTH-2;
-
-	x-=m_left;
-	y-=m_top;
-
-	double sliderPos = (m_curPos-m_minPos)/(m_maxPos - m_minPos);
-	
-	// adding (m_maxPos - m_minPos)*m_percVisible to m_curPos would
-	// take us to the next page of content. Use that.
-	double pageStep = (m_maxPos - m_minPos)/5;
-	if (m_percVisible > 0)
-		pageStep = (m_maxPos - m_minPos)*m_percVisible;
-
-	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL)
-	{
-		if (x <= 0 || x > w)
-			return;
-
-		if (y > 0 && y < h)
-		{
-			// up arrow clicked
-			m_curPos -= pageStep/STEPS_PER_PAGE;
-		}
-		else if (y > getHeight()-h-2 && y < getHeight()-1)
-		{
-			// down arrow clicked
-			m_curPos += pageStep/STEPS_PER_PAGE;
-		}
-		else if (y >= h+2 + (getHeight()-2*h-4-m_sliderLen)*sliderPos &&
-			y <= h+2 + (getHeight()-2*h-4-m_sliderLen)*sliderPos + m_sliderLen)
-		{
-			m_sliderDragStart = y;
-			m_sliderDragStartVal = m_curPos;
-		}
-		else
-		{
-			if (y > h+1 && y < getHeight()-h-1)
-			{
-				if (y < h+1+(getHeight()-2*h-2)*sliderPos)
-					m_curPos -= pageStep;
-				else
-					m_curPos += pageStep;
-			}
-		}
-	}
-	else if (m_scrollDir == ScrollBar::SCROLL_HORIZONTAL)
-	{
-		if (y <= 0 || y > h)
-			return;
-
-		if (x > 0 && x < w)
-		{
-			// left arrow clicked
-			m_curPos -= pageStep/STEPS_PER_PAGE;
-		}
-		else if (x > getWidth()-w-2 && x < getWidth()-1)
-		{
-			// right arrow clicked
-			m_curPos += pageStep/STEPS_PER_PAGE;
-		}
-		else if (x >= w+2 + (getWidth()-2*w-4-m_sliderLen)*sliderPos &&
-			x <= w+2 + (getWidth()-2*w-4-m_sliderLen)*sliderPos + m_sliderLen)
-		{
-			m_sliderDragStart = x;
-			m_sliderDragStartVal = m_curPos;
-		}
-		else
-		{
-			if (x > w+1 && x < getWidth()-w-1)
-			{
-				if (x < w+1+(getWidth()-2*w-2)*sliderPos)
-					m_curPos -= pageStep;
-				else
-					m_curPos += pageStep;
-			}
-		}
-	}
-	
-	if (m_curPos < m_minPos)
-		m_curPos = m_minPos;
-	if (m_curPos > m_maxPos)
-		m_curPos = m_maxPos;*/
-
 	Vector2i lP = parentToLocal(Vector2i(x,y));
 	if (m_slider.isPtInside(lP.x,lP.y))
 	{
-		m_sliderDragStart = y;
-		m_sliderDragStartVal = m_curPos;
-		
-		m_slider.getMouseFocus();
-		m_pActiveComponent = &m_slider;
-		m_slider.onMouseDown(lP.x, lP.y, button);
+		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
+			m_sliderDragStart = y;
+			m_sliderDragStartVal = m_curPos;
+			
+			m_slider.getMouseFocus();
+			m_pActiveComponent = &m_slider;
+			m_slider.onMouseDown(lP.x, lP.y, button);
+		}
+		else
+			ASSERT(0);
 	}
 	else if (Container::onMouseDown(x,y,button))
 	{
@@ -257,10 +174,14 @@ bool ScrollBar::onMouseDown(int x, int y, int button)
 	}
 	else
 	{
-		// check if background area was clicked
-		
-		m_curPos = (m_maxPos - m_minPos)*(lP.y - m_decBtn.getBottom() - m_sliderLen/2) 
-					/ (m_incBtn.getTop() - m_decBtn.getBottom() - m_sliderLen);
+		// background area was clicked
+		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
+			m_curPos = (m_maxPos - m_minPos)*(lP.y - m_decBtn.getBottom() - m_sliderLen/2) 
+						/ (m_incBtn.getTop() - m_decBtn.getBottom() - m_sliderLen);
+		}
+		else
+			ASSERT(0);
+
 		if (m_curPos < m_minPos)
 			m_curPos = m_minPos;
 		if (m_curPos > m_maxPos)
@@ -276,13 +197,18 @@ bool ScrollBar::onMouseMove(int x, int y, int prevx, int prevy)
 
 	if (m_sliderDragStart > -1)
 	{
-		if (x <= getLeft()-DRAG_MARGIN || x > getRight()+DRAG_MARGIN) {
-			m_curPos = m_sliderDragStartVal;
-			return false;
-		}
+		if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
+			if (x <= getLeft()-DRAG_MARGIN || x > getRight()+DRAG_MARGIN) {
+				m_curPos = m_sliderDragStartVal;
+				return false;
+			}
 
-		m_curPos = m_sliderDragStartVal + (m_maxPos - m_minPos)*(y - m_sliderDragStart)
-				/(m_incBtn.getTop() - m_decBtn.getBottom() - m_sliderLen);
+			m_curPos = m_sliderDragStartVal + (m_maxPos - m_minPos)*(y - m_sliderDragStart)
+					/(m_incBtn.getTop() - m_decBtn.getBottom() - m_sliderLen);
+		}
+		else
+			ASSERT(0);
+
 		if (m_curPos < m_minPos)
 			m_curPos = m_minPos;
 		if (m_curPos > m_maxPos)
