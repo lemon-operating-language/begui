@@ -42,6 +42,7 @@ public:
 	virtual int			getChildrenNum() const	{ return (int)m_children.size(); }
 	virtual Component*	getChild(int pos)		{ return m_children[pos]; }
 	virtual void		remComponent(Component *pC);
+	virtual bool		contains(Component *pC);
 
 	// overridables
 	virtual void onMouseDownEx(int x, int y) { };

@@ -59,7 +59,6 @@ void ListBox::create(int x, int y, int width, int height, SelectionMode selMode,
 	if (style.hasProp("scrollbar_padding"))
 		m_scrollBarPadding = style.get_rect("scrollbar_padding");
 
-//	m_scroller.create(width-ScrollBar::SCROLL_WIDTH, 0, height, ScrollBar::SCROLL_VERTICAL);
 	m_scroller.create(width, m_scrollBarPadding.top, 
 		height-m_scrollBarPadding.top-m_scrollBarPadding.bottom, 
 		ScrollBar::SCROLL_VERTICAL);
@@ -69,8 +68,21 @@ void ListBox::create(int x, int y, int width, int height, SelectionMode selMode,
 
 void ListBox::onUpdate()
 {
+	// update the scrollbar bounds
+	int itemHeight = getItemHeight();
+	int content_height = (int)m_items.size()*itemHeight;
+	bool bNeedsScrolling = (content_height > getHeight());
+	if (bNeedsScrolling) {
+		m_scroller.setBounds(0, 
+			m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/itemHeight, 
+			(double)(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/(content_height));
+	}
+
+	// let scrollbar update
 	m_scroller.frameUpdate();
 	
+	// if the listbox AutoHeight option is set, adjust the height to fit
+	// contents (or reach the maximum height)
 	if (m_bAutoHeight) {
 		int content_height = (int)m_items.size()*getItemHeight();
 		int height = content_height + m_contentPadding.top + m_contentPadding.bottom +
@@ -94,15 +106,12 @@ int ListBox::getItemHeight() const
 
 void ListBox::onRender()
 {
+	// get the offset corresponding to the position of the scrollbar
 	int lineHeight = getItemHeight();
-	
 	int content_height = (int)m_items.size()*lineHeight;
 	bool bNeedsScrolling = (content_height > getHeight());
 	int content_y_offs = 0;
 	if (bNeedsScrolling) {
-		m_scroller.setBounds(0, 
-			m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/lineHeight, 
-			(double)(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/(content_height));
 		content_y_offs = -(int)(m_scroller.getScrollPos()*lineHeight);
 	}
 
@@ -409,6 +418,20 @@ void ListBox::onKeyDown(int key)
 				}
 			}
 			break;
+		case KEY_PAGEUP:
+			{
+				m_curItem -= m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/getItemHeight();
+				if (m_curItem < 0)
+					m_curItem = 0;
+				break;
+			}
+		case KEY_PAGEDOWN:
+			{
+				m_curItem += m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/getItemHeight();
+				if (m_curItem >= m_items.size())
+					m_curItem = m_items.size()-1;
+				break;
+			}
 		case ' ':
 			switch (m_selectMode) {
 			case SINGLE_SELECT:
@@ -451,6 +474,10 @@ void ListBox::onKeyDown(int key)
 			}
 			break;
 	}
+	
+	// make the currently active item visible
+	makeItemVisible(m_curItem);
+
 	Component::onKeyDown(key);
 }
 
@@ -485,5 +512,32 @@ void ListBox::deselectAll()
 		if (!m_items[j].m_bEnabled) continue;
 
 		m_items[j].m_bSelected = false;
+	}
+}
+
+void ListBox::makeItemVisible(int item)
+{
+	// sanity check
+	if (item < 0 || item >= (int)m_items.size())
+		return;
+
+	// get the position of the current item
+	int itemHeight = getItemHeight();
+	int curPosTop = itemHeight*item;
+	int curPosBottom = itemHeight*(item+1);
+
+	// get the visible area
+	double nItems = m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/itemHeight;
+	double curScrollPos = (m_scroller.getScrollPos() - m_scroller.getMinPos())/(m_scroller.getMaxPos() - m_scroller.getMinPos());
+	int topVisible = (int)(itemHeight * curScrollPos * nItems);
+	int bottomVisible = topVisible + getHeight()-(m_contentPadding.top + m_contentPadding.bottom);
+
+	// set the scrollbar position
+	if (curPosTop < topVisible)
+		m_scroller.setScrollPos(curPosTop / itemHeight);
+	else if (curPosBottom >= bottomVisible) {
+		double a = nItems;
+		double b = (double)(curPosBottom)/ itemHeight;
+		m_scroller.setScrollPos(b - a);
 	}
 }

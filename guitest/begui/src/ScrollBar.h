@@ -59,9 +59,12 @@ public:
 	virtual void	create(int x, int y, int length, ScrollDir dir, double minPos=0, double maxPos=1,
 							const std::string &style_name="std");
 			void	setScrollPos(double pos);
-			double	getScrollPos() const				{ return m_curPos; }
-			void	setPercVisible(double perc)	{ ASSERT(perc >= 0 && perc <= 1.0); m_percVisible = perc; }
+			void	setPercVisible(double perc)		{ ASSERT(perc >= 0 && perc <= 1.0); m_percVisible = perc; }
 			void	setBounds(double minPos, double maxPos, double percVisible);
+			double	getScrollPos() const			{ return m_curPos; }
+			double	getMinPos() const				{ return m_minPos; }
+			double	getMaxPos() const				{ return m_maxPos; }
+			double	getPercVisible() const			{ return m_percVisible; }
 
 	virtual void onUpdate();
 	virtual void onRender();	

@@ -261,3 +261,14 @@ void Container::remComponent(Component *pC)
 		}
 	}
 }
+
+bool Container::contains(Component *pC)
+{
+	if (!pC) return false;
+	for (size_t i=0; i<m_children.size(); ++i) {
+		if (m_children[i] == pC) {
+			return true;
+		}
+	}
+	return false;
+}
