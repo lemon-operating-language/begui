@@ -65,7 +65,8 @@ protected:
 	bool				m_bHighlightMouseOver;	// highlights the item that is under the mouse cursor
 	int					m_mouseOverItem;	// item under the current position of the mouse cursor
 
-	Functor1<int>		m_onItemClick;	// arg1: the id of the clicked item
+	Functor1<int>		m_onItemSelect;	// arg1: the id of the *LAST* selected item. If multiple selection
+										// is enabled, user has to check which items are actually selected
 
 	ResourceManager::ImageRef	m_bg, m_selection;
 	Rect<int>					m_activeArea, m_resizableArea;
@@ -104,7 +105,7 @@ public:
 	void		disableItem(size_t i)				{ m_items[i].m_bEnabled = false; }
 	void		setHighlightOnMouseOver(bool b)		{ m_bHighlightMouseOver = b; }
 
-	void	handleOnItemClick(Functor1<int> &f)		{ m_onItemClick = f; }
+	void	handleOnItemSelect(Functor1<int> &f)		{ m_onItemSelect = f; }
 
 private:
 	void selectRange(size_t start, size_t end);

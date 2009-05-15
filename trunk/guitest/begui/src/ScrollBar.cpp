@@ -83,19 +83,17 @@ void ScrollBar::create(int x, int y, int length, ScrollDir dir, double minPos, d
 	}
 	else {
 		m_incBtn.create(0, 0, "", 101, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_down");
-		Rect<int> actBorders = m_incBtn.getActiveBorders();
-		m_incBtn.setPos(-actBorders.left, getHeight()-m_incBtn.getActiveArea().getHeight());
+		m_incBtn.setPos(0, getHeight()-m_incBtn.getHeight());
 		
 		
 		m_decBtn.create(0, 0, "", 102, makeFunctor(*this, &ScrollBar::handleClick), "scroller_btn_up");
-		actBorders = m_decBtn.getActiveBorders();
-		m_decBtn.setPos(-actBorders.left, -actBorders.top);
+		m_decBtn.setPos(0, 0);
 		
 		m_slider.create(0, 0, "", 103, Functor1<int>(), "scroller_slider");
 
-		int sl_w = m_slider.getActiveArea().getWidth();
-		int btn1_w = m_decBtn.getActiveArea().getWidth();
-		int btn2_w = m_incBtn.getActiveArea().getWidth();
+		int sl_w = m_slider.getWidth();
+		int btn1_w = m_decBtn.getWidth();
+		int btn2_w = m_incBtn.getWidth();
 		int center_x = getWidth()/2;
 		m_slider.setPos(center_x - sl_w/2, m_slider.getTop());
 		m_decBtn.setPos(center_x - btn1_w/2, m_decBtn.getTop());
@@ -111,10 +109,10 @@ void ScrollBar::onUpdate()
 	// update the position and size of the slider
 	int runArea = 0;
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
-		runArea = m_incBtn.getActiveArea().top - m_decBtn.getActiveArea().bottom;
+		runArea = m_incBtn.getTop() - m_decBtn.getBottom();
 	}
 	else {
-		runArea = m_incBtn.getActiveArea().left - m_decBtn.getActiveArea().right;
+		runArea = m_incBtn.getLeft() - m_decBtn.getRight();
 	}
 
 	if (m_percVisible > 1)
@@ -127,10 +125,10 @@ void ScrollBar::onUpdate()
 	Rect<int> slActBorders = m_slider.getActiveBorders();
 	if (m_scrollDir == ScrollBar::SCROLL_VERTICAL) {
 		m_slider.setPos(m_slider.getLeft(), 
-			m_decBtn.getActiveArea().bottom + 1 +
-			(int)((runArea - m_sliderLen)*(m_curPos-m_minPos)/(m_maxPos-m_minPos)) );
+			m_decBtn.getBottom() + 1 +
+			(int)((runArea - m_sliderLen -2)*(m_curPos-m_minPos)/(m_maxPos-m_minPos)) );
 
-		m_slider.setSize(m_slider.getWidth(), (m_sliderLen - slActBorders.top + slActBorders.bottom));
+		m_slider.setSize(m_slider.getWidth(), m_sliderLen);
 	}
 	else {
 	}
@@ -144,9 +142,9 @@ void ScrollBar::onRender()
 		int center_x = getWidth()/2;
 		Component::drawImage(m_barBg, 
 			center_x - m_barBg.m_width/2, 
-			m_decBtn.getActiveArea().bottom-3, 
+			m_decBtn.getBottom()-3, 
 			0, 
-			m_incBtn.getActiveArea().top-m_decBtn.getActiveArea().bottom+6);
+			m_incBtn.getTop()-m_decBtn.getBottom()+6);
 	}
 	else
 		ASSERT(0);

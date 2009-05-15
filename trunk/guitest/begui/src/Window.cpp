@@ -43,7 +43,10 @@ Window::Window() :
 	m_state(VISIBLE),
 	m_captionTextColor(0,0,0),
 	m_bHasBorders(true),
-	m_bHasCaption(true)
+	m_bHasCaption(true),
+	m_bCanMinimize(false),
+	m_bCanMaximize(false),
+	m_bCanClose(true)
 {
 	setFixedZOrder(false);
 }
@@ -97,13 +100,19 @@ void Window::create(int left, int top, int width, int height, const std::string 
 	
 	// create the window caption buttons
 	if (m_bHasCaption) {
-		m_closeBtn.create(300, 0, "", 101, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_close_btn");
-		Container::addComponent(&m_closeBtn);
+		if (m_bCanClose) {
+			m_closeBtn.create(300, 0, "", 101, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_close_btn");
+			Container::addComponent(&m_closeBtn);
+		}
 		if (m_bResizable) {
-			m_maxBtn.create(300, 0, "", 102, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_max_btn");
-			Container::addComponent(&m_maxBtn);
-			m_minBtn.create(300, 0, "", 103, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_min_btn");
-			Container::addComponent(&m_minBtn);
+			if (m_bCanMaximize) {
+				m_maxBtn.create(300, 0, "", 102, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_max_btn");
+				Container::addComponent(&m_maxBtn);
+			}
+			if (m_bCanMinimize) {
+				m_minBtn.create(300, 0, "", 103, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_min_btn");
+				Container::addComponent(&m_minBtn);
+			}
 		}
 	}
 	
@@ -166,10 +175,11 @@ void Window::frameUpdate()
 		m_captionBarWidth = m_windowActiveArea.getWidth();
 
 	// update the positions of the buttons
-	m_closeBtn.setPos(m_captionBarWidth - m_closeBtn.getWidth(), 4);
-	m_maxBtn.setPos(m_captionBarWidth - m_closeBtn.getWidth() - m_maxBtn.getWidth() +2, 4);
-	m_minBtn.setPos(m_captionBarWidth - m_closeBtn.getWidth() - m_maxBtn.getWidth() 
-					- m_minBtn.getWidth() +4, 4);
+	int cw = m_closeBtn.getWidth();
+	m_closeBtn.setPos(m_captionBarWidth - 3*cw/2, 4);
+	m_maxBtn.setPos(m_captionBarWidth - 3*cw/2 - int(1.2*m_maxBtn.getWidth()), 4);
+	m_minBtn.setPos(m_captionBarWidth - 3*cw/2 - int(1.2*m_maxBtn.getWidth()) 
+		- int(1.2*m_minBtn.getWidth()), 4);
 }
 
 void Window::frameRender()
@@ -216,7 +226,7 @@ void Window::frameRender()
 	// setup the translation
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glTranslatef(getLeft(), getTop(), 0.0f);
+	glTranslatef((float)getLeft(), (float)getTop(), 0.0f);
 
 // TEMP: render the client area frame
 /*glColor4f(1,0,0,1);
@@ -282,6 +292,7 @@ bool Window::onMouseDown(int x, int y, int button)
 	// Start moving.
 	if (lP.x>=0 && lP.x<m_captionBarWidth && lP.y>=0 && lP.y<m_captionActiveArea.getHeight())
 		m_bMoving = true;
+	return true;
 }
 
 bool Window::onMouseMove(int x, int y, int prevx, int prevy)
@@ -333,6 +344,17 @@ bool Window::isPtInside(int x, int y)
 	if (y < m_captionActiveArea.getHeight() && x > m_captionBarWidth)
 		return false;
 	return true;
+}
+
+
+void Window::onKeyDown(int key)
+{
+	m_contents.onKeyDown(key);
+}
+
+void Window::onKeyUp(int key)
+{
+	m_contents.onKeyUp(key);
 }
 
 void Window::onCaptionBtn(int id)

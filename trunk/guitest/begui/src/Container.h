@@ -47,8 +47,8 @@ public:
 	virtual void onMouseDownEx(int x, int y) { };
 	virtual void onMouseMoveEx(int x, int y, int prevx, int prevy) { };
 	virtual void onMouseUpEx(int x, int y) { };
-	virtual void onKeyDownEx(int key) { };
-	virtual void onKeyUpEx(int key) { };
+	virtual void onKeyDown(int key);
+	virtual void onKeyUp(int key);
 	virtual void onRender() { };
 
 	virtual void frameUpdate();
@@ -59,9 +59,6 @@ public:
 	virtual bool onMouseUp(int x, int y, int button);
 
 protected:
-	virtual void onKeyDown(int key);
-	virtual void onKeyUp(int key);
-
 	void bringChildToFront(int id);
 };
 

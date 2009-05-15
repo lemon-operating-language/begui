@@ -81,7 +81,6 @@ public:
 	void	setResizableArea(const Rect<int> &resizable_area);
 	
 	Rect<int>	getActiveBorders() const	{ return Rect<int>(m_activeArea.left, m_activeArea.top, m_faces[UP].m_width-m_activeArea.right, m_faces[UP].m_height-m_activeArea.bottom); }
-	Rect<int>	getActiveArea() const;
 
 	virtual bool onMouseDown(int x, int y, int button);
 	virtual bool onMouseMove(int x, int y, int prevx, int prevy);

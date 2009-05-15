@@ -30,7 +30,7 @@ using namespace begui;
 BaseApp_Win	*BaseApp_Win::m_pInst = NULL;
 
 
-BaseApp_Win::BaseApp_Win() : m_bSyncRendering(true)
+BaseApp_Win::BaseApp_Win()
 {
 }
 
@@ -42,27 +42,33 @@ bool BaseApp_Win::initialize(const std::string &title, size_t width, size_t heig
 {
 	// set the desired options of the new window
 	FrameWindow::Options opt;
+	opt.bOwnDraw = true;
+	opt.bFullScreen = false;
+	opt.nColorBits = 24;
+	opt.nDepthBits = 8;
+	opt.nStencilBits = 0;
 
 	// Create Our OpenGL Window
 	try {
-		FrameWindow::inst()->create(0, 0, width, height, title, 0);
+		FrameWindow::inst()->create(0, 0, (int)width, (int)height, title, &opt);
 	}
 	catch (std::exception &e) {
 		Console::error("Failed to create main window: %s\n", e.what());
 		return false;
 	}
 
+	// use synchronous rendering?
+	FrameWindow::inst()->setSyncRendering(false);
+
 	// do any extra initialization here
 	if (!onCreate())
 		return false;
 
-	return true;
-}
+	// update and render the frame once after creating the window
+	updateFrame();
+	renderFrame();
 
-void BaseApp_Win::resize(int width, int height)
-{
-//	display::setSize(width, height);
-//	FrameWindow::inst()->setSize(width, height);
+	return true;
 }
 
 void BaseApp_Win::updateFrame()
@@ -86,6 +92,10 @@ int BaseApp_Win::run()
 
 	while(!done)									// Loop That Runs While done=FALSE
 	{
+		// if we are not using synchronous rendering, wait for messages
+		if (!FrameWindow::inst()->useSyncRendering())
+			WaitMessage();
+
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
 		{
 			if (msg.message == 0)
@@ -94,7 +104,7 @@ int BaseApp_Win::run()
 				if (FrameWindow::inst()->isActive())				// Program Active?
 				{
 					updateFrame();
-					if (m_bSyncRendering)
+					if (FrameWindow::inst()->useSyncRendering())
 						renderFrame();
 				}
 			}
@@ -107,14 +117,21 @@ int BaseApp_Win::run()
 				TranslateMessage(&msg);				// Translate The Message
 				DispatchMessage(&msg);				// Dispatch The Message
 			}
+
+			// update and render the frame after a message is processed
+			updateFrame();
+			renderFrame();
 		}
 		else										// If There Are No Messages
 		{
-			// Draw The Scene.  Watch for Quit Messages From DrawGLScene()
+			// idle-time rendering. This will be reached only if 
+			// synchronous rendering is used
+			onIdle();
+
 			if (FrameWindow::inst()->isActive())
 			{
 				updateFrame();
-				if (m_bSyncRendering)
+				if (FrameWindow::inst()->useSyncRendering())
 					renderFrame();
 			}
 		}

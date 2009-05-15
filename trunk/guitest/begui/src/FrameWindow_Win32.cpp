@@ -263,6 +263,44 @@ void FrameWindow_Win32::initializeSubsystems()
 
 void FrameWindow_Win32::freeGLWindow()
 {
+	// if in full-screen mode, go back to windowed mode
+	if (m_options.bFullScreen)
+	{
+		ChangeDisplaySettings(NULL,0);
+		ShowCursor(TRUE);
+	}
+
+	// release rendering context
+	if (m_hRC)
+	{
+		if (!wglMakeCurrent(NULL,NULL))
+			Console::error("Release Of DC And RC Failed.\n");
+
+		if (!wglDeleteContext(m_hRC))
+			Console::error("Release Rendering Context Failed.\n");
+		m_hRC = NULL;
+	}
+
+	// release dc
+	if (m_hDC && !ReleaseDC(m_hWnd, m_hDC))
+	{
+		Console::error("Release Device Context Failed.\n");
+		m_hDC = NULL;
+	}
+
+	// destroy window
+	if (m_hWnd && !DestroyWindow(m_hWnd))
+	{
+		Console::error("Could Not Release hWnd.\n");
+		m_hWnd = NULL;
+	}
+
+	// unregister window class
+	if (!UnregisterClass("BeGUIFrameWindow", m_hInstance))
+	{
+		Console::error("Could Not Unregister Class.\n");
+		m_hInstance = NULL;
+	}
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
