@@ -320,3 +320,12 @@ void ScrollBar::handleClick(int id)
 			break;
 	}
 }
+
+void ScrollBar::setScrollPos(double pos)
+{
+	if (pos < m_minPos)
+		pos = m_minPos;
+	if (pos > m_maxPos)
+		pos = m_maxPos;
+	m_curPos = pos;
+}

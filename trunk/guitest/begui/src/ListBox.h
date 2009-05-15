@@ -110,6 +110,7 @@ public:
 private:
 	void selectRange(size_t start, size_t end);
 	void deselectAll();
+	void makeItemVisible(int item);	// scroll the list so that item is visible
 
 	int	getItemHeight() const;
 };
