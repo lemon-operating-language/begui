@@ -32,24 +32,23 @@ class BaseApp_Win
 private:
 	static BaseApp_Win	*m_pInst;
 
-	bool	m_bSyncRendering;
-
 public:
 	virtual bool initialize(const std::string &title, size_t width, size_t height, 
 						Window::Style frame_style=Window::MULTIPLE);
 	virtual int run();
-	void setSynchronousRendering(bool bSyncRendering)	{ m_bSyncRendering = bSyncRendering; }
+	
+	void setSyncRendering(bool bSyncRendering)	{ FrameWindow::inst()->setSyncRendering(bSyncRendering); }
 
 	static BaseApp_Win* inst()	{ if (!m_pInst) m_pInst = new BaseApp_Win(); return m_pInst; }
 
 	// overridables
 	virtual bool onCreate() { return true; }
+	virtual void onIdle()	{ }
 
 protected:
 	BaseApp_Win();
 	virtual ~BaseApp_Win();
 	
-	virtual void resize(int width, int height);
 	virtual void updateFrame();
 	virtual void renderFrame();
 };

@@ -60,6 +60,9 @@ protected:
 	bool			m_bMovable;
 	bool			m_bHasBorders;
 	bool			m_bHasCaption;
+	bool			m_bCanMinimize;
+	bool			m_bCanMaximize;
+	bool			m_bCanClose;
 
 	ResourceManager::ImageRef	m_windowFace, m_captionFace;
 	Rect<int>	m_windowActiveArea, m_captionActiveArea;
@@ -105,6 +108,8 @@ public:
 	virtual bool onMouseMove(int x, int y, int prevx, int prevy);
 	virtual bool onMouseUp(int x, int y, int button);
 	virtual bool isPtInside(int x, int y);
+	virtual void onKeyDown(int key);
+	virtual void onKeyUp(int key);
 
 	//
 	virtual Menu*		createMainMenu();

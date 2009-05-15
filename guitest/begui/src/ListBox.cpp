@@ -123,82 +123,54 @@ void ListBox::onRender()
 	int w = getWidth()-((bNeedsScrolling)? m_scroller.getWidth()+1 : 0);
 	int h = getHeight();
 
-/*	// draw background
-	if (m_style == STYLE_BUTTONS)
-		glColor4f(0,0,0,0.3);
-	else
-		glColor4f(1,1,1,0.7);
-	glBegin(GL_QUADS);
-		glVertex2f(0, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, h);
-		glVertex2f(0, h);
-	glEnd();
-	
-	// draw a line frame around the list box
-	if (m_style == STYLE_BUTTONS)
-		glColor4f(0,0,0,0.8);
-	else
-		glColor4f(0,0,0,0.4);
-	glBegin(GL_LINES);
-		glVertex2f(0, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, h);
-		glVertex2f(w, h);
-		glVertex2f(0, h);
-		glVertex2f(0, h);
-		glVertex2f(0, 0);
-	glEnd();
-*/
 	// draw items
 	for (size_t i=0; i<m_items.size(); ++i)
 	{
-		int top = 2 + (int)i*lineHeight;
-		int bottom = top + lineHeight - 2;
-		int left = 2;
-		int right = w - 2;
+		float top = 2 + (float)i*lineHeight;
+		float bottom = top + lineHeight - 2;
+		float left = 2;
+		float right = (float)w - 2;
 
-		Color textCl(0.2,0.2,0.2);
-		float textAlpha = 0.9;
+		Color textCl(0.2f,0.2f,0.2f);
+		float textAlpha = 0.9f;
 		if (!m_items[i].m_bEnabled)
-			textAlpha = 0.2;
+			textAlpha = 0.2f;
 		Color bgCl(1,1,1);
-		float bgAlpha = 0.8;
+		float bgAlpha = 0.8f;
 
 		switch (m_style) {
 			case STYLE_FLAT:
-				top = (int)i*lineHeight;
+				top = (float)i*lineHeight;
 				bottom = top + lineHeight;
 				left = 0;
-				right = w-1;
+				right = (float)w-1;
 				if (m_items[i].m_bSelected)
-					bgCl = Color(0.5,0.7,1);
+					bgCl = Color(0.5f,0.7f,1);
 				if (i == m_mouseOverItem && m_bHighlightMouseOver)
-					bgCl = Color(0.7,0.85,1);
+					bgCl = Color(0.7f,0.85f,1);
 				break;
 			case STYLE_STRIPES:
-				top = (int)i*lineHeight;
+				top = (float)i*lineHeight;
 				bottom = top + lineHeight;
 				left = 0;
-				right = w-1;
+				right = (float)w-1;
 				if (m_items[i].m_bEnabled && m_items[i].m_bSelected)
-					bgCl = Color(0.5,0.7,1);
+					bgCl = Color(0.5f,0.7f,1);
 				else if (i%2 == 0)
 					bgCl = Color(1,1,1);
 				else
-					bgCl = Color(0.83, 0.90, 0.95);
+					bgCl = Color(0.83f, 0.90f, 0.95f);
 				bgAlpha = 1;
 				break;
 			case STYLE_BUTTONS:
 				if (!m_items[i].m_bEnabled) {
 					bgCl = Color(1,1,1);
-					bgAlpha = 0.2;
+					bgAlpha = 0.2f;
 				}
 				else if (m_items[i].m_bSelected)
-					bgCl = Color(1,0.7,0.2);
+					bgCl = Color(1,0.7f,0.2f);
 				else
-					bgCl = Color(0.5,0.7,1);
+					bgCl = Color(0.5f,0.7f,1);
 				break;
 		}
 
@@ -208,7 +180,7 @@ void ListBox::onRender()
 		left += m_contentPadding.left;
 		right -= m_contentPadding.right;
 
-		m_items[i].m_rect = Rect<int>(left, top, right, bottom);
+		m_items[i].m_rect = Rect<int>((int)left, (int)top, (int)right, (int)bottom);
 
 		// do some culling of invisible items to reduce rendering needs
 		if (bottom < 0)
@@ -231,7 +203,7 @@ void ListBox::onRender()
 		
 		// draw a line frame for the item
 		if (m_style == STYLE_BUTTONS) {
-			glColor4f(0,0,0,0.5);
+			glColor4f(0,0,0,0.5f);
 			glBegin(GL_LINES);
 				glVertex2f(left, top);
 				glVertex2f(right, top);
@@ -245,15 +217,30 @@ void ListBox::onRender()
 		}
 		else if (m_style == STYLE_FLAT && i!=m_items.size()-1) {
 			// draw lines separating the items
-			glColor4f(0.4,0.4,0.4,0.3);
+			glColor4f(0.4f,0.4f,0.4f,0.3f);
 			glBegin(GL_LINES);
 				glVertex2f(right, bottom);
 				glVertex2f(left, bottom);
 			glEnd();
 		}
 
+		// if this is the current item, draw a line frame to indicate that
+		if (i == m_curItem) {
+			glColor4f(0.1f, 0.1f, 0.1f, 0.3f);
+			glBegin(GL_LINES);
+				glVertex2f(left+2, top+2);
+				glVertex2f(right-2, top+2);
+				glVertex2f(right-2, top+2);
+				glVertex2f(right-2, bottom-2);
+				glVertex2f(right-2, bottom-2);
+				glVertex2f(left+2, bottom-2);
+				glVertex2f(left+2, bottom-2);
+				glVertex2f(left+2, top+2);
+			glEnd();
+		}
+
 		glColor4f(textCl.r, textCl.g, textCl.b, textAlpha);
-		Font::renderString(left + 2, bottom-3, m_items[i].m_text.getText());
+		Font::renderString((int)left + 2, (int)bottom-3, m_items[i].m_text.getText());
 	}
 	
 	display::unmask();
@@ -314,7 +301,7 @@ bool ListBox::onMouseDown(int _x, int _y, int button)
 				m_curItem = (int)i;
 
 				// call the event handler for item click
-				m_onItemClick((int)i);
+				m_onItemSelect((int)i);
 				
 				return true;
 			}
@@ -370,6 +357,7 @@ void ListBox::onKeyDown(int key)
 				if (input::isKeyDown(KEY_LSHIFT) || input::isKeyDown(KEY_RSHIFT)) {
 					if (m_prevItem == -1) m_prevItem = m_curItem;
 					selectRange(m_prevItem, m_curItem);
+					m_onItemSelect(m_curItem);
 				}
 				else {
 					if (m_selectMode != MULTI_SELECT_SINGLECLICK &&
@@ -428,6 +416,7 @@ void ListBox::onKeyDown(int key)
 					m_items[j].m_bSelected = false;
 				m_items[m_curItem].m_bSelected = true;
 				m_prevItem = m_curItem;
+				m_onItemSelect(m_curItem);
 				break;
 			case MULTI_SELECT:
 				if (input::isKeyDown(KEY_LCTRL) || input::isKeyDown(KEY_RCTRL)) {
@@ -441,10 +430,12 @@ void ListBox::onKeyDown(int key)
 					m_items[m_curItem].m_bSelected = true;
 					m_prevItem = m_curItem;
 				}
+				m_onItemSelect(m_curItem);
 				break;
 			case MULTI_SELECT_SINGLECLICK:
 				m_items[m_curItem].m_bSelected = !m_items[m_curItem].m_bSelected;
 				m_prevItem = m_curItem;
+				m_onItemSelect(m_curItem);
 				break;
 			}
 			break;
@@ -456,6 +447,7 @@ void ListBox::onKeyDown(int key)
 					if (!m_items[j].m_bEnabled) continue;
 					m_items[j].m_bSelected = true;
 				}
+				m_onItemSelect(0);
 			}
 			break;
 	}

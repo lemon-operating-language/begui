@@ -47,7 +47,7 @@ class Button {
 		image face_up = 60,1,81,22, gui2_wnd_texture.png
 		rect active_area = 3, 3, 18, 18
 		color main_color = 255,255,255
-		rect resizable_area = 0,0,0,0
+		rect resizable_area = 10,10,11,11
 		int default_width = 21
 		int default_height = 21
 	}
@@ -55,7 +55,7 @@ class Button {
 		image face_up = 82,1,103,22, gui2_wnd_texture.png
 		rect active_area = 3, 3, 18, 18
 		color main_color = 255,255,255
-		rect resizable_area = 0,0,0,0
+		rect resizable_area = 10,10,11,11
 		int default_width = 21
 		int default_height = 21
 	}
@@ -63,7 +63,7 @@ class Button {
 		image face_up = 104,1,125,22, gui2_wnd_texture.png
 		rect active_area = 3, 3, 18, 18
 		color main_color = 255,255,255
-		rect resizable_area = 0,0,0,0
+		rect resizable_area = 10,10,11,11
 		int default_width = 21
 		int default_height = 21
 	}

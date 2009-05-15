@@ -37,12 +37,6 @@ int g_lastYPos = 0;
 
 FrameWindow::FrameWindow()
 {
-	m_options.bOwnDraw = true;
-	m_options.bFullScreen = false;
-	m_options.nColorBits = 16;
-	m_options.nDepthBits = 16;
-	m_options.nStencilBits = 0;
-
 	// default style for a frame window
 	setStyle(Window::MULTIPLE);
 }
@@ -90,6 +84,9 @@ void FrameWindow::create(int left, int top, int width, int height, const std::st
 	// only if the window is own-drawn does it have borders and caption
 	m_bHasBorders = m_bHasCaption = m_options.bOwnDraw;
 	m_bMovable = m_options.bOwnDraw;
+
+	m_bCanMinimize = true;
+	m_bCanMaximize = true;
 
 	Window::create(left, top, width, height, title, style_name);
 }

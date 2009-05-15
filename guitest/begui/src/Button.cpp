@@ -70,13 +70,14 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 	else
 		m_activeArea = Rect<int>(0,0,m_faces[UP].m_width, m_faces[UP].m_height);
 
+	Rect<int> borders = getActiveBorders();
 	if (w > 0) {
 		m_bAutoSzX = false;
 		m_right = x + w;
 	}
 	else {
 		if (style.hasProp("default_width"))
-			m_right = x+style.get_i("default_width");
+			m_right = x+style.get_i("default_width")-borders.left-borders.right;
 		else if (title.length() > 0)
 		{
 			m_bAutoSzX = true;
@@ -85,8 +86,12 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 				cw = 80;
 			m_right = x + cw;
 		}
-		else
-			m_right = x+m_faces[UP].m_width;
+		else {
+			if (m_activeArea.getWidth() > 0)
+				m_right = x+m_activeArea.getWidth();
+			else
+				m_right = x+m_faces[UP].m_width;
+		}
 	}
 
 	if (h > 0) {
@@ -97,11 +102,15 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 		if (style.hasProp("default_height"))
 		{
 			m_bAutoSzY = true;
-			int default_height = style.get_i("default_height");
+			int default_height = style.get_i("default_height")-borders.top-borders.bottom;
 			m_bottom = y+default_height;
 		}
-		else
-			m_bottom = y+m_faces[UP].m_height;
+		else {
+			if (m_activeArea.getHeight() > 0)
+				m_bottom = y+m_activeArea.getHeight();
+			else
+				m_bottom = y+m_faces[UP].m_height;
+		}
 	}
 }
 
@@ -142,10 +151,12 @@ void Button::onRender()
 	if (m_status == Button::DOWN && !m_faces[m_status].m_texture)
 		offs = 1.0f;
 
+	Rect<int> actBorders = getActiveBorders();
 	Component::drawImageWtBorders(btn_face, 
-							offs-m_activeArea.left,
-							offs-m_activeArea.top,
-							w-2*offs, h-2*offs,
+							(int)(offs-actBorders.left),
+							(int)(offs-actBorders.top),
+							(int)(w-2*offs + actBorders.left + actBorders.right),
+							(int)(h-2*offs + actBorders.top + actBorders.bottom),
 							m_resizableArea);
 	
 	int centerx = w/2-m_activeArea.left;
@@ -174,7 +185,7 @@ void Button::onRender()
 
 	// render the text
 	if (m_status == Button::INACTIVE)
-		glColor3f(0.3, 0.3, 0.3);
+		glColor3f(0.3f, 0.3f, 0.3f);
 	else
 		glColor3f(1,1,1);
 	Font::renderString(centerx - title_w/2 + iw/2, centery+4, m_title);
@@ -248,14 +259,15 @@ void Button::setResizableArea(const Rect<int> &resizable_area)
 	m_resizableArea = resizable_area;
 }
 
-Rect<int> Button::getActiveArea() const
+/*Rect<int> Button::getActiveArea() const
 {
 	return Rect<int>(getLeft(), getTop(),
 		getRight() - (m_faces[UP].m_width-m_activeArea.right) - m_activeArea.left,
 		getBottom() - (m_faces[UP].m_height-m_activeArea.bottom) - m_activeArea.top);
-}
+}*/
 
 bool Button::isPtInside(int x, int y)
 {
-	return getActiveArea().contains(x,y);
+//	return getActiveArea().contains(x,y);
+	return Component::isPtInside(x,y);
 }

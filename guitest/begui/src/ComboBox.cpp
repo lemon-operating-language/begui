@@ -64,7 +64,7 @@ void ComboBox::create(int x, int y, int width, int list_height, const std::strin
 	m_listbox.create(0, height+2, width, list_height, ListBox::SINGLE_SELECT, ListBox::STYLE_FLAT, "std_shadow");
 	m_listbox.setHighlightOnMouseOver(true);
 	m_listbox.setAutoHeight(true);
-	m_listbox.handleOnItemClick(makeFunctor(*this, &ComboBox::onItemClick));
+	m_listbox.handleOnItemSelect(makeFunctor(*this, &ComboBox::onItemClick));
 	m_bIsOpen = false;
 	m_curItem = 0;
 	
@@ -112,7 +112,16 @@ bool ComboBox::onMouseDown(int x, int y, int button)
 			remComponent(&m_listbox);
 		}
 	}
-	return Container::onMouseDown(x,y,button);
+	bool bHandled = Container::onMouseDown(x,y,button);
+	if (m_bIsOpen) {
+		m_pActiveComponent = &m_listbox;
+		m_listbox.getFocus();
+	}
+	else {
+		m_listbox.releaseFocus();
+		m_pActiveComponent = 0;
+	}
+	return bHandled;
 }
 
 bool ComboBox::onMouseMove(int x, int y, int prevx, int prevy)

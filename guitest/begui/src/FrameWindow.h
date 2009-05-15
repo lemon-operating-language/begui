@@ -153,6 +153,9 @@ public:
 	virtual void setPos(int x, int y);
 	virtual void setSize(int sx, int sy);
 
+	bool	useSyncRendering() const		{ return m_bSyncRendering; }
+	void	setSyncRendering(bool bSync)	{ m_bSyncRendering = bSync; }
+
 	Options	getOptions() const	{ return m_options; }
 
 	virtual void frameRender();
