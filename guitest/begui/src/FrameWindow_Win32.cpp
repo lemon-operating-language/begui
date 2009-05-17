@@ -476,13 +476,21 @@ LRESULT FrameWindow_Win32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 void FrameWindow_Win32::frameRender()
 {
-	int w = display::getWidth();
-	int h = display::getHeight();
+	Rect<int> border = getInactiveBorders();
+
+	int w = display::getWidth() + border.left + border.right;
+	int h = display::getHeight() + border.top + border.bottom;
+
+	static std::vector<unsigned char> data(w*h*4);
+	static std::vector<unsigned char> data2(w*h*4);
 
 	if (m_options.bOwnDraw) {
 		// check if the render buffer has the right size. If not, update
-		if (m_frameRenderPass.getWidth() != w || m_frameRenderPass.getHeight() != h)
+		if (m_frameRenderPass.getWidth() != w || m_frameRenderPass.getHeight() != h) {
 			m_frameRenderPass.setup(m_frameRenderPass.getPixelFormat(), w, h, 0, false);
+			data.resize(w*h*4);
+			data2.resize(w*h*4);
+		}
 
 		m_frameRenderPass.beginPass();
 	}
@@ -494,10 +502,7 @@ void FrameWindow_Win32::frameRender()
 	FrameWindow::frameRender();
 	
 	if (m_options.bOwnDraw) {
-		static std::vector<unsigned char> data(w*h*4);
-		static std::vector<unsigned char> data2(w*h*4);
-
-		glReadPixels(0, 0, display::getWidth(), display::getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
+		glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
 
 		m_frameRenderPass.endPass();
 
@@ -525,7 +530,11 @@ void FrameWindow_Win32::frameRender()
 		SIZE sz = {w, h};
 		POINT ptSrc = {0,0};
 		BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
-		POINT screenPos = {getLeft(), getTop()};
+		POINT screenPos = {getLeft()-border.left, getTop()-border.top};
+		if (m_state == MAXIMIZED) {
+			screenPos.x = -border.left;
+			screenPos.y = -border.top;
+		}
 		
 		if (!UpdateLayeredWindow(m_hWnd, dc, &screenPos, &sz, m_hMemDC, &ptSrc, 0, &blend, ULW_ALPHA))
 			Console::error("UpdateLayeredWindow failed\n");

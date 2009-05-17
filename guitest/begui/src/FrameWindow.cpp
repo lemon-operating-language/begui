@@ -116,16 +116,26 @@ void FrameWindow::setSize(int w, int h)
 
 void FrameWindow::resetViewport()
 {
-	// Setup and orthogonal, pixel-to-pixel projection matrix
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(m_left, m_right, m_bottom, m_top, 0.0, 1.0);
+	if (m_options.bOwnDraw) {
+		Rect<int> border = getInactiveBorders();
 
-	// Setup the viewport
-	if (m_options.bOwnDraw)
-		glViewport(0,0,getWidth(),getHeight());
-	else
+		// Setup and orthogonal, pixel-to-pixel projection matrix
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(m_left, m_right+border.left+border.right, m_bottom+(border.top+border.bottom), m_top, 0.0, 1.0);
+
+		// Setup the viewport
+		glViewport(0,0,getWidth()+border.left+border.right, getHeight()+border.top+border.bottom);
+	}
+	else {
+		// Setup and orthogonal, pixel-to-pixel projection matrix
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(m_left, m_right, m_bottom, m_top, 0.0, 1.0);
+
+		// Setup the viewport
 		glViewport(m_left, -m_top, getWidth(), getHeight());
+	}
 }
 
 void FrameWindow::showModalDialog(begui::Dialog *dlg)
@@ -194,255 +204,3 @@ void FrameWindow::onCaptionBtn(int id)
 			Window::onCaptionBtn(id);
 	}
 }
-
-/*
-// Singleton instance
-FrameWindow *FrameWindow::m_pInstance;
-
-FrameWindow::FrameWindow() : 
-	m_pMenu(0), 
-	m_pModalDialog(0),
-	m_bOwnDraw(true),
-{
-}
-
-FrameWindow::~FrameWindow()
-{
-	SAFE_DELETE(m_pMenu);
-}
-
-bool FrameWindow::create(int width, int height, const std::string &title, Style wnd_style, bool bOwnDraw)
-{
-	m_left = 0;
-	m_top = 0;
-	m_right = width;
-	m_bottom = height;
-	m_title = title;
-	m_style = wnd_style;
-	m_bOwnDraw = bOwnDraw;
-
-	m_children.clear();
-
-	
-
-	
-	
-	// create the main menu
-	m_pMenu = new Menu();
-	m_pMenu->createMainMenu();
-	addComponent(m_pMenu);
-
-
-	return true;
-}
-
-void FrameWindow::resize(int width, int height)
-{
-	m_right = m_left + width;
-	m_bottom = m_top + height;
-	
-	// update client area
-	calcClientArea();
-}
-
-
-void FrameWindow::frameUpdate()
-{
-	
-}
-
-void FrameWindow::frameRender()
-{
-	resetViewport();
-
-	int wnd_top = getTop();
-
-	if (m_bOwnDraw) {
-		wnd_top += m_captionActiveArea.bottom - m_captionActiveArea.top;
-
-		// render the window caption
-		glColor4f(1,1,1,1);
-		Component::drawImageWtBorders(m_captionFace, getLeft() - m_captionActiveArea.left,
-			getTop() - m_captionActiveArea.top,
-			m_captionBarWidth,
-			0,
-			m_captionResizableArea);
-		
-		// render the caption title
-		glColor4f(m_captionTextColor.r, m_captionTextColor.g, m_captionTextColor.b, 1);
-		FontManager::getCurFont()->renderString(getLeft() + m_captionTextPadLeft, getTop() + m_captionTextYPos, m_title);
-	}
-
-	// render the window main area
-	if (m_style == FrameWindow::MULTIPLE)
-		glColor4f(0.5f,0.5f,0.5f,1);
-	else
-		glColor4f(1,1,1,1);
-	if (m_bOwnDraw) {
-		Component::drawImageWtBorders(m_windowFace, getLeft() - m_windowActiveArea.left,
-			wnd_top - m_windowActiveArea.top,
-			getWidth(),// + (m_windowActiveArea.left + m_windowFace.m_width - m_windowActiveArea.right),
-			getHeight() // + (m_windowActiveArea.top + m_windowFace.m_height - m_windowActiveArea.bottom)
-						- (m_captionActiveArea.bottom - m_captionActiveArea.top),
-			m_windowResizableArea);
-	}
-	else {
-		Component::drawImage(m_windowFace, getLeft()-m_windowResizableArea.left,
-			wnd_top - m_windowResizableArea.top,
-			getWidth() + (m_windowResizableArea.left + m_windowFace.m_width - m_windowResizableArea.right),
-			getHeight() + (m_windowResizableArea.top + m_windowFace.m_height - m_windowResizableArea.bottom));
-	}
-
-	// render the contents of the window
-	Container::frameRender();
-
-	// setup the translation
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glTranslatef(getLeft(), getTop(), 0.0f);
-
-	// render the contents of the sub-container
-	m_container.frameRender();
-
-	// Render the modal dialog, if any
-	if (m_pModalDialog)
-	{
-		// Render a blended fs quad to darken the bg
-		glEnable(GL_BLEND);
-		glColor4f(0.3f,0.3f,0.31f,0.6f);
-		glBegin(GL_QUADS);
-			glVertex3f((GLfloat)m_left, (GLfloat)m_top, 0);
-			glVertex3f((GLfloat)m_right, (GLfloat)m_top, 0);
-			glVertex3f((GLfloat)m_right, (GLfloat)m_bottom, 0);
-			glVertex3f((GLfloat)m_left, (GLfloat)m_bottom, 0);
-		glEnd();
-		glDisable(GL_BLEND);
-
-		m_pModalDialog->frameRender();
-	}
-	
-	// Reset the coordinate system
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-}
-
-void FrameWindow::onRender()
-{
-}
-
-bool FrameWindow::onMouseDown(int x, int y, int button)
-{
-	Vector2i lP = parentToLocal(Vector2i(x,y));
-	x = lP.x;
-	y = lP.y;
-
-	if (m_pModalDialog)
-	{
-		m_pModalDialog->onMouseDown(x,y, button);
-		return true;
-	}
-	
-	// if contained controls dont handle the mouse event,
-	// handle it from this control
-	if (!m_container.onMouseDown(x,y,button))
-		if (!Container::onMouseDown(x,y, button)) {
-			// check if the caption was clicked
-			if (m_bOwnDraw && button == MOUSE_BUTTON_LEFT && m_captionActiveArea.contains(lP.x,lP.y)) {
-				m_bDragging = true;
-			}
-			return false;
-		}
-	return true;
-}
-
-bool FrameWindow::onMouseMove(int x, int y, int prevx, int prevy)
-{
-	Vector2i lP = parentToLocal(Vector2i(x,y));
-	Vector2i lPp = parentToLocal(Vector2i(prevx,prevy));
-	x = lP.x;
-	y = lP.y;
-	prevx = lPp.x;
-	prevy = lPp.y;
-
-	if (m_pModalDialog)
-	{
-		if (m_pModalDialog->isPtInside(x,y))
-			m_pModalDialog->onMouseMove(x,y,prevx,prevy);
-		return true;
-	}
-	
-	// handle dragging of the window
-	if (m_bDragging && input::isMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-		setPos(getLeft()+(x-prevx), getTop()+(y-prevy));
-		Console::print("new pos = %d, %d\n", getLeft(), getTop());
-		return true;
-	}
-
-	// if contained controls dont handle the mouse event,
-	// handle it from this control
-	if (!m_container.onMouseMove(x,y,prevx,prevy))
-		return Container::onMouseMove(x,y,prevx,prevy);
-	return false;
-}
-
-bool FrameWindow::onMouseUp(int x, int y, int button)
-{
-	Vector2i lP = parentToLocal(Vector2i(x,y));
-	x = lP.x;
-	y = lP.y;
-
-	if (m_pModalDialog)
-	{
-		m_pModalDialog->onMouseUp(x,y,button);
-		return true;
-	}
-	
-	m_bDragging = false;
-
-	// if contained controls dont handle the mouse event,
-	// handle it from this control
-	if (!m_container.onMouseUp(x,y,button))
-		return Container::onMouseUp(x,y,button);
-	return false;
-}
-
-void FrameWindow::onKeyDown(int key)
-{
-	if (m_pModalDialog)
-	{
-		m_pModalDialog->onKeyDown(key);
-		return;
-	}
-	Container::onKeyDown(key);
-}
-
-void FrameWindow::onKeyUp(int key)
-{
-	if (m_pModalDialog)
-	{
-		m_pModalDialog->onKeyUp(key);
-		return;
-	}
-	Container::onKeyUp(key);
-}
-
-void FrameWindow::showModalDialog(Dialog *dlg)
-{
-	ASSERT(dlg);
-	m_pModalDialog = dlg;
-}
-
-void FrameWindow::closeModalDialog()
-{
-	m_pModalDialog = 0;
-}
-
-void FrameWindow::setEventHook(begui::FrameWindow::Event evt, const Functor1<Event> &fun)
-{
-	switch (evt) {
-		case FrameWindow::MINIMIZE: m_onMinimize = fun; break;
-		case FrameWindow::MAXIMIZE: m_onMaximize = fun; break;
-		case FrameWindow::RESTORE: m_onRestore = fun; break;
-		case FrameWindow::CLOSE: m_onClose = fun; break;
-	}
-}*/

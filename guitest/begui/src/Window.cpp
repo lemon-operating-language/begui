@@ -123,26 +123,36 @@ void Window::create(int left, int top, int width, int height, const std::string 
 	onCreate();
 }
 
+void Window::setSize(int w, int h)
+{
+	Rect<int> border = getInactiveBorders();
+//	Component::setSize(w+border.left+border.right, h+border.top+border.bottom);
+	Component::setSize(w,h);
+}
+
 void Window::calcClientArea()
 {
+	// get borders
+	Rect<int> border = getInactiveBorders();
+
 	// compute the client area of our window
-	m_clientArea.top = (m_bHasCaption ? m_captionActiveArea.getHeight() : 0) + (m_bHasBorders ? m_borderSize.top:0);
-	m_clientArea.left = m_bHasBorders ? m_borderSize.left : 0;
-	m_clientArea.right = getWidth() - m_windowActiveArea.left 
-		- (m_windowFace.m_width - m_windowActiveArea.right)
-		- ((m_bHasBorders)? (m_borderSize.right) : 0) + 1;
-	m_clientArea.bottom = getHeight() - m_windowActiveArea.top - (m_bHasBorders ? (m_borderSize.top + m_borderSize.bottom) : 0)
+	m_clientArea.top = border.top + (m_bHasCaption ? m_captionActiveArea.getHeight() : 0) + (m_bHasBorders ? m_borderSize.top:0);
+	m_clientArea.left = border.left + (m_bHasBorders ? m_borderSize.left : 0);
+	m_clientArea.right = m_clientArea.left + getWidth()
+		- ((m_bHasBorders)? (m_borderSize.right + m_borderSize.left) : 0);
+	m_clientArea.bottom = m_clientArea.top + getHeight()
+		- (m_bHasBorders ? (m_borderSize.top + m_borderSize.bottom) : 0)
 		- (m_bHasCaption ? m_captionActiveArea.getHeight() : 0);
 }
 
 void Window::setClientAreaSize(int cw, int ch)
 {
-	int new_r = cw + m_windowActiveArea.left + (m_windowFace.m_width - m_windowActiveArea.right) 
-				+ (m_bHasBorders ? (m_borderSize.right) : 0) - 1;
-	int new_b = ch + m_windowActiveArea.top 
+	int new_r = cw 
+				+ (m_bHasBorders ? (m_borderSize.right + m_borderSize.left) : 0);
+	int new_b = ch 
 				+ (m_bHasBorders ? (m_borderSize.top + m_borderSize.bottom) : 0) 
 				+ (m_bHasCaption ? m_captionActiveArea.getHeight() : 0);
-	setSize(new_r+m_clientArea.left, new_b+m_clientArea.top);
+	setSize(new_r, new_b);
 }
 
 Menu* Window::createMainMenu()
@@ -161,6 +171,9 @@ void Window::frameUpdate()
 	// update client area
 	calcClientArea();
 
+	// get borders
+	Rect<int> border = getInactiveBorders();
+
 	// update the dummy container
 	m_contents.setPos(m_clientArea.left, m_clientArea.top);
 	m_contents.setSize(m_clientArea.getWidth(), m_clientArea.getHeight());
@@ -176,30 +189,34 @@ void Window::frameUpdate()
 
 	// update the positions of the buttons
 	int cw = m_closeBtn.getWidth();
-	m_closeBtn.setPos(m_captionBarWidth - 3*cw/2, 4);
-	m_maxBtn.setPos(m_captionBarWidth - 3*cw/2 - int(1.2*m_maxBtn.getWidth()), 4);
-	m_minBtn.setPos(m_captionBarWidth - 3*cw/2 - int(1.2*m_maxBtn.getWidth()) 
-		- int(1.2*m_minBtn.getWidth()), 4);
+	m_closeBtn.setPos(border.left + m_captionBarWidth - 3*cw/2, border.top + 4);
+	m_maxBtn.setPos(border.left + m_captionBarWidth - 3*cw/2 - int(1.2*m_maxBtn.getWidth()), border.top + 4);
+	m_minBtn.setPos(border.left + m_captionBarWidth - 3*cw/2 - int(1.2*m_maxBtn.getWidth()) 
+		- int(1.2*m_minBtn.getWidth()), border.top + 4);
 }
 
 void Window::frameRender()
 {
-	int wnd_top = getTop() + ((m_bHasCaption)? m_captionActiveArea.getHeight() : 0);
+	// get borders
+	Rect<int> border = getInactiveBorders();
+
+	int wnd_top = getTop() + border.top + ((m_bHasCaption)? m_captionActiveArea.getHeight() : 0);
 
 	glEnable(GL_BLEND);
 
 	// render the window caption
 	glColor4f(1,1,1,1);
 	if (m_bHasCaption) {
-		Component::drawImageWtBorders(m_captionFace, getLeft() - m_captionActiveArea.left,
-			getTop() - m_captionActiveArea.top,
+		Component::drawImageWtBorders(m_captionFace, border.left + getLeft() - m_captionActiveArea.left,
+			border.top + getTop() - m_captionActiveArea.top,
 			m_captionBarWidth + m_captionActiveArea.left + (m_captionFace.m_width - m_captionActiveArea.right),
 			0,
 			m_captionResizableArea);
 		
 		// render the caption title
 		glColor4f(m_captionTextColor.r, m_captionTextColor.g, m_captionTextColor.b, 1);
-		FontManager::getCurFont()->renderString(getLeft() + m_captionTextPadLeft, getTop() + m_captionTextYPos, m_title);
+		FontManager::getCurFont()->renderString(border.left + getLeft() + m_captionTextPadLeft, 
+												border.top + getTop() + m_captionTextYPos, m_title);
 	}
 
 	// render the window main area
@@ -209,14 +226,15 @@ void Window::frameRender()
 	else
 		glColor4f(1,1,1,alpha);
 	if (m_bHasBorders) {
-		Component::drawImageWtBorders(m_windowFace, getLeft() - m_windowActiveArea.left,
+		Component::drawImageWtBorders(m_windowFace, getLeft()/* - m_windowActiveArea.left*/,
 			wnd_top - m_windowActiveArea.top,
-			getWidth(),
-			getHeight() - ((m_bHasCaption)? m_captionActiveArea.getHeight() : 0),
+			getWidth() + border.left + border.right,
+			getHeight() - ((m_bHasCaption)? m_captionActiveArea.getHeight() : 0)
+				+ border.top + border.bottom,
 			m_windowResizableArea);
 	}
 	else {
-		Component::drawImage(m_windowFace, getLeft()-m_windowResizableArea.left,
+		Component::drawImage(m_windowFace, border.left + getLeft()-m_windowResizableArea.left,
 			wnd_top - m_windowResizableArea.top,
 			getWidth() + (m_windowResizableArea.left + m_windowFace.m_width - m_windowResizableArea.right),
 			getHeight() + (m_windowResizableArea.top + m_windowFace.m_height - m_windowResizableArea.bottom));
@@ -230,8 +248,8 @@ void Window::frameRender()
 	glPushMatrix();
 	glTranslatef((float)getLeft(), (float)getTop(), 0.0f);
 
-// TEMP: render the client area frame
-/*glColor4f(1,0,0,1);
+/*// DEBUG: render the client area frame
+glColor4f(1,0,0,1);
 glBegin(GL_LINES);
 	glVertex2f(m_clientArea.left, m_clientArea.top);
 	glVertex2f(m_clientArea.right, m_clientArea.top);
@@ -248,23 +266,6 @@ glEnd();*/
 
 	// render the contents of the sub-container
 	m_contents.frameRender();
-
-	// Render the modal dialog, if any
-/*	if (m_pModalDialog)
-	{
-		// Render a blended fs quad to darken the bg
-		glEnable(GL_BLEND);
-		glColor4f(0.3f,0.3f,0.31f,0.6f);
-		glBegin(GL_QUADS);
-			glVertex3f((GLfloat)m_left, (GLfloat)m_top, 0);
-			glVertex3f((GLfloat)m_right, (GLfloat)m_top, 0);
-			glVertex3f((GLfloat)m_right, (GLfloat)m_bottom, 0);
-			glVertex3f((GLfloat)m_left, (GLfloat)m_bottom, 0);
-		glEnd();
-		glDisable(GL_BLEND);
-
-		m_pModalDialog->frameRender();
-	}*/
 	
 	// Reset the coordinate system
 	glMatrixMode(GL_MODELVIEW);
@@ -286,13 +287,17 @@ bool Window::onMouseDown(int x, int y, int button)
 	
 	// if we got here, the internal components did not handle the event
 
+
 	// Check if click was on the title bar
 	// Check if click was on the border and the window is resizable
 	//TODO
 
 	// Click was on the empty space, and window is movable.
 	// Start moving.
-	if (lP.x>=0 && lP.x<m_captionBarWidth && lP.y>=0 && lP.y<m_captionActiveArea.getHeight())
+	Rect<int> border = getInactiveBorders();
+	int xx = lP.x - border.left;
+	int yy = lP.y - border.top;
+	if (xx>=0 && xx<m_captionBarWidth && yy>=0 && yy<m_captionActiveArea.getHeight())
 		m_bMoving = true;
 	return true;
 }
@@ -336,14 +341,15 @@ bool Window::isPtInside(int x, int y)
 {
 	// x,y in local coordinates!
 
-	// Check title bar and related gap!
-	//TODO
+	Rect<int> border = getInactiveBorders();
+	int xx = x - border.left;
+	int yy = y - border.top;
 
-	if (x < m_left || x > m_right)
+	if (xx < m_left || xx > m_right)
 		return false;
-	if (y < m_top || y > m_bottom)
+	if (yy < m_top || yy > m_bottom)
 		return false;
-	if (y < m_captionActiveArea.getHeight() && x > m_captionBarWidth)
+	if (yy < m_captionActiveArea.getHeight() && xx > m_captionBarWidth)
 		return false;
 	return true;
 }
@@ -389,4 +395,15 @@ void Window::maximize()
 void Window::restore()
 {
 	m_state = VISIBLE;
+}
+
+Rect<int> Window::getInactiveBorders() const
+{
+	if (m_bHasCaption)
+		return Rect<int>(m_windowActiveArea.left, m_captionActiveArea.top, 
+			m_windowFace.m_width-m_windowActiveArea.right,
+			m_windowFace.m_height-m_windowActiveArea.bottom);
+	return Rect<int>(m_windowActiveArea.left, m_windowActiveArea.top, 
+		m_windowFace.m_width-m_windowActiveArea.right,
+		m_windowFace.m_height-m_windowActiveArea.bottom);
 }

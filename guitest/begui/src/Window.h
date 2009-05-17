@@ -100,6 +100,7 @@ public:
 	virtual void frameRender();
 	virtual void onRender();
 
+	virtual void setSize(int w, int h);
 	virtual void minimize();
 	virtual void maximize();
 	virtual void restore();
@@ -117,6 +118,8 @@ public:
 	inline Rect<int>	getClientArea() const	{ return m_clientArea; }
 	inline Style		getStyle() const		{ return m_style; }
 	inline State		getState() const		{ return m_state; }
+
+	Rect<int> getInactiveBorders() const;
 
 protected:
 	virtual void	onCaptionBtn(int id);

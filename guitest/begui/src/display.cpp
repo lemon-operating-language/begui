@@ -51,8 +51,10 @@ void display::setSize(int w, int h)
 // this rectangle
 void display::maskRect(int x, int y, int w, int h)
 {
-	int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft();
-	int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop();
+	Rect<int> fb = FrameWindow::inst()->getInactiveBorders();
+
+	int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft() + (fb.left+fb.right);
+	int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop() + (fb.top+fb.bottom);
 
 	if (FrameWindow::inst()->getOptions().bOwnDraw) {
 		x -= FrameWindow::inst()->getLeft();
@@ -61,42 +63,6 @@ void display::maskRect(int x, int y, int w, int h)
 
 	glScissor(x,fh-y-h+1,w,h);
 	glEnable(GL_SCISSOR_TEST);
-
-/*	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(0, fh, fh, 0, -1, 10);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_DEPTH_TEST);
-	
-	glEnable(GL_BLEND);
-	glColor4f(0,0,0,0);
-	glBegin(GL_QUADS);
-		glVertex3f(0 , 0 , -1);
-		glVertex3f(fw, 0 , -1);
-		glVertex3f(fw, fh, -1);
-		glVertex3f(0 , fh, -1);
-	glEnd();
-
-	// draw a quad to the depth buffer, at depth 0
-	glBegin(GL_QUADS);
-		glVertex3f(x  ,y  ,100);
-		glVertex3f(x+w,y  ,100);
-		glVertex3f(x+w,y+h,100);
-		glVertex3f(x  ,y+h,100);
-	glEnd();
-	
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_GREATER);*/
 }
 
 // Remove any previous masks. Rendering can be done anywhere
@@ -104,30 +70,4 @@ void display::maskRect(int x, int y, int w, int h)
 void display::unmask()
 {
 	glDisable(GL_SCISSOR_TEST);
-/*
-	int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft();
-	int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop();
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	gluOrtho2D(0, fh, fh, 0);
-	
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glDisable(GL_DEPTH_TEST);
-
-	glBegin(GL_QUADS);
-		glVertex3f(0 , 0 , 100);
-		glVertex3f(fw, 0 , 100);
-		glVertex3f(fw, fh, 100);
-		glVertex3f(0 , fh, 100);
-	glEnd();
-	
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();*/
 }
