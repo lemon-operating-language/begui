@@ -63,9 +63,6 @@ void TextBox::onUpdate()
 
 void TextBox::onRender()
 {
-	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
-	display::maskRect(wpos.x-1, wpos.y, getWidth()+1, getHeight()+1);
-
 	Font *pFont = FontManager::getCurFont();
 	ASSERT(pFont);
 
@@ -115,6 +112,9 @@ void TextBox::onRender()
 		getWidth()+m_activeArea.left + (m_bg.m_width-m_activeArea.right), 
 		getHeight()+m_activeArea.top + (m_bg.m_height-m_activeArea.bottom), 
 		m_resizableArea);
+
+	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
+	display::maskRect(wpos.x, wpos.y, getWidth(), getHeight());
 
 	// render the text
 	if (m_text.isEditable())
