@@ -31,6 +31,8 @@ void FrameWindow_Win32::createGLWindow(int left, int top, int width, int height,
 	WindowRect.top	 =(long)0;			// Set Top Value To 0
 	WindowRect.bottom=(long)height;		// Set Bottom Value To Requested Height
 
+	m_options = opt;
+
 	// Grab An Instance For Our Window
 	m_hInstance			= GetModuleHandle(NULL);
 
@@ -187,12 +189,12 @@ void FrameWindow_Win32::createGLWindow(int left, int top, int width, int height,
 				createGLWindow(left, top, width, height, title, opt2);
 				return;
 			}
-			else {
+			else if (!bSimpleOk) {
 				Console::print("ERROR: OpenGL requirements not met. Cannot initialize BeGUI\n");
 				MessageBox(m_hWnd, "ERROR: OpenGL requirements not met. Cannot initialize BeGUI", "Error",
 					MB_OK|MB_ICONEXCLAMATION);
 				freeGLWindow();
-				return;
+				throw std::exception("beGUI could not start");
 			}
 		}
 

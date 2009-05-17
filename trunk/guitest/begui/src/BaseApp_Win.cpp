@@ -44,8 +44,8 @@ bool BaseApp_Win::initialize(const std::string &title, size_t width, size_t heig
 	FrameWindow::Options opt;
 	opt.bOwnDraw = true;
 	opt.bFullScreen = false;
-	opt.nColorBits = 24;
-	opt.nDepthBits = 8;
+	opt.nColorBits = 16;
+	opt.nDepthBits = 16;
 	opt.nStencilBits = 0;
 
 	// Create Our OpenGL Window
