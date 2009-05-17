@@ -186,6 +186,8 @@ void Window::frameRender()
 {
 	int wnd_top = getTop() + ((m_bHasCaption)? m_captionActiveArea.getHeight() : 0);
 
+	glEnable(GL_BLEND);
+
 	// render the window caption
 	glColor4f(1,1,1,1);
 	if (m_bHasCaption) {

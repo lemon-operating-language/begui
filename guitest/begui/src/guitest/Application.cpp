@@ -93,6 +93,9 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	// Uncomment this line to have a console for text output
 	Console::create();
 
+	// Set the path of the resource directory
+//	ResourceManager::inst()->setResourceDir("./res/");
+
 	if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE))
 		return false;
 
