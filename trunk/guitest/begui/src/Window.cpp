@@ -234,8 +234,8 @@ void Window::frameRender()
 			m_windowResizableArea);
 	}
 	else {
-		Component::drawImage(m_windowFace, border.left + getLeft()-m_windowResizableArea.left,
-			wnd_top - m_windowResizableArea.top,
+		Component::drawImage(m_windowFace, getLeft()-m_windowResizableArea.left,
+			wnd_top - m_windowResizableArea.top - border.top,
 			getWidth() + (m_windowResizableArea.left + m_windowFace.m_width - m_windowResizableArea.right),
 			getHeight() + (m_windowResizableArea.top + m_windowFace.m_height - m_windowResizableArea.bottom));
 	}
@@ -399,6 +399,8 @@ void Window::restore()
 
 Rect<int> Window::getInactiveBorders() const
 {
+	if (!m_bHasBorders)
+		return Rect<int>(0,0,0,0);
 	if (m_bHasCaption)
 		return Rect<int>(m_windowActiveArea.left, m_captionActiveArea.top, 
 			m_windowFace.m_width-m_windowActiveArea.right,
