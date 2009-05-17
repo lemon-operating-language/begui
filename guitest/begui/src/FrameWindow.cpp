@@ -78,7 +78,7 @@ void FrameWindow::create(int left, int top, int width, int height, const std::st
 	}
 	catch (std::exception e) {
 		Console::error("Failed to create OpenGL window: " + (std::string)e.what() + "\n");
-		return;
+		throw e;
 	}
 
 	// only if the window is own-drawn does it have borders and caption
