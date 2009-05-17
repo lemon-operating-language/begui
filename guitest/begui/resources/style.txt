@@ -82,7 +82,7 @@ class ScrollBar {
 class Window {
 	style std {
 		image window_bg = 0,74,423,511, gui2_wnd_texture.png
-		rect window_active_area = 19,12,402,412			#active area relative to the top left corner of the face
+		rect window_active_area = 18,12,402,412			#active area relative to the top left corner of the face
 		rect window_resizable_area = 26,20,393,404		#resizable area relative to the top left corner of the face
 		
 		image caption = 0,25,438,74, gui2_wnd_texture.png
@@ -96,7 +96,7 @@ class Window {
 	
 	style std_framewnd {
 		image window_bg = 0,74,423,511, gui2_wnd_texture.png
-		rect window_active_area = 19,12,402,412			#active area relative to the top left corner of the face
+		rect window_active_area = 18,12,402,412			#active area relative to the top left corner of the face
 		rect window_resizable_area = 26,20,393,404		#resizable area relative to the top left corner of the face
 		
 		image caption = 0,25,438,74, gui2_wnd_texture.png
