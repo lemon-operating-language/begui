@@ -163,28 +163,38 @@ void FrameWindow_Win32::createGLWindow(int left, int top, int width, int height,
 		Console::print("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 
 		// Check hardware support
-/*		std::string err_str = "";
+		std::string err_str = "";
 		bool bSimpleOk = true;
 		if (!GL_VERSION_2_0)
 			err_str = "WARNING: OpenGL 2.0 not supported. Try updating the graphics card drivers.";
-		if (glewIsSupported("GL_EXT_framebuffer_object"))
+		if (!glewIsSupported("GL_EXT_framebuffer_object"))
 			err_str = "frame buffer objects not supported";
 		if (err_str.length() > 0) {
 			Console::print("ERROR: " + err_str + "\n");
-			if (m_bLayeredWindow && bSimpleOk) {
+			if (opt.bOwnDraw && bSimpleOk)
+			{
+				// inform the user
 				Console::print("WARNING: cannot use layered windows! Falling back to standard window style\n");
-				MessageBox(hWnd, "WARNING: cannot use layered windows! Falling back to standard window style", "Error",
+				MessageBox(m_hWnd, "WARNING: cannot use layered windows! Falling back to standard window style", "Error",
 					MB_OK|MB_ICONEXCLAMATION);
+
+				// destroy the current window
+				freeGLWindow();
+
+				// create a new, simple window
+				Options opt2 = opt;
+				opt2.bOwnDraw = false;
+				createGLWindow(left, top, width, height, title, opt2);
+				return;
 			}
 			else {
 				Console::print("ERROR: OpenGL requirements not met. Cannot initialize BeGUI\n");
-				MessageBox(hWnd, "ERROR: OpenGL requirements not met. Cannot initialize BeGUI", "Error",
+				MessageBox(m_hWnd, "ERROR: OpenGL requirements not met. Cannot initialize BeGUI", "Error",
 					MB_OK|MB_ICONEXCLAMATION);
-				killGLWindow();
+				freeGLWindow();
+				return;
 			}
-			m_bLayeredWindow = false;
-			m_bOffscreenRendering = false;
-		}*/
+		}
 
 		// Create a layered window?
 		if (m_options.bOwnDraw)

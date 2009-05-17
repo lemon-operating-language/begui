@@ -84,6 +84,7 @@ void ComboBox::onRender()
 	int lineHeight = pFont->getLineHeight()+2;
 	
 	glEnable(GL_BLEND);
+	glColor4f(1,1,1,1);
 
 	// draw the background
 	Component::drawImageWtBorders(m_face, -m_activeArea.left, -m_activeArea.top,

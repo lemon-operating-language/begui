@@ -95,8 +95,8 @@ void CheckBox::onRender()
 			float chV = 4;
 			glTexCoord2f(chU/512.0f, chV/512.0f);			glVertex3f(2, -2, 0);
 			glTexCoord2f((chU+chW)/512.0f, chV/512.0f);	glVertex3f(11, -2, 0);
-			glTexCoord2f((chU+chW)/512.0f, (chV+chH)/512.0f);	glVertex3f(11, h-1, 0);
-			glTexCoord2f(chU/512.0f, (chV+chH)/512.0f);	glVertex3f(2, h-1, 0);
+			glTexCoord2f((chU+chW)/512.0f, (chV+chH)/512.0f);	glVertex3f(11, (float)(h-1), 0);
+			glTexCoord2f(chU/512.0f, (chV+chH)/512.0f);	glVertex3f(2, (float)(h-1), 0);
 		}
 	glEnd();
 		

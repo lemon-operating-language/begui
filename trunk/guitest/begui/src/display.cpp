@@ -103,11 +103,11 @@ void display::maskRect(int x, int y, int w, int h)
 // on the screen after this call.
 void display::unmask()
 {
+	glDisable(GL_SCISSOR_TEST);
+/*
 	int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft();
 	int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop();
 
-	glDisable(GL_SCISSOR_TEST);
-/*
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();

@@ -94,6 +94,8 @@ void Texture::create(int width, int height, GLenum format, unsigned char* data)
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, texformat, dataformat, data);
 	
 	//GLboolean res;
@@ -215,6 +217,8 @@ void Texture::create(const Image &image, bool bResize)
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, imgformat, dataformat, data);
 	
 	m_width = w;

@@ -21,6 +21,7 @@
 
 #include "Font.h"
 #include "util.h"
+#include "../../bcore/src/Image.h"
 
 using namespace begui;
 
@@ -87,6 +88,8 @@ void Font::renderString_i(int x, int y, const std::string &str,
 	m_texture.set();
 
 	glEnable(GL_BLEND);
+//	glColor4f(1,1,1,1);
+
 	glBegin(GL_QUADS);
 	int xpos = x;
 	int ypos = y;
@@ -118,10 +121,10 @@ void Font::renderString_i(int x, int y, const std::string &str,
 		int top = ypos - charInfo.m_horiBearingY;
 		int bottom = ypos+fh - charInfo.m_horiBearingY;
 		if (bRender) {
-			glTexCoord2f(tx,ty+th);		glVertex3f(left, top, 0);
-			glTexCoord2f(tx+tw,ty+th);	glVertex3f(right, top, 0);
-			glTexCoord2f(tx+tw,ty);		glVertex3f(right, bottom, 0);
-			glTexCoord2f(tx,ty);		glVertex3f(left, bottom, 0);
+			glTexCoord2f(tx,ty+th);		glVertex2f(left, top);
+			glTexCoord2f(tx+tw,ty+th);	glVertex2f(right, top);
+			glTexCoord2f(tx+tw,ty);		glVertex2f(right, bottom);
+			glTexCoord2f(tx,ty);		glVertex2f(left, bottom);
 		}
 
 		// store the position of the rendered character
@@ -135,6 +138,7 @@ void Font::renderString_i(int x, int y, const std::string &str,
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+glEnable(GL_BLEND);
 }
 
 void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string &str,
@@ -315,6 +319,18 @@ bool Font::createFont(const std::string &font_file, int font_size)
 	}
 	
 	m_texture.create(texW, texH, GL_RGBA, &pixels[0]);
+
+	// DEBUG
+/*	Image img;
+	img.create(texW, texH, 3);
+	for (size_t i=0; i<texW; ++i)
+		for (size_t j=0; j<texH; ++j)
+			img(i,j)[0] = img(i,j)[1] = img(i,j)[2] = pixels[4*(j*texW + i) + 3];
+	img.savePPM("font_debug.ppm");
+	FILE *fp = fopen("font_debug.txt", "w+");
+	for (size_t i=0; i<m_character.size(); ++i)
+		fprintf(fp, "%d - %d %d %d %d\n", i, m_character[i].m_left, m_character[i].m_top, m_character[i].m_right, m_character[i].m_bottom);
+	fclose(fp);*/
 
 	m_lineHeight = maxHFont;
 
