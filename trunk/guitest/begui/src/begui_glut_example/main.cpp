@@ -32,17 +32,37 @@ void renderScene(void)
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0.0,0.0,5.0, 
+	gluLookAt(0.0,2.0,5.0, 
 		      0.0,0.0,-1.0,
 			  0.0f,1.0f,0.0f);
 	glPushMatrix();
-	glRotatef(angle,0.0,1.0,0.0);
+	glRotatef(angle,0.2,1.0,0.0);
 
-	glBegin(GL_TRIANGLES);
-		glVertex3f(-0.5,-0.5,0.0);
-		glVertex3f(0.5,0.0,0.0);
-		glVertex3f(0.0,0.5,0.0);
-	glEnd();
+	glEnable(GL_LIGHTING);                     //enables lighting
+	glEnable(GL_LIGHT0);                       //enables a light
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE,0);  //sets lighting to one-sided
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
+	float black[4]={0,0,0,0};
+	float white[4]={1,1,1,1};
+	glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,black);
+	glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,black);
+	glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,white);
+	float lightpos[] = {0, 1, 1, .0f};
+	float lightdiffuse[] = {1,1,1,1};
+	float lightspecular[] = {0.5f,0.5f,0.5f,1};
+	float lightambient[] = {0.1f,0.1f,0.1f,1};
+	glLightfv(GL_LIGHT0,GL_POSITION,lightpos);       //updates the light's position
+	glLightfv(GL_LIGHT0,GL_DIFFUSE,lightdiffuse);    //updates the light's diffuse colour
+	glLightfv(GL_LIGHT0,GL_SPECULAR,lightspecular);  //updates the light's specular colour
+	glLightfv(GL_LIGHT0,GL_AMBIENT,lightambient);    //updates the light's ambient colour
+ 
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_AUTO_NORMAL);
+	glutSolidTeapot(1);
+
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
 
 	glPopMatrix();
 
@@ -173,14 +193,14 @@ int main(int argc, char *argv[])
 	myWindow.addComponent(&myBtn1);
 	myList1.create(20, 50, 160, 100, ListBox::SINGLE_SELECT);
 	myList1.handleOnItemSelect(makeFunctor((Functor1<int>*)0, &onListSelect));
-	myList1.addItem("Wireframe mode");
-	myList1.addItem("Smooth shading");
-	myList1.addItem("Another silly entry");
-	myList1.addItem("Wireframe mode");
-	myList1.addItem("Smooth shading");
-	myList1.addItem("Another silly entry");
-	myList1.addItem("Wireframe mode");
-	myList1.addItem("Smooth shading");
+	myList1.addItem("Triangle");
+	myList1.addItem("Rectangle");
+	myList1.addItem("Textured Rectangle");
+	myList1.addItem("Cube");
+	myList1.addItem("Teapot");
+	myList1.addItem("Knot");
+	myList1.addItem("Complicated Object 1");
+	myList1.addItem("Complicated Object 2");
 	myWindow.addComponent(&myList1);
 
 	// start the main loop
