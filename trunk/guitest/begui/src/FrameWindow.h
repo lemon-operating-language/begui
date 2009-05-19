@@ -62,7 +62,9 @@ public:
 public:
 	virtual ~FrameWindow();
 
-	static FrameWindow* inst();
+	// An instance of a FrameWindow is created only by calling createInstance()
+	static FrameWindow* createInstance();
+	static FrameWindow* inst()				{ return m_pInst; }
 
 	virtual void create(int left, int top, int width, int height, const std::string &title, const Options *opt = 0,
 						const std::string &style_name = "std_framewnd");

@@ -51,17 +51,21 @@ void display::setSize(int w, int h)
 // this rectangle
 void display::maskRect(int x, int y, int w, int h)
 {
-	Rect<int> fb = FrameWindow::inst()->getInactiveBorders();
+	if (FrameWindow::inst()) {
+		Rect<int> fb = FrameWindow::inst()->getInactiveBorders();
 
-	int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft() + (fb.left+fb.right);
-	int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop() + (fb.top+fb.bottom);
+		int fw = FrameWindow::inst()->getRight()-FrameWindow::inst()->getLeft() + (fb.left+fb.right);
+		int fh = FrameWindow::inst()->getBottom()-FrameWindow::inst()->getTop() + (fb.top+fb.bottom);
 
-	if (FrameWindow::inst()->getOptions().bOwnDraw) {
-		x -= FrameWindow::inst()->getLeft();
-		y -= FrameWindow::inst()->getTop();
+		if (FrameWindow::inst()->getOptions().bOwnDraw) {
+			x -= FrameWindow::inst()->getLeft();
+			y -= FrameWindow::inst()->getTop();
+		}
+
+		glScissor(x,fh-y-h+1,w,h);
 	}
-
-	glScissor(x,fh-y-h+1,w,h);
+	else
+		glScissor(x, g_displayHeight-y-h+1, w, h);
 	glEnable(GL_SCISSOR_TEST);
 }
 
