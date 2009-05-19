@@ -13,6 +13,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bgui", "bgui.vcproj", "{E60
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bcore", "..\..\..\bcore\bcore\bcore.vcproj", "{B8FA7A92-A0F9-4E8F-B903-399ABD776ABD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "begui_glut_example", "begui_glut_example\begui_glut_example.vcproj", "{5C984716-94A6-45DA-922F-E39B5C1E3F1D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B8FA7A92-A0F9-4E8F-B903-399ABD776ABD} = {B8FA7A92-A0F9-4E8F-B903-399ABD776ABD}
+		{E606B0E9-AB15-4507-B484-C7EEC27FC768} = {E606B0E9-AB15-4507-B484-C7EEC27FC768}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -35,6 +41,10 @@ Global
 		{B8FA7A92-A0F9-4E8F-B903-399ABD776ABD}.Debug|Win32.Build.0 = Debug|Win32
 		{B8FA7A92-A0F9-4E8F-B903-399ABD776ABD}.Release|Win32.ActiveCfg = Release|Win32
 		{B8FA7A92-A0F9-4E8F-B903-399ABD776ABD}.Release|Win32.Build.0 = Release|Win32
+		{5C984716-94A6-45DA-922F-E39B5C1E3F1D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5C984716-94A6-45DA-922F-E39B5C1E3F1D}.Debug|Win32.Build.0 = Debug|Win32
+		{5C984716-94A6-45DA-922F-E39B5C1E3F1D}.Release|Win32.ActiveCfg = Release|Win32
+		{5C984716-94A6-45DA-922F-E39B5C1E3F1D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
