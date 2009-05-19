@@ -133,10 +133,12 @@ void initBeGUI()
 		throw std::exception("failed to set default font");
 	
 	// Initialize the window manager and load resources
-	ResourceManager::inst()->setResourceDir("..\\..\\..\\resources\\");
+	ResourceManager::inst()->setResourceDir("..\\..\\..\\resources\\"); //CHANGE THIS to the folder where begui\resources is located
 	ResourceManager::inst()->loadResources();
 }
 }}}
+
+*Remember to change '"..\\..\\..\\resources\\"' to the path where the 'begui\resources\' folder is located.* Alternatively, you can copy 'begui\resources' to a new directory in your project's folder and use that path. This way, you can also use an alternative GUI skin by modifying the contents of the copied directory (like 'style.txt').
 
 We have to call this function after the GLUT window is created, in our 'main' function.
 
