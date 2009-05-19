@@ -138,9 +138,9 @@ void initBeGUI()
 }
 }}}
 
-*Remember to change '"..\\..\\..\\resources\\"' to the path where the 'begui\resources\' folder is located.* Alternatively, you can copy 'begui\resources' to a new directory in your project's folder and use that path. This way, you can also use an alternative GUI skin by modifying the contents of the copied directory (like 'style.txt').
+*Remember to change `"..\\..\\..\\resources\\"` to the path where the `begui\resources\` folder is located.* Alternatively, you can copy `begui\resources` to a new directory in your project's folder and use that path. This way, you can also use an alternative GUI skin by modifying the contents of the copied directory (like `style.txt`).
 
-We have to call this function after the GLUT window is created, in our 'main' function.
+We have to call this function after the GLUT window is created, in our `main` function.
 
 Don't forget to link your program with the library files for beGUI, GLEW and Freetype, which are all necessary for beGUI.
 
@@ -154,7 +154,7 @@ Button myBtn1;
 ListBox myList1;
 }}}
 
-Now, we have to initialize the window and the two controls. This is done by calling the 'create' methods of each object, and adding the two controls to the window using the method 'Window::addComponent(...)', as follows:
+Now, we have to initialize the window and the two controls. This is done by calling the `create` methods of each object, and adding the two controls to the window using the method `Window::addComponent(...)`, as follows:
 
 {{{
 int main(int argc, char *argv[])
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
         .......
 }}}
 
-Finally, we have to render the beGUI controls in our application. To do so, we have to setup an orthographic projection, which will not scale our pixels, and for each frame, update and render our controls. To do so, we have to call the 'frameUpdate' and 'frameRender' methods of the controls on the top of the control hierarchy, in our case 'myWindow'. The 'renderFrame' method in our application is modified in the following way:
+Finally, we have to render the beGUI controls in our application. To do so, we have to setup an orthographic projection, which will not scale our pixels, and for each frame, update and render our controls. To do so, we have to call the `frameUpdate` and `frameRender` methods of the controls on the top of the control hierarchy, in our case `myWindow`. The `renderFrame` method in our application is modified in the following way:
 
 {{{
 void renderScene(void)
@@ -221,9 +221,9 @@ Now compile and run the program. You should be able to see a small window, with 
 
 = Forwarding mouse and keyboard events to beGUI =
 
-To finish integrating beGUI with our app, we have to forward all mouse and keyboard events from GLUT to beGUI. Since we are not using beGUI's 'FrameWindow' functionality, we have to do that in two parts:
-  * Forward mouse/keyboard events to beGUI's input subsystem (namespace 'input')
-  * Call the appropriate event handlers of all top-level components ('myWindow' in our case)
+To finish integrating beGUI with our app, we have to forward all mouse and keyboard events from GLUT to beGUI. Since we are not using beGUI's `FrameWindow` functionality, we have to do that in two parts:
+  * Forward mouse/keyboard events to beGUI's input subsystem (namespace `input`)
+  * Call the appropriate event handlers of all top-level components (`myWindow` in our case)
 
 The event handling methods in our GLUT program are changes as follows:
 
