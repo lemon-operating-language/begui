@@ -49,6 +49,7 @@ bool BaseApp_Win::initialize(const std::string &title, size_t width, size_t heig
 	opt.nStencilBits = 0;
 
 	// Create Our OpenGL Window
+	FrameWindow::createInstance();
 	try {
 		FrameWindow::inst()->create(0, 0, (int)width, (int)height, title, &opt);
 	}

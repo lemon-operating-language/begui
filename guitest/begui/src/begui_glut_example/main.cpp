@@ -53,6 +53,8 @@ void renderScene(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	display::setSize(width, height);
+
 	// render the window
 	myWindow.frameUpdate();
 	myWindow.frameRender();
@@ -98,6 +100,22 @@ void processMousePassiveMotion(int x, int y)
 	myWindow.onMouseMove(x, y, prevx, prevy);
 	prevx = x;
 	prevy = y;
+}
+
+void onButtonClick(int id)
+{
+	// id: the id of the control generating this event
+	if (id == 101) // if it was from our button
+	{
+		MessageBox(0, TEXT("You click my buttons!"), TEXT("Click"), MB_OK);
+	}
+}
+
+void onListSelect(int sel) {
+	// sel is the id of the selected item (starting from 0 for
+	// the first item and continuing incrementaly for each subsequent
+	// item)
+	MessageBox(0, TEXT("List item selected"), TEXT("List event"), MB_OK);
 }
 
 void initBeGUI()
@@ -151,9 +169,10 @@ int main(int argc, char *argv[])
 
 	// create the beGUI window
 	myWindow.create(20, 20, 200, 200, "test");
-	myBtn1.create(20, 20, "Button 1", 101);
+	myBtn1.create(20, 20, "Button 1", 101, makeFunctor((Functor1<int>*)0, &onButtonClick));
 	myWindow.addComponent(&myBtn1);
 	myList1.create(20, 50, 160, 100, ListBox::SINGLE_SELECT);
+	myList1.handleOnItemSelect(makeFunctor((Functor1<int>*)0, &onListSelect));
 	myList1.addItem("Wireframe mode");
 	myList1.addItem("Smooth shading");
 	myList1.addItem("Another silly entry");

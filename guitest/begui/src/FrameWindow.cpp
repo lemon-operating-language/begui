@@ -46,7 +46,7 @@ FrameWindow::~FrameWindow()
 	free();
 }
 
-FrameWindow* FrameWindow::inst()
+FrameWindow* FrameWindow::createInstance()
 {
 	if (m_pInst)
 		return m_pInst;

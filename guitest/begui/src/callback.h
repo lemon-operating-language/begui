@@ -147,7 +147,7 @@ public:
 	static void thunk(const FunctorBase &ftor,P1 p1)
 	{
 		if (ftor.m_func)
-			(Func(ftor.func))(p1);
+			(Func(ftor.m_func))(p1);
 	}
 };
 
