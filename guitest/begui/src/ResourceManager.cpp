@@ -47,7 +47,8 @@ void ResourceManager::loadResources()
 	// load all textures
 	// Initialize the window manager and load resources
 
-	loadPropertyFile(getResourceDir() + "style.txt");
+	if (!loadPropertyFile(getResourceDir() + "style.txt"))
+		return;
 	
 	Image img;
 	img.load(getResourceDir() + "bg.png");
