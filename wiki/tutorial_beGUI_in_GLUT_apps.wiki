@@ -268,13 +268,32 @@ The final step in this tutorial is to see how we can respond to GUI events gener
 Let's first add two functions, to handle button clicks and list box item selections respectively:
 
 {{{
+void onButtonClick(int id)
+{
+	// id: the id of the control generating this event
+	if (id == 101) // if it was from our button
+	{
+		MessageBox(0, TEXT("You click my buttons!"), TEXT("Click"), MB_OK);
+	}
+}
 
+void onListSelect(int sel) {
+	// sel is the id of the selected item (starting from 0 for
+	// the first item and continuing incrementaly for each subsequent
+	// item)
+	MessageBox(0, TEXT("List item selected"), TEXT("List event"), MB_OK);
+}
 }}}
 
 Now, let's let beGUI know that it has to call our functions when the respective events occur. To do so, we modify our component initialization code in the following way:
 
 {{{
-
+        ......
+	myBtn1.create(20, 20, "Button 1", 101, makeFunctor((Functor1<int>*)0, &onButtonClick)); // set the callback for button clicks
+	myWindow.addComponent(&myBtn1);
+	myList1.create(20, 50, 160, 100, ListBox::SINGLE_SELECT);
+	myList1.handleOnItemSelect(makeFunctor((Functor1<int>*)0, &onListSelect)); // set the callback for list item selections
+        ......
 }}}
 
 All done! Compile and run it again, and enjoy stuff happening when you interact with the controls.
