@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _BASETEXTFILE_H_INCLUDED_
+#define _BASETEXTFILE_H_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -63,3 +66,5 @@ public:
 	BaseTextFile& operator >> (float&);
 	BaseTextFile& operator >> (int&);
 };
+
+#endif

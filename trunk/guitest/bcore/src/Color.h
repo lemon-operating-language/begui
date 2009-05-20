@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _COLOR_H2397_INCLUDED_
+#define _COLOR_H2397_INCLUDED_
+
 #pragma once
 
 #include <math.h>
@@ -157,3 +160,5 @@ public:
 		return c;
 	}
 };
+
+#endif

@@ -19,6 +19,11 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _TRACKBALL_H45631_INCLUDED_
+#define _TRACKBALL_H45631_INCLUDED_
+
+#pragma once
+
 /* 
  *  Simple trackball-like motion adapted (ripped off) from projtex.c
  *  (written by David Yu and David Blythe).  See the SIGGRAPH '96
@@ -108,3 +113,5 @@ public:
 	void motion(int x, int y);
 	void animate(GLboolean animate);
 };
+
+#endif

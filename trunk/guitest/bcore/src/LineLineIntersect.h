@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _LINELINEINTERSECT_H45631_INCLUDED_
+#define _LINELINEINTERSECT_H45631_INCLUDED_
+
 #pragma once
 
 __forceinline bool line_line_intersect(const Vector2 &pt00, const Vector2 &pt01,
@@ -79,3 +82,5 @@ __forceinline bool line_line_intersect(const Vector2 &pt00, const Vector2 &pt01,
 
 	return true;
 }
+
+#endif

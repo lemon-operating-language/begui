@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _COMMON_H42631_INCLUDED_
+#define _COMMON_H42631_INCLUDED_
+
 #pragma once
 
 #include <stdio.h>
@@ -33,3 +36,4 @@
 #include "../../bcore/src/sequence.h"
 #include "../../bcore/src/Vector2i.h"
 
+#endif

@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _MATRIX3_H45631_INCLUDED_
+#define _MATRIX3_H45631_INCLUDED_
+
 #pragma once
 
 #include "Vector3.h"
@@ -75,3 +78,5 @@ public:
 	}
 
 };
+
+#endif

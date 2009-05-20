@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _CONSOLE_H54867_INCLUDED_
+#define _CONSOLE_H54867_INCLUDED_
+
 #pragma once
 
 //#define NOMINMAX
@@ -40,3 +43,5 @@ public:
 	static void error(char*, ...);
 	static void error(const std::string&);
 };
+
+#endif

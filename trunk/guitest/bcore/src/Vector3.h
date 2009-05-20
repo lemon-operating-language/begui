@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _VECTOR3_H45631_INCLUDED_
+#define _VECTOR3_H45631_INCLUDED_
+
 #pragma once
 
 #include <math.h>
@@ -65,3 +68,5 @@ public:
 	inline bool operator != (const Vector3& v)		{ return (v.x == x && v.y == y && v.z == z); }
 	inline bool equalsTheta (const Vector3& v, float theta)		{ return ((fabs(v.x-x)<theta) && (fabs(v.y-y)<theta) && (fabs(v.z-z)<theta)); }
 };
+
+#endif

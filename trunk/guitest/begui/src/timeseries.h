@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _TIMESERIES_H42631_INCLUDED_
+#define _TIMESERIES_H42631_INCLUDED_
+
 #pragma once
 
 #include <vector>
@@ -236,3 +239,5 @@ void TimeSeries<T>::transition(const T& start_value, double start_time,
 
 	start(delay);
 }
+
+#endif

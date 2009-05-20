@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _BUTTON_H42631_INCLUDED_
+#define _BUTTON_H42631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -93,3 +96,5 @@ public:
 };
 
 };
+
+#endif

@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _DRAWTRIANGLE_H45631_INCLUDED_
+#define _DRAWTRIANGLE_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"

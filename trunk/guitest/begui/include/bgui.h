@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _BEGUI_H42631_INCLUDED_
+#define _BEGUI_H42631_INCLUDED_
+
 #pragma once
 
 #include "../src/Component.h"
@@ -44,3 +47,5 @@
 #include "../src/ImageBox.h"
 #include "../src/ListBox.h"
 #include "../src/ComboBox.h"
+
+#endif

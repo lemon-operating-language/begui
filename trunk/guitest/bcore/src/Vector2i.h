@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _VECTOR2I_H45631_INCLUDED_
+#define _VECTOR2I_H45631_INCLUDED_
+
 #pragma once
 
 #include <math.h>
@@ -60,3 +63,5 @@ public:
 	inline float	angle(const Vector2i& v) const		{ return acosf((float)(dot(v)/(length()*v.length()))); }
 	inline float	angleUnitV(const Vector2i& v) const	{ return acosf((float)dot(v)); }	// WORKS ONLY ON UNIT VECTORS
 };
+
+#endif

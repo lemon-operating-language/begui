@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _SEQUENCE_H45631_INCLUDED_
+#define _SEQUENCE_H45631_INCLUDED_
+
 #pragma once
 
 #include <list>
@@ -189,3 +192,5 @@ public:
 	// dereference operator to get the current value
 	const T& operator *() const	{ return m_curValue; }
 };
+
+#endif

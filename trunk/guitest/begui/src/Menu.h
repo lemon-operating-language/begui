@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _MENU_H42631_INCLUDED_
+#define _MENU_H42631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -81,3 +84,5 @@ public:
 };
 
 };
+
+#endif

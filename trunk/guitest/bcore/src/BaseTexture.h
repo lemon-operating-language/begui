@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _BASETEXTURE_H23487_INCLUDED_
+#define _BASETEXTURE_H23487_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -64,3 +67,5 @@ public:
 	inline bool isManaged() const	{ return m_bIsManaged; }
 	inline GLuint	getGLTex()		{ return m_texture; }
 };
+
+#endif

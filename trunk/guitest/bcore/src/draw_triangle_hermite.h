@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _DRAWTRIANGLEHERMITE_H4658_INCLUDED_
+#define _DRAWTRIANGLEHERMITE_H4658_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -115,3 +118,5 @@ void draw_triangle_hermite(P p1, P p2, P p3,
 		draw_line_hermite(v1, v2, iv1, iv2, tv1, tv2, renderer);
 	}
 }
+
+#endif

@@ -75,7 +75,7 @@ void Image::interpolate(double x, double y, Filter filter, double filter_stretch
 			for (int i=int(x - filter_half_w)+1; i<=int(x+filter_half_w); ++i)
 			{
 				if (i<0 || i>=(int)m_width || j<0 || j>=(int)m_height)
-					x_temp += (*this)(x,y)[c] * m_filterLUT[filter][(size_t)((int)fabs((x - (double)i)*LUT_scale))];
+					x_temp += (*this)((size_t)x,(size_t)y)[c] * m_filterLUT[filter][(size_t)((int)fabs((x - (double)i)*LUT_scale))];
 				else
 					x_temp += (*this)(i,j)[c] * m_filterLUT[filter][(size_t)((int)fabs((x - (double)i)*LUT_scale))];
 			}

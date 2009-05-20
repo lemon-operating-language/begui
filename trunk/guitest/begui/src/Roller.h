@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _ROLLER_H42631_INCLUDED_
+#define _ROLLER_H42631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -70,3 +73,5 @@ public:
 };
 
 };
+
+#endif
