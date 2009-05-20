@@ -24,6 +24,14 @@
 
 #pragma once
 
+#ifndef _CRT_SECURE_NO_WARNINGS
+	#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+// use the secure variants of CRT methods (substitutes, fe., sprintf with sprintf_s)
+#undef _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES
+#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
