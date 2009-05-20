@@ -107,8 +107,8 @@ ResourceManager::ImageRef ResourceManager::loadImage(const std::string &filename
 	iref.m_texture = tex;
 	iref.m_topLeft = Vector2(0,0);
 	iref.m_bottomRight = Vector2((float)img.getWidth()/tex->getWidth(), (float)img.getHeight()/tex->getHeight());
-	iref.m_width = img.getWidth();
-	iref.m_height = img.getHeight();
+	iref.m_width = (int)img.getWidth();
+	iref.m_height = (int)img.getHeight();
 
 	m_images.insert(std::pair<std::string, ImageRef>(filename, iref));
 

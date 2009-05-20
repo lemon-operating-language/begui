@@ -420,16 +420,16 @@ void ListBox::onKeyDown(int key)
 			break;
 		case KEY_PAGEUP:
 			{
-				m_curItem -= m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/getItemHeight();
+				m_curItem -= (int)m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/getItemHeight();
 				if (m_curItem < 0)
 					m_curItem = 0;
 				break;
 			}
 		case KEY_PAGEDOWN:
 			{
-				m_curItem += m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/getItemHeight();
-				if (m_curItem >= m_items.size())
-					m_curItem = m_items.size()-1;
+				m_curItem += (int)m_items.size()-(getHeight()-(m_contentPadding.top + m_contentPadding.bottom))/getItemHeight();
+				if (m_curItem >= (int)m_items.size())
+					m_curItem = (int)m_items.size()-1;
 				break;
 			}
 		case ' ':

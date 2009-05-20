@@ -121,10 +121,10 @@ void Font::renderString_i(int x, int y, const std::string &str,
 		int top = ypos - charInfo.m_horiBearingY;
 		int bottom = ypos+fh - charInfo.m_horiBearingY;
 		if (bRender) {
-			glTexCoord2f(tx,ty+th);		glVertex2f(left, top);
-			glTexCoord2f(tx+tw,ty+th);	glVertex2f(right, top);
-			glTexCoord2f(tx+tw,ty);		glVertex2f(right, bottom);
-			glTexCoord2f(tx,ty);		glVertex2f(left, bottom);
+			glTexCoord2f(tx,ty+th);		glVertex2f((float)left, (float)top);
+			glTexCoord2f(tx+tw,ty+th);	glVertex2f((float)right, (float)top);
+			glTexCoord2f(tx+tw,ty);		glVertex2f((float)right, (float)bottom);
+			glTexCoord2f(tx,ty);		glVertex2f((float)left, (float)bottom);
 		}
 
 		// store the position of the rendered character
@@ -302,7 +302,7 @@ bool Font::createFont(const std::string &font_file, int font_size)
 		charInfo.m_left = xpos;
 		charInfo.m_right = xpos + slot->bitmap.width;
 		if (char_id == ' ')
-			charInfo.m_right = xpos + font_size/2.6;
+			charInfo.m_right = xpos + int(font_size/2.6);
 		charInfo.m_horiBearingX = face->glyph->metrics.horiBearingX/64;
 		charInfo.m_horiBearingY = face->glyph->metrics.horiBearingY/64;
 		charInfo.m_horiAdvance  = face->glyph->metrics.horiAdvance/64;

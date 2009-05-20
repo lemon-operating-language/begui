@@ -33,6 +33,7 @@ class Label : public Component
 {
 private:
 	std::string	m_text;
+	Color		m_textColor;
 
 public:
 	Label();
@@ -49,6 +50,7 @@ public:
 	virtual bool isPtInside(int x, int y);
 
 	inline void	setText(const std::string& text)	{ m_text = text; }
+	inline void setTextColor(const Color &cl)		{ m_textColor = cl; }
 };
 
 };
