@@ -172,7 +172,8 @@ bool Container::onMouseUp(int x, int y, int button)
 	if (m_pActiveComponent)
 	{
 		m_pActiveComponent->onMouseUp(lP.x, lP.y, button);
-		m_pActiveComponent->releaseMouseFocus();
+		if (m_pActiveComponent)	// check again, mouse up could have changed that
+			m_pActiveComponent->releaseMouseFocus();
 		return true;
 	}
 	else
