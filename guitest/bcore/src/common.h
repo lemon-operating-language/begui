@@ -22,14 +22,17 @@
 #ifndef _COMMON_H24688_INCLUDED_
 #define _COMMON_H24688_INCLUDED_
 
+#pragma once
+
 /**
  * Common includes, macros, preproc directives and typedefs 
  * used throughout the program
  *
  */
-#pragma once
 
-#define _CRT_SECURE_NO_WARNINGS // disable the "unsafe" warnings in Visual Studio 2005
+#define _CRT_SECURE_NO_WARNINGS
+#undef _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES
+#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 
 #define SAFE_DELETE(x) { if (x) { delete x; x=0; } }
 #define SAFE_DELETE_VEC(x) { if (x) { delete[] x; x=0; } }
