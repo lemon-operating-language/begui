@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _CHECKBOX_H42631_INCLUDED_
+#define _CHECKBOX_H42631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -62,3 +65,5 @@ private:
 };
 
 };
+
+#endif

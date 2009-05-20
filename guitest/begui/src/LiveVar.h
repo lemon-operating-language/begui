@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _LIVEVAR_H42631_INCLUDED_
+#define _LIVEVAR_H42631_INCLUDED_
+
 #pragma once
 
 #include <vector>
@@ -108,3 +111,5 @@ LiveVar<T>::operator const T& () const
 {
 	return m_value;
 }
+
+#endif

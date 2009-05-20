@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _VIEWPORT_H45631_INCLUDED_
+#define _VIEWPORT_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -58,3 +61,5 @@ public:
 
 	void setMatrix();
 };
+
+#endif

@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _TEXTURE_H45631_INCLUDED_
+#define _TEXTURE_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -119,3 +122,5 @@ public:
 	bool loadCubePPM(const std::string (&fnames)[6]);
 	bool loadCubeHDR(const std::string (&fnames)[6]);
 };
+
+#endif

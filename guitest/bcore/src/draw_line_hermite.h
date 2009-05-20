@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _DRAWLINEHERMITE_H4009_INCLUDED_
+#define _DRAWLINEHERMITE_H4009_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -76,3 +79,5 @@ void draw_line_hermite(const P &pt1, const P &pt2,
 		}
 	}
 }
+
+#endif

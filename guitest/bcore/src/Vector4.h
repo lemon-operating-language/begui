@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _VECTOR4_H45631_INCLUDED_
+#define _VECTOR4_H45631_INCLUDED_
+
 #pragma once
 
 class Vector4
@@ -58,3 +61,5 @@ public:
 	inline bool operator != (const Vector4& v)		{ return (v.x == x && v.y == y && v.z == z && v.w == w); }
 	inline bool equalsTheta (const Vector4& v, float theta)		{ return ((fabs(v.x-x)<theta) && (fabs(v.y-y)<theta) && (fabs(v.z-z)<theta) && (fabs(v.w-w)<theta)); }
 };
+
+#endif

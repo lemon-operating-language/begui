@@ -19,6 +19,9 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _CALLBACK_H42631_INCLUDED_
+#define _CALLBACK_H42631_INCLUDED_
+
 #pragma once
 
 class FunctorBase {
@@ -190,3 +193,5 @@ makeFunctor(/*Functor1<P1>*,*/Callee &c,TRT (CallType::* const &f)(TP1) const)
 	typedef TRT (CallType::*MemFunc)(TP1) const;
 	return MemberTranslator1<TP1/*was P1*/,Callee,MemFunc>(c,f);
 	}
+
+#endif

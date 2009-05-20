@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _COMMON_H24688_INCLUDED_
+#define _COMMON_H24688_INCLUDED_
+
 /**
  * Common includes, macros, preproc directives and typedefs 
  * used throughout the program
@@ -118,3 +121,5 @@ enum TexGenPrimitive {
 	TG_BOX,
 	TG_PLANE
 };
+
+#endif

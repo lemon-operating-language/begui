@@ -18,6 +18,10 @@
 //    You should have received a copy of the GNU Lesser General Public License
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#ifndef _MATRIX_H45631_INCLUDED_
+#define _MATRIX_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -534,3 +538,5 @@ Matrix<T> operator / (const Matrix<T>& m, const M f)
 			result(i,j) = m(i,j) / f;
 	return result;
 }
+
+#endif

@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _MISC_H45631_INCLUDED_
+#define _MISC_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -62,3 +65,5 @@ __forceinline bool pt_in_rect(int x, int y, int left, int top, int right, int bo
 		return false;
 	return true;
 }
+
+#endif

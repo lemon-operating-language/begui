@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _BBOX_H47945_INCLUDED_
+#define _BBOX_H47945_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -65,3 +68,5 @@ public:
 
 	void render();
 };
+
+#endif

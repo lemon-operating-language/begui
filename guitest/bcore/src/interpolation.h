@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _INTERPOLATION_H45631_INCLUDED_
+#define _INTERPOLATION_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -40,3 +43,5 @@ I interp_hermite(const I &i1, const I &i2, const I &ti1, const I &ti2, T xstart,
 	// calculate the interpolated value
 	return h00*i1 + h10*h*ti1 + h01*i2 + h11*h*ti2;
 }
+
+#endif

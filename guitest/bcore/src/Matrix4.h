@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _MATRIX4_H45631_INCLUDED_
+#define _MATRIX4_H45631_INCLUDED_
+
 #pragma once
 
 #include "Vector3.h"
@@ -137,3 +140,5 @@ public:
 
 	Vector3 getTranslation() { return Vector3((float)m[0][3], (float)m[1][3], (float)m[2][3]); }
 };
+
+#endif

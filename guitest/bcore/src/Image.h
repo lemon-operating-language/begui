@@ -19,6 +19,9 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef _IMAGE_H45631_INCLUDED_
+#define _IMAGE_H45631_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -286,3 +289,5 @@ void Image::toMatrix(Matrix<T> &mat) const
 		throw std::exception("image format not supported");
 	}
 }
+
+#endif

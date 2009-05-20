@@ -19,6 +19,10 @@
 //    along with Be3D.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#ifndef _DRAWLINE_H4369_INCLUDED_
+#define _DRAWLINE_H4369_INCLUDED_
+
 #pragma once
 
 #include "common.h"
@@ -63,3 +67,5 @@ void render_2d_line(const P &pt1, const P &pt2, T &renderer)
 		}
 	}
 }
+
+#endif
