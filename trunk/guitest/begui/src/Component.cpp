@@ -73,63 +73,63 @@ Vector2i Component::localToParent(const Vector2i& v) const
 
 void Component::drawBorderedQuad(int l, int t, int r, int b,		// position to appear on screen
 								 int lB, int tB, int rB, int bB,				// border positions
-						double texL, double texLB, double texR, double texRB,	// left to right positions in tex
-						double texT, double texTB, double texB, double texBB)	// top to bottom
+						float texL, float texLB, float texR, float texRB,	// left to right positions in tex
+						float texT, float texTB, float texB, float texBB)	// top to bottom
 {	
 	glBegin(GL_QUADS);
 		// top-left corner
-		glTexCoord2f(texL, texT);	glVertex3f(l, t, 0);
-		glTexCoord2f(texLB, texT);	glVertex3f(lB, t, 0);
-		glTexCoord2f(texLB, texTB);	glVertex3f(lB, tB, 0);
-		glTexCoord2f(texL, texTB);	glVertex3f(l, tB, 0);
+		glTexCoord2f(texL, texT);	glVertex3f((float)l, (float)t, 0);
+		glTexCoord2f(texLB, texT);	glVertex3f((float)lB, (float)t, 0);
+		glTexCoord2f(texLB, texTB);	glVertex3f((float)lB, (float)tB, 0);
+		glTexCoord2f(texL, texTB);	glVertex3f((float)l, (float)tB, 0);
 		
 		// top border
-		glTexCoord2f(texLB, texT);	glVertex3f(lB, t, 0);
-		glTexCoord2f(texRB, texT);	glVertex3f(rB, t, 0);
-		glTexCoord2f(texRB, texTB);	glVertex3f(rB, tB, 0);
-		glTexCoord2f(texLB, texTB);	glVertex3f(lB, tB, 0);
+		glTexCoord2f(texLB, texT);	glVertex3f((float)lB, (float)t, 0);
+		glTexCoord2f(texRB, texT);	glVertex3f((float)rB, (float)t, 0);
+		glTexCoord2f(texRB, texTB);	glVertex3f((float)rB, (float)tB, 0);
+		glTexCoord2f(texLB, texTB);	glVertex3f((float)lB, (float)tB, 0);
 
 		// top-right corner
-		glTexCoord2f(texRB, texT);	glVertex3f(rB, t, 0);
-		glTexCoord2f(texR, texT);	glVertex3f(r, t, 0);
-		glTexCoord2f(texR, texTB);	glVertex3f(r, tB, 0);
-		glTexCoord2f(texRB, texTB);	glVertex3f(rB, tB, 0);
+		glTexCoord2f(texRB, texT);	glVertex3f((float)rB, (float)t, 0);
+		glTexCoord2f(texR, texT);	glVertex3f((float)r, (float)t, 0);
+		glTexCoord2f(texR, texTB);	glVertex3f((float)r, (float)tB, 0);
+		glTexCoord2f(texRB, texTB);	glVertex3f((float)rB, (float)tB, 0);
 
 		// left border
-		glTexCoord2f(texL, texTB);	glVertex3f(l, tB, 0);
-		glTexCoord2f(texLB, texTB);	glVertex3f(lB, tB, 0);
-		glTexCoord2f(texLB, texBB);	glVertex3f(lB, bB, 0);
-		glTexCoord2f(texL, texBB);	glVertex3f(l, bB, 0);
+		glTexCoord2f(texL, texTB);	glVertex3f((float)l, (float)tB, 0);
+		glTexCoord2f(texLB, texTB);	glVertex3f((float)lB, (float)tB, 0);
+		glTexCoord2f(texLB, texBB);	glVertex3f((float)lB, (float)bB, 0);
+		glTexCoord2f(texL, texBB);	glVertex3f((float)l, (float)bB, 0);
 
 		// center area
-		glTexCoord2f(texLB, texTB);	glVertex3f(lB, tB, 0);
-		glTexCoord2f(texRB, texTB);	glVertex3f(rB, tB, 0);
-		glTexCoord2f(texRB, texBB);	glVertex3f(rB, bB, 0);
-		glTexCoord2f(texLB, texBB);	glVertex3f(lB, bB, 0);
+		glTexCoord2f(texLB, texTB);	glVertex3f((float)lB, (float)tB, 0);
+		glTexCoord2f(texRB, texTB);	glVertex3f((float)rB, (float)tB, 0);
+		glTexCoord2f(texRB, texBB);	glVertex3f((float)rB, (float)bB, 0);
+		glTexCoord2f(texLB, texBB);	glVertex3f((float)lB, (float)bB, 0);
 
 		// right border
-		glTexCoord2f(texRB, texTB);	glVertex3f(rB, tB, 0);
-		glTexCoord2f(texR, texTB);	glVertex3f(r, tB, 0);
-		glTexCoord2f(texR, texBB);	glVertex3f(r, bB, 0);
-		glTexCoord2f(texRB, texBB);	glVertex3f(rB, bB, 0);
+		glTexCoord2f(texRB, texTB);	glVertex3f((float)rB, (float)tB, 0);
+		glTexCoord2f(texR, texTB);	glVertex3f((float)r, (float)tB, 0);
+		glTexCoord2f(texR, texBB);	glVertex3f((float)r, (float)bB, 0);
+		glTexCoord2f(texRB, texBB);	glVertex3f((float)rB, (float)bB, 0);
 
 		// bottom-left corner
-		glTexCoord2f(texL, texBB);	glVertex3f(l, bB, 0);
-		glTexCoord2f(texLB, texBB);	glVertex3f(lB, bB, 0);
-		glTexCoord2f(texLB, texB);	glVertex3f(lB, b, 0);
-		glTexCoord2f(texL, texB);	glVertex3f(l, b, 0);
+		glTexCoord2f(texL, texBB);	glVertex3f((float)l, (float)bB, 0);
+		glTexCoord2f(texLB, texBB);	glVertex3f((float)lB, (float)bB, 0);
+		glTexCoord2f(texLB, texB);	glVertex3f((float)lB, (float)b, 0);
+		glTexCoord2f(texL, texB);	glVertex3f((float)l, (float)b, 0);
 
 		// bottom border
-		glTexCoord2f(texLB, texBB);	glVertex3f(lB, bB, 0);
-		glTexCoord2f(texRB, texBB);	glVertex3f(rB, bB, 0);
-		glTexCoord2f(texRB, texB);	glVertex3f(rB, b, 0);
-		glTexCoord2f(texLB, texB);	glVertex3f(lB, b, 0);
+		glTexCoord2f(texLB, texBB);	glVertex3f((float)lB, (float)bB, 0);
+		glTexCoord2f(texRB, texBB);	glVertex3f((float)rB, (float)bB, 0);
+		glTexCoord2f(texRB, texB);	glVertex3f((float)rB, (float)b, 0);
+		glTexCoord2f(texLB, texB);	glVertex3f((float)lB, (float)b, 0);
 
 		// bottom-right corner
-		glTexCoord2f(texRB, texBB);	glVertex3f(rB, bB, 0);
-		glTexCoord2f(texR, texBB);	glVertex3f(r, bB, 0);
-		glTexCoord2f(texR, texB);	glVertex3f(r, b, 0);
-		glTexCoord2f(texRB, texB);	glVertex3f(rB, b, 0);
+		glTexCoord2f(texRB, texBB);	glVertex3f((float)rB, (float)bB, 0);
+		glTexCoord2f(texR, texBB);	glVertex3f((float)r, (float)bB, 0);
+		glTexCoord2f(texR, texB);	glVertex3f((float)r, (float)b, 0);
+		glTexCoord2f(texRB, texB);	glVertex3f((float)rB, (float)b, 0);
 	glEnd();
 }
 
@@ -200,7 +200,7 @@ void Component::frameRender()
 	// transform the parent coordinate system to the local one
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glTranslatef(m_left, m_top, 0);
+	glTranslatef((float)m_left, (float)m_top, 0);
 	
 	// Render the component
 	onRender();
@@ -226,13 +226,13 @@ void Component::drawImage(ResourceManager::ImageRef &image, int x, int y, int w,
 		h = image.m_height;
 	glBegin(GL_QUADS);
 		glTexCoord2f(image.m_topLeft.x, image.m_topLeft.y);
-		glVertex3f(x, y, 0);
+		glVertex3f((float)x, (float)y, 0);
 		glTexCoord2f(image.m_bottomRight.x, image.m_topLeft.y);
-		glVertex3f(x+w, y, 0);
+		glVertex3f((float)(x+w), (float)y, 0);
 		glTexCoord2f(image.m_bottomRight.x, image.m_bottomRight.y);
-		glVertex3f(x+w, y+h, 0);
+		glVertex3f((float)(x+w), (float)(y+h), 0);
 		glTexCoord2f(image.m_topLeft.x, image.m_bottomRight.y);
-		glVertex3f(x, y+h, 0);
+		glVertex3f((float)x, (float)(y+h), 0);
 	glEnd();
 	
 	glDisable(GL_TEXTURE_2D);

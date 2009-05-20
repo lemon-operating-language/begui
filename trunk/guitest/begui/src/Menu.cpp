@@ -181,21 +181,21 @@ void Menu::onRender()
 		// This is a submenu or a menuitem
 		if (m_menuItems.size() > 0)
 		{
-			glColor4f(1,1,1,0.9);
-			double tW = 512;	// texture width;
-			double tH = 512;	// texture width;
-			int wtL = 0;		// window left in pixels in texture
-			int wtR = 511;		// window right
-			int wtT = 76;		// top
-			int wtB = 504;		// bottom
-			int offs = 32;	// the size of the border
+			glColor4f(1,1,1,0.9f);
+			float tW = 512;	// texture width;
+			float tH = 512;	// texture width;
+			float wtL = 0;		// window left in pixels in texture
+			float wtR = 511;		// window right
+			float wtT = 76;		// top
+			float wtB = 504;		// bottom
+			float offs = 32;	// the size of the border
 		//	int left = m_left - 12;
 			int left = -12;
 			int top = m_bottom + 3;
 			int right = left + m_contentWidth;
 			int bottom = top + m_contentHeight;
 			Component::drawBorderedQuad(left, top, right, bottom,
-										left+offs, top, right-offs, bottom-offs,
+										left+(int)offs, top, right-(int)offs, bottom-(int)offs,
 										wtL/tW, (wtL+offs)/tW, wtR/tW, (wtR-offs)/tW,
 										wtT/tH, (wtT+offs)/tH, wtB/tH, (wtB-offs)/tH);
 		}
@@ -215,15 +215,15 @@ void Menu::onRender()
 		if (!m_isMainMenu)
 			hl_right = mi->m_left + m_contentWidth - 40;
 		glBegin(GL_QUADS);
-			glVertex3f(mi->m_left, mi->m_top, 0);
-			glVertex3f(mi->m_right, mi->m_top, 0);
-			glVertex3f(mi->m_right, mi->m_bottom, 0);
-			glVertex3f(mi->m_left, mi->m_bottom, 0);
+			glVertex3f((float)mi->m_left, (float)mi->m_top, 0);
+			glVertex3f((float)mi->m_right, (float)mi->m_top, 0);
+			glVertex3f((float)mi->m_right, (float)mi->m_bottom, 0);
+			glVertex3f((float)mi->m_left, (float)mi->m_bottom, 0);
 			
-			glColor4f(0.9f, 0.5f, 0, 1); glVertex3f(mi->m_right, mi->m_top, 0);
-			glColor4f(0.7f, 0.4f, 0, 1); glVertex3f(hl_right, mi->m_top, 0);
-			glColor4f(0.7f, 0.4f, 0, 1); glVertex3f(hl_right, mi->m_bottom, 0);
-			glColor4f(0.9f, 0.5f, 0, 1); glVertex3f(mi->m_right, mi->m_bottom, 0);
+			glColor4f(0.9f, 0.5f, 0, 1); glVertex3f((float)mi->m_right, (float)mi->m_top, 0);
+			glColor4f(0.7f, 0.4f, 0, 1); glVertex3f((float)hl_right, (float)mi->m_top, 0);
+			glColor4f(0.7f, 0.4f, 0, 1); glVertex3f((float)hl_right, (float)mi->m_bottom, 0);
+			glColor4f(0.9f, 0.5f, 0, 1); glVertex3f((float)mi->m_right, (float)mi->m_bottom, 0);
 		glEnd();
 	}
 	
@@ -259,11 +259,11 @@ void Menu::onRender()
 			Menu *mi = m_menuItems[i];
 
 			// size of the checkmark
-			int chW = 17;
-			int chH = 20;
+			float chW = 17;
+			float chH = 20;
 			// pos in the texture file.
-			int chU = 405;
-			int chV = 4;
+			float chU = 405;
+			float chV = 4;
 
 			if (!m_menuItems[i]->isEnabled())
 				glColor4f(0, 0, 0, 0.25f);
@@ -271,10 +271,10 @@ void Menu::onRender()
 				glColor4f(0,0,0, 0.8f);
 
 			glBegin(GL_QUADS);
-				glTexCoord2f(chU/512.0, chV/512.0);			glVertex3f(mi->m_right, mi->m_bottom-11, 0);
-				glTexCoord2f((chU+chW)/512.0, chV/512.0);	glVertex3f(mi->m_right+8, mi->m_bottom-11, 0);
-				glTexCoord2f((chU+chW)/512.0, (chV+chH)/512.0);	glVertex3f(mi->m_right+8, mi->m_bottom-1, 0);
-				glTexCoord2f(chU/512.0, (chV+chH)/512.0);	glVertex3f(mi->m_right, mi->m_bottom-1, 0);
+				glTexCoord2f(chU/512.0f, chV/512.0f);				glVertex3f((float)mi->m_right, (float)mi->m_bottom-11, 0);
+				glTexCoord2f((chU+chW)/512.0f, chV/512.0f);			glVertex3f((float)mi->m_right+8, (float)mi->m_bottom-11, 0);
+				glTexCoord2f((chU+chW)/512.0f, (chV+chH)/512.0f);	glVertex3f((float)mi->m_right+8, (float)mi->m_bottom-1, 0);
+				glTexCoord2f(chU/512.0f, (chV+chH)/512.0f);			glVertex3f((float)mi->m_right, (float)mi->m_bottom-1, 0);
 			glEnd();
 		}
 	}

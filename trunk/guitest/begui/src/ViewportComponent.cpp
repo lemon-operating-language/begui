@@ -55,7 +55,7 @@ void ViewportComponent::onRender()
 	mat.loadGLMatrix(GL_MODELVIEW_MATRIX);
 	Vector3 t = mat.getTranslation();
 	int frameH = display::getHeight();
-	m_viewport.setDimensions(t.x, frameH-(t.y+h), w, h);
+	m_viewport.setDimensions((int)t.x, frameH-int(t.y+h), w, h);
 
 	// push matrices
 	glMatrixMode(GL_PROJECTION);
@@ -110,7 +110,7 @@ bool ViewportComponent::onMouseUp(int x, int y, int button)
 	if (m_bNavigationEnabled)
 		m_trackball.mouseUp(x-Component::getLeft(), y-Component::getTop());
 
-	m_lastClickPos = Vector2(x-Component::getLeft(),y-Component::getTop());
+	m_lastClickPos = Vector2((float)(x-Component::getLeft()), (float)(y-Component::getTop()));
 
 	return Component::onMouseUp(x,y,button);
 }

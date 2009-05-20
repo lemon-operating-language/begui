@@ -45,7 +45,7 @@ void Container::frameRender()
 	// Change the coordinate system to the local one
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glTranslatef(m_left, m_top, 0);
+	glTranslatef((float)m_left, (float)m_top, 0);
 	
 	// Render the container itself
 	onRender();

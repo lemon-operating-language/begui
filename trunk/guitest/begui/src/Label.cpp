@@ -24,7 +24,7 @@
 
 using namespace begui;
 
-Label::Label()
+Label::Label() : m_textColor(0.3f,0.3f,0.3f)
 {
 }
 
@@ -43,7 +43,7 @@ void Label::onUpdate()
 
 void Label::onRender()
 {	
-	glColor4f(0.3, 0.3, 0.3, 0.8);
+	glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, 0.8f);
 	Font::renderString(0, getHeight(), m_text);
 }
 

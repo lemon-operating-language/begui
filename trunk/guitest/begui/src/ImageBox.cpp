@@ -58,19 +58,19 @@ void ImageBox::onRender()
 	glColor4f(0,0,0,0.5f);
 	glBegin(GL_QUADS);
 		glVertex2f(0, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, h);
-		glVertex2f(0, h);
+		glVertex2f((float)w, 0);
+		glVertex2f((float)w, (float)h);
+		glVertex2f(0, (float)h);
 	glEnd();
 
 	// Render the image
 	if (m_texture.isLoaded())
 	{
-		int left = 0;	// change if centering the image..
-		int top = 0;
+		float left = 0;	// change if centering the image..
+		float top = 0;
 
 		float u = 1.0f, v = 1.0f;
-		int iw = w, ih=h;
+		float iw = (float)w, ih=(float)h;
 	/*	if (!m_bResizeImg)
 		{
 			iw = (w > m_pImage->getWidth()) ? m_pImage->getWidth() : w;
@@ -115,11 +115,11 @@ bool ImageBox::onMouseDown(int x, int y, int button)
 		{
 			m_selLine.clear();
 			
-			Vector2 pt(x-m_left,y-m_top);
+			Vector2 pt(float(x-m_left), float(y-m_top));
 			if (pt.x < 0) pt.x = 0;
 			if (pt.y < 0) pt.y = 0;
-			if (pt.x > m_pImage->getWidth()) pt.x = m_pImage->getWidth();
-			if (pt.y > m_pImage->getHeight()) pt.y = m_pImage->getHeight();
+			if (pt.x > m_pImage->getWidth()) pt.x = (float)m_pImage->getWidth();
+			if (pt.y > m_pImage->getHeight()) pt.y = (float)m_pImage->getHeight();
 			m_selLine.push_back(pt);
 		}
 
@@ -135,11 +135,11 @@ bool ImageBox::onMouseMove(int x, int y, int prevx, int prevy)
 	{
 		if (m_pImage && m_bSelectable)
 		{
-			Vector2 pt(x-m_left,y-m_top);
+			Vector2 pt(float(x-m_left), float(y-m_top));
 			if (pt.x < 0) pt.x = 0;
 			if (pt.y < 0) pt.y = 0;
-			if (pt.x > m_pImage->getWidth()) pt.x = m_pImage->getWidth();
-			if (pt.y > m_pImage->getHeight()) pt.y = m_pImage->getHeight();
+			if (pt.x > m_pImage->getWidth()) pt.x = (float)m_pImage->getWidth();
+			if (pt.y > m_pImage->getHeight()) pt.y = (float)m_pImage->getHeight();
 			m_selLine.push_back(pt);
 		}
 	}
@@ -153,11 +153,11 @@ bool ImageBox::onMouseUp(int x, int y, int button)
 	{
 		if (m_pImage && m_bSelectable)
 		{
-			Vector2 pt(x-m_left,y-m_top);
+			Vector2 pt(float(x-m_left), float(y-m_top));
 			if (pt.x < 0) pt.x = 0;
 			if (pt.y < 0) pt.y = 0;
-			if (pt.x > m_pImage->getWidth()) pt.x = m_pImage->getWidth();
-			if (pt.y > m_pImage->getHeight()) pt.y = m_pImage->getHeight();
+			if (pt.x > m_pImage->getWidth()) pt.x = (float)m_pImage->getWidth();
+			if (pt.y > m_pImage->getHeight()) pt.y = (float)m_pImage->getHeight();
 			m_selLine.push_back(pt);
 
 			if (m_selLine.size() <= 2)	// only endpoints, no mouse move in between

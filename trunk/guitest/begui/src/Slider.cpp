@@ -124,7 +124,7 @@ void Slider::onRender()
 	// sanitize
 	if (f > 1) f = 1;
 	if (f < 0) f = 0;
-	int spos = f*w;
+	int spos = (int)(f*w);
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -133,7 +133,7 @@ void Slider::onRender()
 	int text_y = pFont->getLineHeight() - 1;
 	int r_text_x = w - 2;
 	
-	char curValStr[64];
+	char curValStr[64] = {0};
 	sprintf(curValStr, "%.3f", m_curValue);
 
 	// render the label bg
@@ -219,9 +219,9 @@ void Slider::onRender()
 			steps = 50;
 		for (int i=0; i<steps; ++i)
 		{
-			int lx = i*w/steps;
+			float lx = (float)(i*w/steps);
 			glVertex3f(lx, 2, 0);
-			glVertex3f(lx, h-2, 0);
+			glVertex3f(lx, (float)h-2, 0);
 		}
 		glEnd();
 	}
@@ -253,10 +253,10 @@ void Slider::onRender()
 		int t = - 12;
 		glColor4f(1,1,1,1);
 		glBegin(GL_QUADS);
-			glTexCoord2f(496/512.0, 1/512.0);	glVertex3f(spos-4, t, 0);
-			glTexCoord2f(505/512.0, 1/512.0);	glVertex3f(spos+5, t, 0);
-			glTexCoord2f(505/512.0, 19/512.0);	glVertex3f(spos+5, t+18, 0);
-			glTexCoord2f(496/512.0, 19/512.0);	glVertex3f(spos-4, t+18, 0);
+			glTexCoord2f(496/512.0f, 1/512.0f);	glVertex3f(spos-4, t, 0);
+			glTexCoord2f(505/512.0f, 1/512.0f);	glVertex3f(spos+5, t, 0);
+			glTexCoord2f(505/512.0f, 19/512.0f);	glVertex3f(spos+5, t+18, 0);
+			glTexCoord2f(496/512.0f, 19/512.0f);	glVertex3f(spos-4, t+18, 0);
 		glEnd();
 
 		glBindTexture(GL_TEXTURE_2D, 0);

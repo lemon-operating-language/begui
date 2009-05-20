@@ -9,7 +9,7 @@ EditableText::EditableText() : m_bMultiLine(true), m_cursorX(0), m_cursorY(0),
 	m_bEditable(true), m_x(0), m_y(0), m_lineWidth(0),
 	m_bRenderCursor(true),
 	m_bTextSelectable(true),
-	m_textColor(0,0,0), m_textAlpha(0.7),
+	m_textColor(0,0,0), m_textAlpha(0.7f),
 	m_selectionColor(1.0f, 0.7f, 0.2f), m_selectionAlpha(0.7f),
 	m_cursorColor(0,0,0)
 {
@@ -80,10 +80,10 @@ void EditableText::renderString()
 		for (int i = selStart; i<selEnd; ++i) {
 			// highlight this character
 			Rect<int> &pos = m_charPos[i];
-			glVertex2f(pos.left-1, pos.top-1);
-			glVertex2f(pos.right, pos.top-1);
-			glVertex2f(pos.right, pos.bottom);
-			glVertex2f(pos.left-1, pos.bottom);
+			glVertex2f((float)pos.left-1, (float)pos.top-1);
+			glVertex2f((float)pos.right, (float)pos.top-1);
+			glVertex2f((float)pos.right, (float)pos.bottom);
+			glVertex2f((float)pos.left-1, (float)pos.bottom);
 		}
 		glEnd();
 	}
@@ -103,8 +103,8 @@ void EditableText::renderString()
 	{
 		glColor4f(m_cursorColor.r, m_cursorColor.g, m_cursorColor.b, m_cursorAlpha);
 		glBegin(GL_LINES);
-			glVertex2f(m_cursorX, m_cursorY);
-			glVertex2f(m_cursorX, m_cursorY-10);
+			glVertex2f((float)m_cursorX, (float)m_cursorY);
+			glVertex2f((float)m_cursorX, (float)m_cursorY-10);
 		glEnd();
 	}
 }
@@ -200,7 +200,7 @@ void EditableText::onKeyDown(int key)
 				setCursorPos( (m_selectStart < m_selectEnd) ? m_selectStart : m_selectEnd );
 				m_selectEnd = m_selectStart = m_cursorPos;
 			}
-			else if (m_cursorPos < ((std::string)m_text).size()) {
+			else if (m_cursorPos < (int)((std::string)m_text).size()) {
 				std::string text = m_text;
 				text.erase(m_cursorPos, 1);
 				setText(text);
@@ -239,7 +239,7 @@ void EditableText::onKeyDown(int key)
 		break;
 	case KEY_END:
 		if (input::isKeyDown(KEY_LCTRL) || input::isKeyDown(KEY_RCTRL))
-			setCursorPos(((std::string)m_text).length());
+			setCursorPos((int)((std::string)m_text).length());
 		else
 			setCursorPos(getLineEnd(m_cursorPos));
 		m_selectEnd = m_cursorPos;
@@ -272,9 +272,9 @@ void EditableText::onKeyUp(int key)
 void EditableText::setCursorPos(int pos)
 {
 	if (pos < 0) pos = 0;
-	if (pos > m_charPos.size()) pos = m_charPos.size();
+	if (pos > (int)m_charPos.size()) pos = (int)m_charPos.size();
 	m_cursorPos = pos;
-	if (pos < m_charPos.size()) {
+	if (pos < (int)m_charPos.size()) {
 		m_cursorX = m_charPos[pos].left;
 		m_cursorY = m_charPos[pos].bottom;
 		m_cursorH = m_charPos[pos].getHeight();
@@ -397,7 +397,7 @@ void EditableText::cursorUp(int *cursorX, int *cursorY, int *cursorH, int* char_
 	*cursorY = *cursorX = 0;
 	for (int i=curPos-1; i>=0; --i)
 	{
-		if (i >= m_charPos.size()-1)
+		if (i >= (int)m_charPos.size()-1)
 			continue;
 
 		int cw = m_charPos[i].getWidth();
@@ -446,7 +446,7 @@ void EditableText::cursorDown(int *cursorX, int *cursorY, int *cursorH, int* cha
 	int y = m_cursorY;
 	int curPos = m_cursorPos;
 
-	if (curPos >= m_charPos.size()-1)
+	if (curPos >= (int)m_charPos.size()-1)
 		return;
 
 	*cursorY = *cursorX = 0;
@@ -497,8 +497,8 @@ int EditableText::getLineStart(int cursorPos) const
 {
 	if (cursorPos == 0)
 		return 0;
-	if (cursorPos >= m_charPos.size())
-		cursorPos = m_charPos.size()-1;
+	if (cursorPos >= (int)m_charPos.size())
+		cursorPos = (int)m_charPos.size()-1;
 	for (int i=cursorPos; i>0; --i)
 	{
 		if (m_charPos[i].left <= m_charPos[i-1].left)
@@ -510,14 +510,14 @@ int EditableText::getLineStart(int cursorPos) const
 int EditableText::getLineEnd(int cursorPos) const
 {
 	if (cursorPos == m_charPos.size())
-		return m_charPos.size();
+		return (int)m_charPos.size();
 
-	for (int i=cursorPos; i<m_charPos.size()-1; ++i)
+	for (int i=cursorPos; i<(int)m_charPos.size()-1; ++i)
 	{
 		if (m_charPos[i+1].left <= m_charPos[i].left)
 			return i;
 	}
-	return m_charPos.size();
+	return (int)m_charPos.size();
 }
 
 std::string	EditableText::getSelectedText() const

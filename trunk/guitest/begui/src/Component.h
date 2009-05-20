@@ -114,8 +114,8 @@ public:
 	//helpers
 	static void drawBorderedQuad(int left, int top, int right, int bottom,		// position to appear on screen
 						int lB, int tB, int rB, int bB,							// border positions
-						double texL, double texLB, double texR, double texRB,	// left to right positions in tex
-						double texT, double texTB, double texB, double texBB);	// top to bottom
+						float texL, float texLB, float texR, float texRB,	// left to right positions in tex
+						float texT, float texTB, float texB, float texBB);	// top to bottom
 	static void drawImage(ResourceManager::ImageRef &image, int x, int y, int w=0, int h=0);
 
 	// draw an image, using non-resizable borders and a resizable center area. Arguments
