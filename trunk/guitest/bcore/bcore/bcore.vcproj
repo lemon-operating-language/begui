@@ -177,6 +177,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\memory.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\misc.cpp"
 				>
 			</File>
@@ -308,6 +312,10 @@
 			</File>
 			<File
 				RelativePath="..\src\Matrix4.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\memory.h"
 				>
 			</File>
 			<File
