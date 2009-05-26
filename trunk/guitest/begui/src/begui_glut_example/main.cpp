@@ -152,7 +152,7 @@ void initBeGUI()
 		throw std::exception("failed to set default font");
 	
 	// Initialize the window manager and load resources
-	ResourceManager::inst()->setResourceDir("..\\..\\..\\resources\\");
+	ResourceManager::inst()->setResourceDir("..\\resources\\");
 	ResourceManager::inst()->loadResources();
 	
 	// set some OpenGL states

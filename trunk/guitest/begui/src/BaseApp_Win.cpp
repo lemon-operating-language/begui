@@ -38,15 +38,20 @@ BaseApp_Win::~BaseApp_Win()
 {
 }
 
-bool BaseApp_Win::initialize(const std::string &title, size_t width, size_t height, Window::Style frame_style)
+bool BaseApp_Win::initialize(const std::string &title, size_t width, size_t height, Window::Style frame_style,
+							 FrameWindow::Options *pOpt)
 {
 	// set the desired options of the new window
 	FrameWindow::Options opt;
-	opt.bOwnDraw = true;
-	opt.bFullScreen = false;
-	opt.nColorBits = 16;
-	opt.nDepthBits = 16;
-	opt.nStencilBits = 0;
+	if (pOpt)
+		opt = *pOpt;
+	else {
+		opt.bOwnDraw = true;
+		opt.bFullScreen = false;
+		opt.nColorBits = 16;
+		opt.nDepthBits = 16;
+		opt.nStencilBits = 0;
+	}
 
 	// Create Our OpenGL Window
 	FrameWindow::createInstance();

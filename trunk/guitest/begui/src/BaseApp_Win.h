@@ -37,7 +37,8 @@ private:
 
 public:
 	virtual bool initialize(const std::string &title, size_t width, size_t height, 
-						Window::Style frame_style=Window::MULTIPLE);
+						Window::Style frame_style=Window::MULTIPLE,
+						FrameWindow::Options *opt=0);
 	virtual int run();
 	
 	void setSyncRendering(bool bSyncRendering)	{ FrameWindow::inst()->setSyncRendering(bSyncRendering); }
