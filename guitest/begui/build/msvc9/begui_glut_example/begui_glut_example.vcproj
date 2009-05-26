@@ -61,6 +61,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib glew32.lib winmm.lib freetype235_D.lib"
+				OutputFile="$(OutDir)/../../../demos/$(ProjectName)_D.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBCMTD"
 				GenerateDebugInformation="true"
@@ -135,6 +136,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib glew32.lib winmm.lib freetype235MT.lib"
+				OutputFile="$(OutDir)/../../../demos/$(ProjectName).exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
