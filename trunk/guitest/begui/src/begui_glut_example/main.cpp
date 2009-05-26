@@ -8,6 +8,12 @@ ListBox myList1;
 int width = 0;
 int height = 0;
 
+float material_diffuse[4]={1,1,1,1};
+float lightpos[] = {0, 1, 1, .0f};
+float lightdiffuse[] = {1,1,1,1};
+float lightspecular[] = {0.5f,0.5f,0.5f,1};
+float lightambient[] = {0.1f,0.1f,0.1f,1};
+
 void renderScene(void)
 {
 	static float angle = 0;
@@ -44,14 +50,9 @@ void renderScene(void)
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
 	float black[4]={0,0,0,0};
-	float white[4]={1,1,1,1};
 	glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT,black);
 	glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,black);
-	glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,white);
-	float lightpos[] = {0, 1, 1, .0f};
-	float lightdiffuse[] = {1,1,1,1};
-	float lightspecular[] = {0.5f,0.5f,0.5f,1};
-	float lightambient[] = {0.1f,0.1f,0.1f,1};
+	glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,material_diffuse);
 	glLightfv(GL_LIGHT0,GL_POSITION,lightpos);       //updates the light's position
 	glLightfv(GL_LIGHT0,GL_DIFFUSE,lightdiffuse);    //updates the light's diffuse colour
 	glLightfv(GL_LIGHT0,GL_SPECULAR,lightspecular);  //updates the light's specular colour
@@ -127,7 +128,9 @@ void onButtonClick(int id)
 	// id: the id of the control generating this event
 	if (id == 101) // if it was from our button
 	{
-		MessageBox(0, TEXT("You click my buttons!"), TEXT("Click"), MB_OK);
+		lightdiffuse[0] = (float)rand()/RAND_MAX;
+		lightdiffuse[1] = (float)rand()/RAND_MAX;
+		lightdiffuse[2] = (float)rand()/RAND_MAX;
 	}
 }
 
@@ -135,7 +138,16 @@ void onListSelect(int sel) {
 	// sel is the id of the selected item (starting from 0 for
 	// the first item and continuing incrementaly for each subsequent
 	// item)
-	MessageBox(0, TEXT("List item selected"), TEXT("List event"), MB_OK);
+	switch (sel) {
+		case 0: lightdiffuse[0]=1;lightdiffuse[1]=1;lightdiffuse[2]=1; break;
+		case 1: lightdiffuse[0]=1;lightdiffuse[1]=0;lightdiffuse[2]=0; break;
+		case 2: lightdiffuse[0]=1;lightdiffuse[1]=0.4f;lightdiffuse[2]=0; break;
+		case 3: lightdiffuse[0]=0;lightdiffuse[1]=1;lightdiffuse[2]=0; break;
+		case 4: lightdiffuse[0]=1;lightdiffuse[1]=1;lightdiffuse[2]=0; break;
+		case 5: lightdiffuse[0]=0;lightdiffuse[1]=0;lightdiffuse[2]=1; break;
+		case 6: lightdiffuse[0]=1;lightdiffuse[1]=0;lightdiffuse[2]=1; break;
+		case 7: lightdiffuse[0]=0.5f;lightdiffuse[1]=0.5f;lightdiffuse[2]=0.5f; break;
+	}
 }
 
 void initBeGUI()
@@ -193,14 +205,14 @@ int main(int argc, char *argv[])
 	myWindow.addComponent(&myBtn1);
 	myList1.create(20, 50, 160, 100, ListBox::SINGLE_SELECT);
 	myList1.handleOnItemSelect(makeFunctor((Functor1<int>*)0, &onListSelect));
-	myList1.addItem("Triangle");
-	myList1.addItem("Rectangle");
-	myList1.addItem("Textured Rectangle");
-	myList1.addItem("Cube");
-	myList1.addItem("Teapot");
-	myList1.addItem("Knot");
-	myList1.addItem("Complicated Object 1");
-	myList1.addItem("Complicated Object 2");
+	myList1.addItem("White");
+	myList1.addItem("Red");
+	myList1.addItem("Orange");
+	myList1.addItem("Green");
+	myList1.addItem("Yellow");
+	myList1.addItem("Blue");
+	myList1.addItem("Purple");
+	myList1.addItem("Grey");
 	myWindow.addComponent(&myList1);
 
 	// start the main loop
