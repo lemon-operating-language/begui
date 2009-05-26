@@ -60,7 +60,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="opengl32.lib glew32.lib winmm.lib freetype235_D.lib"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="LIBCMTD"
@@ -135,7 +134,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/FORCE:MULTIPLE"
 				AdditionalDependencies="opengl32.lib glew32.lib winmm.lib freetype235MT.lib"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="LIBCMT"
