@@ -273,6 +273,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\TabContainer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\TextBox.cpp"
 				>
 			</File>
@@ -400,6 +404,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Slider.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\TabContainer.h"
 				>
 			</File>
 			<File
