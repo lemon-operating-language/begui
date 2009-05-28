@@ -125,7 +125,7 @@ void ListBox::onRender()
 		m_resizableArea);
 	
 	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
-	display::maskRect(wpos.x-1, wpos.y+m_contentPadding.top, 
+	display::pushMask(wpos.x-1, wpos.y+m_contentPadding.top, 
 		getWidth()+2-((bNeedsScrolling)? m_scroller.getWidth() : 0), 
 		getHeight()-m_contentPadding.bottom-m_contentPadding.top+1);
 
@@ -252,7 +252,7 @@ void ListBox::onRender()
 		Font::renderString((int)left + 2, (int)bottom-3, m_items[i].m_text.getText());
 	}
 	
-	display::unmask();
+	display::popMask();
 
 	if (bNeedsScrolling) {
 		glColor4f(1,1,1,1);

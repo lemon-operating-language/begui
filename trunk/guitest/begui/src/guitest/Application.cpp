@@ -94,13 +94,13 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	Console::create();
 
 	// Set the path of the resource directory
-//	ResourceManager::inst()->setResourceDir("../resources/");
+	ResourceManager::inst()->setResourceDir("../resources/");
 
 	FrameWindow::Options opt;
-	opt.bOwnDraw = false;
+	opt.bOwnDraw = true;
 	opt.bFullScreen = false;
-	opt.nColorBits = 16;
-	opt.nDepthBits = 16;
+	opt.nColorBits = 24;
+	opt.nDepthBits = 8;
 	opt.nStencilBits = 0;
 	if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE, &opt))
 		return false;

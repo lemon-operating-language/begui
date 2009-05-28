@@ -114,7 +114,7 @@ void TextBox::onRender()
 		m_resizableArea);
 
 	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
-	display::maskRect(wpos.x, wpos.y, getWidth(), getHeight());
+	display::pushMask(wpos.x, wpos.y, getWidth(), getHeight());
 
 	// render the text
 	if (m_text.isEditable())
@@ -123,7 +123,7 @@ void TextBox::onRender()
 		glColor4f(m_textColor.r*255, m_textColor.g*255, m_textColor.b*255, 0.2f);
 	m_text.renderString();
 
-	display::unmask();
+	display::popMask();
 }
 
 bool TextBox::onMouseDown(int x, int y, int button)

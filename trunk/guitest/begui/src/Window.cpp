@@ -240,7 +240,7 @@ void Window::frameRender()
 			getHeight() + (m_windowResizableArea.top + m_windowFace.m_height - m_windowResizableArea.bottom));
 	}
 
-	// render the contents of the window
+	// render the contents of the window (caption usually)
 	Container::frameRender();
 
 	// setup the translation
@@ -264,8 +264,13 @@ glBegin(GL_LINES);
 	glVertex2f(m_clientArea.left, m_clientArea.top);
 glEnd();*/
 
+	Vector2i wpos = Component::localToWorld(Vector2i(m_clientArea.left, m_clientArea.top));
+	display::pushMask(wpos.x, wpos.y+1, m_clientArea.getWidth(), m_clientArea.getHeight());
+
 	// render the contents of the sub-container
 	m_contents.frameRender();
+	
+	display::popMask();
 	
 	// Reset the coordinate system
 	glMatrixMode(GL_MODELVIEW);
