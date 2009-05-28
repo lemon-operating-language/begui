@@ -24,8 +24,12 @@
 
 using namespace begui;
 
+// display dimensions
 int	g_displayWidth = 0;
 int g_displayHeight = 0;
+
+// a stack of masks for the scissor test
+std::vector<Rect<int> > g_maskStack;
 
 int display::getWidth()
 {
@@ -49,8 +53,9 @@ void display::setSize(int w, int h)
 // Mask the screen except this given rectangle. Any
 // rendering after this call will be restricted only within
 // this rectangle
-void display::maskRect(int x, int y, int w, int h)
+void display::pushMask(int x, int y, int w, int h)
 {
+	Rect<int> rect(x, g_displayHeight-y-h+1, x+w, g_displayHeight-y+1);
 	if (FrameWindow::inst()) {
 		Rect<int> fb = FrameWindow::inst()->getInactiveBorders();
 
@@ -62,16 +67,37 @@ void display::maskRect(int x, int y, int w, int h)
 			y -= FrameWindow::inst()->getTop();
 		}
 
-		glScissor(x,fh-y-h+1,w,h);
+		rect = Rect<int>(x, fh-y-h+1, x+w, fh-y+1);
 	}
-	else
-		glScissor(x, g_displayHeight-y-h+1, w, h);
+
+	//crop the new mask given the previous mask in the stack
+	if (g_maskStack.size() > 0) {
+		Rect<int> &pr = g_maskStack.back();
+		if (rect.left < pr.left) rect.left = pr.left;
+		if (rect.top < pr.top) rect.top = pr.top;
+		if (rect.right > pr.right) rect.right = pr.right;
+		if (rect.bottom > pr.bottom) rect.bottom = pr.bottom;
+	}
+
+	// set the new mask
+	g_maskStack.push_back(rect);
+	glScissor(rect.left, rect.top, rect.getWidth(), rect.getHeight());
 	glEnable(GL_SCISSOR_TEST);
 }
 
 // Remove any previous masks. Rendering can be done anywhere
 // on the screen after this call.
-void display::unmask()
+void display::popMask()
 {
-	glDisable(GL_SCISSOR_TEST);
+	if (g_maskStack.size() > 0)
+		g_maskStack.pop_back();
+
+	if (g_maskStack.size() == 0)
+		glDisable(GL_SCISSOR_TEST);
+	else {
+		// load the previous mask
+		Rect<int> &rect = g_maskStack.back();	
+		glScissor(rect.left, rect.top, rect.getWidth(), rect.getHeight());
+		glEnable(GL_SCISSOR_TEST);
+	}
 }

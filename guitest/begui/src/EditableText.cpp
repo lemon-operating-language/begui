@@ -157,15 +157,19 @@ void EditableText::onKeyDown(int key)
 	{
 	// take care of backspace and navigation keys
 	case KEY_LEFT:
-		if (m_cursorPos > 0)
+		if (m_cursorPos > 0) {
+			//TODO: handle CTRL+arrow
 			setCursorPos(m_cursorPos-1);
+		}
 		m_selectEnd = m_cursorPos;
 		if (!(input::isKeyDown(KEY_LSHIFT) || input::isKeyDown(KEY_RSHIFT)))
 			m_selectStart = m_cursorPos;
 		break;
 	case KEY_RIGHT:
-		if (m_cursorPos < (int)m_charPos.size())
+		if (m_cursorPos < (int)m_charPos.size()) {
+			//TODO: handle CTRL+arrow
 			setCursorPos(m_cursorPos+1);
+		}
 		m_selectEnd = m_cursorPos;
 		if (!(input::isKeyDown(KEY_LSHIFT) || input::isKeyDown(KEY_RSHIFT)))
 			m_selectStart = m_cursorPos;
@@ -247,11 +251,27 @@ void EditableText::onKeyDown(int key)
 			m_selectStart = m_cursorPos;
 		break;
 	default:
-		// if a printable character, add it to the cursor position
 		if (m_bEditable)
 		{
+			// if a printable character, add it to the cursor position
 			if (key < 256 && ( isprint(key) || key==' ' || key == '\t' || key==KEY_ENTER ))
 			{
+				// if there is selected text, remove it (to be replaced by the new character)
+				if (m_selectStart != m_selectEnd && m_bTextSelectable) {
+					std::string text = m_text;
+					if (m_selectStart < m_selectEnd)
+						text.erase(m_selectStart, m_selectEnd-m_selectStart);
+					else
+						text.erase(m_selectEnd, m_selectStart-m_selectEnd);
+					setText(text);
+
+					// return the cursor to the beginning of the selection
+					setCursorPos( (m_selectStart < m_selectEnd) ? m_selectStart : m_selectEnd );
+
+					// nothing selected now:
+					m_selectStart = m_selectEnd = m_cursorPos;
+				}
+
 				if (key == 13)
 					key = '\n';
 				char str[2] = {key, 0};
@@ -260,6 +280,7 @@ void EditableText::onKeyDown(int key)
 				text.insert(m_cursorPos, str);
 				setText(text);
 				setCursorPos(m_cursorPos+1);
+				m_selectStart = m_selectEnd = m_cursorPos;
 			}
 		}
 	}

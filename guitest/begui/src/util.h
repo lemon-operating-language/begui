@@ -60,11 +60,11 @@ namespace display
 	// Mask the screen except this given rectangle. Any
 	// rendering after this call will be restricted only within
 	// this rectangle
-	void maskRect(int x, int y, int w, int h);
+	void pushMask(int x, int y, int w, int h);
 
 	// Remove any previous masks. Rendering can be done anywhere
 	// on the screen after this call.
-	void unmask();
+	void popMask();
 
 	int getWidth();
 	int getHeight();
