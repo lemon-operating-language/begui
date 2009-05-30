@@ -13,6 +13,7 @@ private:
 	TextBox m_textbox;
 	ListBox m_listbox;
 	ComboBox m_combobox;
+	TabContainer m_tabs;
 
 	// example: a live variable
 	double m_sliderPos;

@@ -202,3 +202,20 @@ class GroupBox {
 		rect active_area = 0,0,153,163
 	}
 }
+
+class TabContainer {
+	style std {
+		image client_area_bg = 1,342,152,510, gui2_widgets.png
+		rect resizable_area = 7,7,137,155
+		rect active_area = 0,0,151,161
+		image tab_active = 1,233,77,258, gui2_widgets.png
+		image tab_inactive = 78,233,154,252, gui2_widgets.png
+		rect tab_active_area = 0,0,75,18
+		rect tab_resizable_area = 5,5,70,12
+		color active_tab_text = 30,30,30
+		color inactive_tab_text = 225,225,225
+		int tab_min_width = 10
+		int tab_text_padding = 12
+		image active_bottom_img = 156,236,171,249, gui2_widgets.png
+	}
+}

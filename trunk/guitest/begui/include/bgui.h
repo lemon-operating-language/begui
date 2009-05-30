@@ -47,5 +47,6 @@
 #include "../src/ImageBox.h"
 #include "../src/ListBox.h"
 #include "../src/ComboBox.h"
+#include "../src/TabContainer.h"
 
 #endif

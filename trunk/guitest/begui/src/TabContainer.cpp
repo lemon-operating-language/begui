@@ -20,6 +20,8 @@
 */
 
 #include "TabContainer.h"
+#include "Font.h"
+#include "util.h"
 
 using namespace begui;
 
@@ -27,7 +29,11 @@ TabContainer::TabContainer() :
 	m_curTab(0),
 	m_bCanCreateTabs(false),
 	m_bCanCloseTabs(false),
-	m_bCanDragTabs(false)
+	m_bCanDragTabs(false),
+	m_activeTabTextColor(0,0,0),
+	m_inactiveTabTextColor(1,1,1),
+	m_tabTextPadding(5),
+	m_minTabWidth(60)
 {
 }
 
@@ -53,6 +59,31 @@ void TabContainer::create(int left, int top, int width, int height, const std::s
 	m_bCanCloseTabs = bCanCloseTabs;
 
 	// load the associated style
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("TabContainer").style(style_name);
+	ASSERT(style.hasProp("tab_active"));
+	m_tabActiveImg = ResourceManager::inst()->loadImage(style.get_img("tab_active"));
+	ASSERT(style.hasProp("tab_inactive"));
+	m_tabInactiveImg = ResourceManager::inst()->loadImage(style.get_img("tab_inactive"));
+	ASSERT(style.hasProp("client_area_bg"));
+	m_clientAreaImg = ResourceManager::inst()->loadImage(style.get_img("client_area_bg"));
+	if (style.hasProp("resizable_area"))
+		m_resizableArea = style.get_rect("resizable_area");
+	if (style.hasProp("active_area"))
+		m_activeArea = style.get_rect("active_area");
+	if (style.hasProp("tab_resizable_area"))
+		m_tabResizableArea = style.get_rect("tab_resizable_area");
+	if (style.hasProp("tab_active_area"))
+		m_tabActiveArea = style.get_rect("tab_active_area");
+	if (style.hasProp("active_tab_text"))
+		m_activeTabTextColor = style.get_c("active_tab_text");
+	if (style.hasProp("inactive_tab_text"))
+		m_inactiveTabTextColor = style.get_c("inactive_tab_text");
+	if (style.hasProp("tab_text_padding"))
+		m_tabTextPadding = style.get_i("tab_text_padding");
+	if (style.hasProp("tab_min_width"))
+		m_minTabWidth = style.get_i("tab_min_width");
+	if (style.hasProp("active_bottom_img"))
+		m_activeBtmImg = ResourceManager::inst()->loadImage(style.get_img("active_bottom_img"));
 }
 
 void TabContainer::addTab(const std::string &title)
@@ -60,6 +91,7 @@ void TabContainer::addTab(const std::string &title)
 	Tab *pTab = new Tab;
 	pTab->m_title = title;
 	pTab->m_icon = 0;
+	pTab->setParent(this);
 	m_tabs.push_back(pTab);
 }
 
@@ -139,46 +171,126 @@ void TabContainer::frameUpdate()
 
 void TabContainer::frameRender()
 {
-	// Render the tab headers
-	//TODO
+	glEnable(GL_BLEND);
 
+	Font *pFont = FontManager::getCurFont();
+	int header_h = m_tabActiveArea.getHeight();
+
+	// Render the tab bg
+	glColor4f(1,1,1,1);
+	Component::drawImageWtBorders(m_clientAreaImg, getLeft()-m_activeArea.left, 
+		header_h + getTop()-m_activeArea.top, 
+		getWidth()+(m_clientAreaImg.m_width - m_activeArea.right)+m_activeArea.left, 
+		getHeight()+(m_clientAreaImg.m_height - m_activeArea.bottom)+m_activeArea.top, m_resizableArea);
+
+	// Render the tab headers
+	int tab_x = getLeft()-m_tabActiveArea.left + m_resizableArea.left;
+	for (size_t i=0; i<m_tabs.size(); ++i)
+	{
+		int tab_w = m_minTabWidth;
+		int text_w = pFont->stringLength(m_tabs[i]->m_title) + 2*m_tabTextPadding;
+		if (text_w > tab_w)
+			tab_w = text_w;
+
+		// save tab coords (local coords)
+		m_tabs[i]->m_headerLeft = tab_x - getLeft();
+		m_tabs[i]->m_headerRight = tab_x+tab_w - getTop();
+
+		if (i == m_curTab) {
+			glColor4f(1,1,1,1);
+			Component::drawImageWtBorders(m_tabActiveImg, tab_x, 
+				getTop()-m_tabActiveArea.top, 
+				tab_w, 
+				m_tabActiveImg.m_height,
+				m_tabResizableArea);
+
+			// render the text
+			glColor4f(m_activeTabTextColor.r, m_activeTabTextColor.g, m_activeTabTextColor.b,1);
+			Font::renderString(tab_x + m_tabTextPadding, getTop()+header_h-4, m_tabs[i]->m_title);
+
+			// render a small indicator that the tab is open
+			if (m_activeBtmImg.m_texture) {
+				glColor4f(1,1,1,1);
+				Component::drawImage(m_activeBtmImg, tab_x + tab_w/2 - m_activeBtmImg.m_width/2, getTop()+header_h);
+			}
+		}
+		else {
+			glColor4f(1,1,1,1);
+			Component::drawImageWtBorders(m_tabInactiveImg, tab_x, 
+				getTop()-m_tabActiveArea.top, 
+				tab_w, 
+				m_tabInactiveImg.m_height,
+				m_tabResizableArea);
+			
+			// render the text
+			glColor4f(m_inactiveTabTextColor.r, m_inactiveTabTextColor.g, m_inactiveTabTextColor.b,1);
+			Font::renderString(tab_x + m_tabTextPadding, getTop()+header_h-4, m_tabs[i]->m_title);
+		}
+
+		tab_x += tab_w+1;
+	}
+	
+	// let the container call onRender()
 	Container::frameRender();
 }
 
 void TabContainer::onRender()
 {
 	// render the contents of the active tab
-	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size())
+	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size()) {
+		// mask the client area
+		Vector2i wpos = m_tabs[m_curTab]->localToWorld(Vector2i(0,0));
+		display::pushMask(wpos.x, wpos.y, getWidth(), getHeight());
+
+		m_tabs[m_curTab]->setPos(getLeft(), getTop()+m_tabActiveArea.getHeight());
 		m_tabs[m_curTab]->frameRender();
+		
+		// unmask the client area
+		display::popMask();
+	}
 }
 
 bool TabContainer::onMouseDown(int x, int y, int button)
 {
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+
 	// check for events on the tab headers
-	// TODO
+	if (lP.y<m_tabActiveArea.getHeight()) {
+		for (size_t i=0; i<m_tabs.size(); ++i) {
+			if (lP.x>=m_tabs[i]->m_headerLeft && lP.x<=m_tabs[i]->m_headerRight) {
+				m_curTab = i;
+				return true;
+			}
+		}
+	}
 
 	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size())
-		return m_tabs[m_curTab]->onMouseDown(x,y,button);
+		return m_tabs[m_curTab]->onMouseDown(lP.x,lP.y,button);
 	return Container::onMouseDown(x,y,button);
 }
 
 bool TabContainer::onMouseMove(int x, int y, int prevx, int prevy)
 {
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+	Vector2i lpP = parentToLocal(Vector2i(prevx,prevy));
+
 	// check for events on the tab headers
 	// TODO
 
 	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size())
-		return m_tabs[m_curTab]->onMouseMove(x,y,prevx,prevy);
+		return m_tabs[m_curTab]->onMouseMove(lP.x,lP.y,lpP.x,lpP.y);
 	return Container::onMouseMove(x,y,prevx,prevy);
 }
 
 bool TabContainer::onMouseUp(int x, int y, int button)
 {
+	Vector2i lP = parentToLocal(Vector2i(x,y));
+
 	// check for events on the tab headers
 	// TODO
 
 	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size())
-		return m_tabs[m_curTab]->onMouseUp(x,y,button);
+		return m_tabs[m_curTab]->onMouseUp(lP.x,lP.y,button);
 	return Container::onMouseUp(x,y,button);
 }
 

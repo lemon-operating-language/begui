@@ -89,8 +89,9 @@ protected:
 	public:
 		std::string m_title;
 		ResourceManager::ImageRef *m_icon;
+		int m_headerLeft, m_headerRight;
 
-		Tab() : m_icon(0) { }
+		Tab() : m_icon(0), m_headerLeft(0), m_headerRight(0) { }
 	};
 
 	std::vector<Tab*>	m_tabs;
@@ -106,6 +107,13 @@ protected:
 	Functor1<int> m_onTabClose;
 	Functor1<int> m_onTabDragStart;
 	Functor1<int> m_onTabDragEnd;
+
+	// appearance
+	ResourceManager::ImageRef m_tabActiveImg, m_tabInactiveImg, m_clientAreaImg, m_activeBtmImg;
+	Rect<int>			m_resizableArea, m_activeArea;
+	Rect<int>			m_tabResizableArea, m_tabActiveArea;
+	Color				m_activeTabTextColor, m_inactiveTabTextColor;
+	int					m_tabTextPadding, m_minTabWidth;
 
 private:
 	// hide the original addComponent method
