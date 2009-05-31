@@ -33,7 +33,8 @@ Button::Button() :
 	m_bAutoSzY(true),
 	m_iconPlacement(NEAR_LEFT),
 	m_activeArea(0,0,0,0),
-	m_resizableArea(0,0,0,0)
+	m_resizableArea(0,0,0,0),
+	m_bCanDrag(false)
 {
 }
 
@@ -195,6 +196,7 @@ bool Button::onMouseDown(int x, int y, int button)
 {
 	if (m_status != Button::INACTIVE) {
 		m_status = Button::DOWN;
+		m_onButtonDown(m_id, Vector2i(x,y));
 	}
 	return true;
 }
@@ -204,21 +206,30 @@ bool Button::onMouseMove(int x, int y, int prevx, int prevy)
 	if (m_status != Button::DOWN || !isPtInside(x,y)) {
 		if (m_status != Button::INACTIVE && isPtInside(x,y))
 			m_status = Button::MOUSE_OVER;
-		else
+		else {
 			m_status = Button::UP;
+			m_onButtonUp(m_id, Vector2i(x,y));
+		}
+	}
+	else if (m_status == Button::DOWN && canDrag()) {
+		m_onButtonDrag(m_id, Vector2i(x-prevx, y-prevy));
 	}
 	return true;
 }
 
 bool Button::onMouseUp(int x, int y, int button)
 {
-	if (m_status != Button::INACTIVE) {
+	if (m_status != Button::INACTIVE)
+	{
 		if (m_status == Button::DOWN)
 			m_onClick(m_id);
+
 		if (isPtInside(x,y))
 			m_status = Button::MOUSE_OVER;
 		else
 			m_status = Button::UP;
+		
+		m_onButtonUp(m_id, Vector2i(x,y));
 	}
 	return true;
 }

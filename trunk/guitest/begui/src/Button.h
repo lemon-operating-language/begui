@@ -53,9 +53,11 @@ public:
 private:
 	std::string		m_title;
 	int				m_id;
-	Functor1<int>	m_onClick;	// arg1: the id of the button
+	Functor1<int>	m_onClick, m_onDragStart, m_onDragEnd;	// arg1: the id of the button
+	Functor2<int, const Vector2i&>	m_onButtonDown, m_onButtonUp, m_onButtonDrag; // arg1: id, arg2: position (offset for drag)
 	State			m_status;
 	bool			m_bAutoSzX, m_bAutoSzY;				// true to determine the button size automatically
+	bool			m_bCanDrag;							// true if the button can be dragged around with the mouse
 
 	ResourceManager::ImageRef	m_faces[STATES_NUM];	// the faces corresponding to each state of the button
 	ResourceManager::ImageRef	m_icon;
@@ -76,12 +78,22 @@ public:
 	virtual void onUpdate();
 	virtual void onRender();
 
-	void	setState(State state)	{ m_status = state; }
-	State	getState() const		{ return m_status; }
-	void	setTitle(const std::string& title)	{ m_title = title; }
+	// event hooks
+	void	handleClick(Functor1<int> &callback)						{ m_onClick = callback; }
+	void	handleDragStart(Functor1<int> &callback)					{ m_onDragStart = callback; }
+	void	handleDragEnd(Functor1<int> &callback)						{ m_onDragEnd = callback; }
+	void	handleButtonDown(Functor2<int, const Vector2i&> &callback)	{ m_onButtonDown = callback; }
+	void	handleButtonUp(Functor2<int, const Vector2i&> &callback)	{ m_onButtonUp = callback; }
+	void	handleDrag(Functor2<int, const Vector2i&> &callback)		{ m_onButtonDrag = callback; }
+
+	void	setState(State state)										{ m_status = state; }
+	State	getState() const											{ return m_status; }
+	void	setTitle(const std::string& title)							{ m_title = title; }
 	void	setFace(State state, const ResourceManager::ImageRef &img);
 	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
 	void	setResizableArea(const Rect<int> &resizable_area);
+	void	setCanDrag(bool bDrag)										{ m_bCanDrag = bDrag; }
+	bool	canDrag() const												{ return m_bCanDrag; }
 	
 	Rect<int>	getActiveBorders() const	{ return Rect<int>(m_activeArea.left, m_activeArea.top, m_faces[UP].m_width-m_activeArea.right, m_faces[UP].m_height-m_activeArea.bottom); }
 
