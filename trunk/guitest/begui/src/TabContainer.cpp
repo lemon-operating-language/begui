@@ -296,12 +296,18 @@ bool TabContainer::onMouseUp(int x, int y, int button)
 
 void TabContainer::onKeyDown(int key)
 {
-	//TODO
+	//TODO: handle tab/space to switch tabs
+
+	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size())
+		return m_tabs[m_curTab]->onKeyDown(key);
+	return Container::onKeyDown(key);
 }
 
 void TabContainer::onKeyUp(int key)
 {
-	//TODO
+	if (m_curTab >= 0 && m_curTab < (int)m_tabs.size())
+		return m_tabs[m_curTab]->onKeyUp(key);
+	return Container::onKeyUp(key);
 }
 
 void TabContainer::handleTabToFront(Functor1<int> &callback)

@@ -49,7 +49,8 @@ public:
 //private:
 	union {
 		const void *m_func;
-		char m_memFunc[sizeof(_MemFunc)];
+		//char m_memFunc[sizeof(_MemFunc)];
+		char m_memFunc[8];
 	};
 	void *m_callee;
 };
