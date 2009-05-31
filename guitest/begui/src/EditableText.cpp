@@ -292,6 +292,8 @@ void EditableText::onKeyUp(int key)
 
 void EditableText::setCursorPos(int pos)
 {
+	int lineHeight = FontManager::getCurFont()->getLineHeight();//TEMP
+
 	if (pos < 0) pos = 0;
 	if (pos > (int)m_charPos.size()) pos = (int)m_charPos.size();
 	m_cursorPos = pos;
@@ -300,10 +302,15 @@ void EditableText::setCursorPos(int pos)
 		m_cursorY = m_charPos[pos].bottom;
 		m_cursorH = m_charPos[pos].getHeight();
 	}
-	else {
+	else if (pos > 0) {	// cursor at the end of the text, text non-empty
 		m_cursorX = m_charPos[pos-1].right;
 		m_cursorY = m_charPos[pos-1].bottom;
 		m_cursorH = m_charPos[pos-1].getHeight();
+	}
+	else {	// cursor at the end of the text, text empty
+		m_cursorH = lineHeight;
+		m_cursorX = m_x;
+		m_cursorY = m_y+lineHeight;
 	}
 }
 
