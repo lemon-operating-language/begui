@@ -195,4 +195,75 @@ makeFunctor(/*Functor1<P1>*,*/Callee &c,TRT (CallType::* const &f)(TP1) const)
 	return MemberTranslator1<TP1/*was P1*/,Callee,MemFunc>(c,f);
 	}
 
+/************************* two args - no return *******************/
+template <class P1, class P2>
+class Functor2:protected FunctorBase{
+public:
+	Functor2(DummyInit * = 0){}
+	void operator()(P1 p1, P2 p2)const
+	{
+		if (m_callee || m_func)
+			thunk(*this,p1,p2);
+	}
+	FunctorBase::operator bool;
+protected:
+	typedef void (*Thunk)(const FunctorBase &,P1,P2);
+	Functor2(Thunk t,const void *c,const void *f,size_t sz):
+		FunctorBase(c,f,sz),thunk(t){}
+private:
+	Thunk thunk;
+};
+
+
+template <class P1, class P2,class Func>
+class FunctionTranslator2:public Functor2<P1,P2>{
+public:
+	FunctionTranslator2(Func f):Functor2<P1,P2>(thunk,0,f,0){}
+	static void thunk(const FunctorBase &ftor,P1 p1, P2 p2)
+	{
+		if (ftor.m_func)
+			(Func(ftor.m_func))(p1, p2);
+	}
+};
+
+
+template <class P1,class P2,class Callee, class MemFunc>
+class MemberTranslator2:public Functor2<P1,P2>{
+public:
+	MemberTranslator2(Callee &c,const MemFunc &m):
+		Functor2<P1,P2>(thunk,&c,&m,sizeof(MemFunc)){}
+	static void thunk(const FunctorBase &ftor, P1 p1, P2 p2)
+	{
+		Callee *callee = (Callee *)ftor.m_callee;
+		if (!callee)
+			return;
+		MemFunc &memFunc(*(MemFunc*)(void *)(ftor.m_memFunc));
+		(callee->*memFunc)(p1,p2);
+	}
+};
+
+template <class P1,class P2,class TRT,class TP1,class TP2>
+inline FunctionTranslator2<P1,P2,TRT (*)(TP1,TP2)>
+makeFunctor(Functor2<P1,P2>*,TRT (*f)(TP1,TP2))
+{
+	return FunctionTranslator2<P1,P2,TRT (*)(TP1,TP2)>(f);
+}
+
+
+template </*class P1,*/class Callee,class TRT,class CallType,class TP1,class TP2>
+inline MemberTranslator2<TP1/*was P1*/,TP2,Callee,TRT (CallType::*)(TP1,TP2)>
+makeFunctor(/*Functor1<P1>*,*/Callee &c,TRT (CallType::* const &f)(TP1,TP2))
+	{
+	typedef TRT (CallType::*MemFunc)(TP1,TP2);
+	return MemberTranslator2<TP1/*was P1*/,TP2,Callee,MemFunc>(c,f);
+	}
+
+template </*class P1,*/class Callee,class TRT,class CallType,class TP1,class TP2>
+inline MemberTranslator2<TP1/*was P1*/, TP2, Callee,TRT (CallType::*)(TP1,TP2) const>
+makeFunctor(/*Functor1<P1>*,*/Callee &c,TRT (CallType::* const &f)(TP1,TP2) const)
+	{
+	typedef TRT (CallType::*MemFunc)(TP1,TP2) const;
+	return MemberTranslator2<TP1/*was P1*/,TP2,Callee,MemFunc>(c,f);
+	}
+
 #endif
