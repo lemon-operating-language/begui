@@ -201,10 +201,12 @@ bool Button::onMouseDown(int x, int y, int button)
 
 bool Button::onMouseMove(int x, int y, int prevx, int prevy)
 {
-	if (m_status != Button::INACTIVE && isPtInside(x,y))
-		m_status = Button::MOUSE_OVER;
-	else
-		m_status = Button::UP;
+	if (m_status != Button::DOWN || !isPtInside(x,y)) {
+		if (m_status != Button::INACTIVE && isPtInside(x,y))
+			m_status = Button::MOUSE_OVER;
+		else
+			m_status = Button::UP;
+	}
 	return true;
 }
 
