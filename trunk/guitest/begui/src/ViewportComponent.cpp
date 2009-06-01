@@ -25,16 +25,16 @@
 
 using namespace begui;
 
-ViewportComponent::ViewportComponent() : m_pRenderCallback(0), m_bNavigationEnabled(false)
+ViewportComponent::ViewportComponent() : m_bNavigationEnabled(false)
 {
 }
 
-void ViewportComponent::create(int x, int y, int w, int h, const Viewport& vp, void (*pRenderCallback)())
+void ViewportComponent::create(int x, int y, int w, int h, const Viewport& vp, Functor0 &render_callback)
 {
 	setPos(x,y);
 	setSize(w, h);
 	m_viewport = vp;
-	m_pRenderCallback = pRenderCallback;
+	m_renderCallback = render_callback;
 
 	// init trackball
 	m_trackball.init();
@@ -73,8 +73,8 @@ void ViewportComponent::onRender()
 	if (m_bNavigationEnabled)
 		m_trackball.setMatrix();
 
-	if (m_pRenderCallback)
-		m_pRenderCallback();
+	// render the contents by calling the functor
+	m_renderCallback();
 
 	// pop matrices
 	glMatrixMode(GL_PROJECTION);
