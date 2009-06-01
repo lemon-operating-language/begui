@@ -60,9 +60,32 @@ void ChildWnd1::onCreate()
 	m_combobox.disableItem(2);
 	m_tabs.addComponent(&m_combobox, 0);
 
+	// create a test viewport
+	Viewport vp;
+	vp.setPerspectiveProj(0.1f, 100.0f, 45.0f);
+	m_vp.create(40, 40, 300, 300, vp, makeFunctor(*Application::inst(), &Application::onRenderVp));
+	m_tabs.addComponent(&m_vp, 1);
+
 	// change the size of the window, so that the client area is large
 	// enough to hold the contents
 	setClientAreaSize(416, 410);
+}
+
+void Application::onRenderVp()
+{
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0,0,-5);
+	static float angle = 0.0f;
+	angle += 0.5f;
+	glRotatef(angle, 0, 1, 0);
+
+	glColor4f(1,0.4f,0.1f,1);
+	glBegin(GL_TRIANGLES);
+		glVertex3f(1,1,1);
+		glVertex3f(-1,1,1);
+		glVertex3f(-1,-1,1);
+	glEnd();
 }
 
 bool Application::onCreate()
@@ -113,6 +136,8 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	opt.nStencilBits = 0;
 	if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE, &opt))
 		return false;
+
+	Application::inst()->setSyncRendering(true);
 
 	return Application::inst()->run();
 }

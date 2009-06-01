@@ -35,7 +35,8 @@ class ViewportComponent : public Component
 {
 private:
 	Viewport	m_viewport;
-	void		(*m_pRenderCallback)();
+	//void		(*m_pRenderCallback)();
+	Functor0	m_renderCallback;
 	bool		m_bNavigationEnabled;
 	Trackball	m_trackball;
 	Matrix4		m_viewMat;
@@ -45,7 +46,7 @@ private:
 public:
 	ViewportComponent();
 
-	void create(int x, int y, int w, int h, const Viewport& vp, void (*pRenderCallback)() = 0);
+	void create(int x, int y, int w, int h, const Viewport& vp, Functor0 &render_callback = Functor0());
 	void enableNavigation(bool bEnable)		{ m_bNavigationEnabled = bEnable; }
 
 	Viewport&	getViewport()				{ return m_viewport; }

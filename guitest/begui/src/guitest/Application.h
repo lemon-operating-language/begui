@@ -15,6 +15,7 @@ private:
 	ComboBox m_combobox;
 	TabContainer m_tabs;
 	CheckBox	m_checkbox;
+	ViewportComponent m_vp;
 
 	// example: a live variable
 	double m_sliderPos;
@@ -34,6 +35,7 @@ private:
 public:
 	virtual bool onCreate();
 	void onMenu(int id);
+	void onRenderVp();
 
 	static Application* inst()	{ if (!m_pInst) m_pInst = new Application(); return m_pInst; }
 };
