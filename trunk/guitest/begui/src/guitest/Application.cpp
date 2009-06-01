@@ -18,6 +18,9 @@ void ChildWnd1::onCreate()
 	//m_button1.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
 	m_tabs.addComponent(&m_button1, 0);
 
+	m_checkbox.create(260, 70, "check here", 102);
+	m_tabs.addComponent(&m_checkbox, 0);
+
 	// create a group of radio buttons
 	m_radio1.create(20, 20, "Radio Button 1", 2);
 	m_radio2.create(20, 40, "Radio Button 2", 3);
