@@ -45,6 +45,7 @@
 #include <assert.h>
 
 //#define NOMINMAX	// turn off the generation of min/max macros, so as not to clash with std::min/std::max
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <mmsystem.h>
 
