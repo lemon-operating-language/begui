@@ -35,7 +35,8 @@ CheckBox::~CheckBox()
 {
 }
 
-void CheckBox::create(int x, int y, const std::string &title, int id, const Functor1<int> &callback)
+void CheckBox::create(int x, int y, const std::string &title, int id, const Functor1<int> &callback, 
+				const std::string &style_name)
 {
 	m_title = title;
 	m_state = false;
@@ -43,10 +44,18 @@ void CheckBox::create(int x, int y, const std::string &title, int id, const Func
 	m_id = id;
 	m_bHover = false;
 
-	m_left = x;
-	m_right = x + 12 + Font::stringLength(title);
-	m_top = y;
-	m_bottom = y+12;
+	// load the rest of the properties from the property manager
+	ResourceManager::Style style = ResourceManager::inst()->getClassDef("CheckBox").style(style_name);
+	ASSERT(style.hasProp("unchecked_face"));
+	m_faceUnchecked = ResourceManager::inst()->loadImage(style.get_img("unchecked_face"));
+	ASSERT(style.hasProp("checked_face"));
+	m_faceChecked = ResourceManager::inst()->loadImage(style.get_img("checked_face"));
+	ASSERT(style.hasProp("active_area"));
+	m_activeArea = style.get_rect("active_area");
+
+	// set position and size
+	setPos(x-m_activeArea.left, y-m_activeArea.top);
+	setSize(m_faceUnchecked.m_width + 4 + Font::stringLength(title), m_faceUnchecked.m_height);
 }
 
 void CheckBox::onUpdate()
@@ -55,21 +64,7 @@ void CheckBox::onUpdate()
 
 void CheckBox::onRender()
 {
-	// set the texture of a window
-	Texture *pTex = ResourceManager::inst()->getStockMap(ResourceManager::STD_CONTROLS);
-	pTex->set();
-	
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	int w = getWidth();
-	int h = getHeight();
-
-	// find the position
-	float tL=388;
-	float tR = tL+12;
-	float tT = 2;
-	float tB=tT+12;
 
 	// render the icon
 	if (!isEnabled())
@@ -78,36 +73,18 @@ void CheckBox::onRender()
 		glColor4f(1.0f,1.0f,1.0f,0.8f);
 	else
 		glColor4f(1,1,1,1);
-	glBegin(GL_QUADS);
-		glTexCoord2f(tL/512.0f, tT/512.0f);	glVertex3f(0, 0, 0);
-		glTexCoord2f(tR/512.0f, tT/512.0f);	glVertex3f(12, 0, 0);
-		glTexCoord2f(tR/512.0f, tB/512.0f);	glVertex3f(12, 12, 0);
-		glTexCoord2f(tL/512.0f, tB/512.0f);	glVertex3f(0, 12, 0);
-		
-		// render the check mark
-		if (m_state == true)
-		{
-			// size of the checkmark
-			float chW = 17;
-			float chH = 20;
-			// pos in the texture file.
-			float chU = 405;
-			float chV = 4;
-			glTexCoord2f(chU/512.0f, chV/512.0f);			glVertex3f(2, -2, 0);
-			glTexCoord2f((chU+chW)/512.0f, chV/512.0f);	glVertex3f(11, -2, 0);
-			glTexCoord2f((chU+chW)/512.0f, (chV+chH)/512.0f);	glVertex3f(11, (float)(h-1), 0);
-			glTexCoord2f(chU/512.0f, (chV+chH)/512.0f);	glVertex3f(2, (float)(h-1), 0);
-		}
-	glEnd();
-		
-	glDisable(GL_BLEND);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	if (m_state == true) {
+		Component::drawImage(m_faceChecked, 0, 0);
+	}
+	else {
+		Component::drawImage(m_faceUnchecked, 0, 0);
+	}
 
 	// render the text
-	glColor3f(0.3f,0.3f,0.3f);
+	glColor4f(0.3f,0.3f,0.3f,1);
 	if (!isEnabled())
-		glColor3f(0.6f, 0.6f, 0.6f);
-	Font::renderString(18, h-2, m_title);
+		glColor4f(0.6f, 0.6f, 0.6f, 0.5f);
+	Font::renderString(m_faceChecked.m_width+3, getHeight() - (m_faceChecked.m_height - m_activeArea.bottom)-1, m_title);
 }
 
 bool CheckBox::onMouseDown(int x, int y, int button)

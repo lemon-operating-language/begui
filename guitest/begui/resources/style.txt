@@ -219,3 +219,11 @@ class TabContainer {
 		image active_bottom_img = 156,236,171,249, gui2_widgets.png
 	}
 }
+
+class CheckBox {
+	style std {
+		image checked_face = 96,210,114,228, gui2_widgets.png
+		image unchecked_face = 117,210,135,228, gui2_widgets.png
+		rect active_area = 2,2,14,14
+	}
+}

@@ -27,6 +27,7 @@
 #include "common.h"
 #include "Component.h"
 #include "LiveVar.h"
+#include "ResourceManager.h"
 
 namespace begui {
 
@@ -36,7 +37,8 @@ public:
 	CheckBox();
 	virtual ~CheckBox();
 
-	void create(int x, int y, const std::string &title, int id, const Functor1<int> &callback = Functor1<int>());
+	void create(int x, int y, const std::string &title, int id, const Functor1<int> &callback = Functor1<int>(),
+				const std::string &style_name="std");
 
 	// change the state of the check box
 	void setState(bool state)	{ m_state = state; }
@@ -61,6 +63,9 @@ private:
 	LiveVar<bool>	m_state;	// the state of the checkbox, true for checked
 	Functor1<int>	m_onClick;	// arg1: the id of the checkbutton
 	bool			m_bHover;
+
+	ResourceManager::ImageRef	m_faceChecked, m_faceUnchecked;
+	Rect<int>		m_activeArea;
 
 };
 
