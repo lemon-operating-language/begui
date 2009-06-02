@@ -1,6 +1,8 @@
 #summary A Getting Started guide for a Windows app using beGUI
 #labels Phase-Deploy,Featured
 
+= WARNING: THIS PAGE NEEDS TO BE UPDATED =
+
 = Creating a new application using BeGUI =
 
 <h2>Part 2: Creating a menu</h2>
