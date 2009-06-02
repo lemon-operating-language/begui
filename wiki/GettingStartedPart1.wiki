@@ -47,28 +47,44 @@
 {{{
 	#include "Application.h"
 
-	Application g_theApp;
-
 	int WINAPI WinMain(HINSTANCE	hInstance,		// Instance
 			HINSTANCE	hPrevInstance,		// Previous Instance
 			LPSTR		lpCmdLine,		// Command Line Parameters
 			int		nCmdShow)		// Window Show State
 	{
-		return g_theApp.run("BeGUI test app", 800, 600);
+                // Set the path of the resource directory
+	        ResourceManager::inst()->setResourceDir("../resources/");
+
+                // Set some options for the window we are about to create
+        	FrameWindow::Options opt;
+        	opt.bOwnDraw = true; // set this to false to get a conventional window
+                                     // instead of an alpha-blended one with custom
+                                     // borders (compatible with most systems)
+	        opt.bFullScreen = false;
+        	opt.nColorBits = 24;
+        	opt.nDepthBits = 8;
+        	opt.nStencilBits = 0;
+
+                // Initialize the application (creates the main window and performs
+                // all major initializations)
+	        if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE, &opt))
+		       return false;
+
+                // Start the application's message loop
+		return Application::inst()->run("BeGUI test app", 800, 600);
 	}
 }}}
 
 <h3>Building</h3>
-<p>Ok. One more step is missing. BeGUI is using the FreeType library. So, go and download FreeType (2.3.5 used with beGUI, newer versions will probably work fine as well) from <a href="http://www.freetype.org/">here</a>. Make sure that you set up the include and library directories in Visual Studio correctly (to include the corresponding directories of FreeType). Then link with:
+<p>Ok. One more step is missing. BeGUI is using the FreeType and GLEW libraries. So, go and download FreeType (2.3.5 used with beGUI, newer versions will probably work fine as well) from <a href="http://www.freetype.org/">http://www.freetype.org</a>. Make sure that you set up the include and library directories in Visual Studio correctly (to include the corresponding directories of FreeType). You also need to get GLEW from <a href="http://glew.sourceforge.net/">http://glew.sourceforge.net</a>.</p>
+
+<p>Link your application with:
 <ul>
 <li>`freetype235MT.lib`</li>
 <li>`glew32.lib`</li>
-<li>`glaux.lib` (this dependency will be removed soon)</li>
 <li>`bgui.lib`</li>
 </ul>
-To do so, in Visual Studio, add the above in the field `Project Properties->Linker->Input->Additional Dependencies`. Good. Let's compile and run this simple program, shall we? Before you run it, make sure that the OpenGL, GLEW and FreeType dlls are reachable (e.g. in the application folder). If everything went well, you should see the following after the program loads:</p>
-
-<img src="" />
+To do so, in Visual Studio, add the above in the field `Project Properties->Linker->Input->Additional Dependencies`. Good. Let's compile and run this simple program, shall we? Before you run it, make sure that the OpenGL, GLEW and FreeType dlls are reachable (e.g. in the application folder). If everything went well, you should see an empty window after the program starts.</p>
 
 <p>Yay! You just made your first application based on beGUI. Doesn't look all that exciting though, does it? We should add some things to it. Let's say, a menu, a couple of windows and a bunch of controls.</p>
 
