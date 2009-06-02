@@ -28,13 +28,13 @@
 		...
 	public:
 		...
-		virtual void initialize();
+		virtual void onCreate();
 		...
 	};
 	...
 	// cpp file:
 	...
-	void MyWindow::initialize()
+	void MyWindow::onCreate()
 	{
 		// create the button here
 		m_btn.create(10, 10, "OK");
@@ -42,8 +42,8 @@
 		// add this button as a child of the window. This is
 		// necessary for the button to be displayed and function.
 		addComponent(&m_btn);
-		...
 	}
+        ...
 }}}
 
-<p>We would use the derived class just like the base `Window` class in the first example.</p>
+<p>We would use the derived class just like the base `Window` class in the first example. For a more complete example, see the `guitest` project in the beGUI source package.</p>
