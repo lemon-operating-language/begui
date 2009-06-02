@@ -28,8 +28,10 @@
 #include "../../bcore/src/Rect.h"
 
 // FreeType
-#include <ft2build.h>
-#include FT_FREETYPE_H
+extern "C" {
+	#include <ft2build.h>
+	#include FT_FREETYPE_H
+}
 
 
 namespace begui {
