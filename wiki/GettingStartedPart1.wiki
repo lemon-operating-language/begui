@@ -52,7 +52,9 @@
 			LPSTR		lpCmdLine,		// Command Line Parameters
 			int		nCmdShow)		// Window Show State
 	{
-                // Set the path of the resource directory
+                // Set the path of the resource directory. This path is relative
+                // to the application working directory, and should be the path to
+                // begui/resources/, if you are using the standard beGUI skin.
 	        ResourceManager::inst()->setResourceDir("../resources/");
 
                 // Set some options for the window we are about to create
@@ -60,7 +62,7 @@
         	opt.bOwnDraw = true; // set this to false to get a conventional window
                                      // instead of an alpha-blended one with custom
                                      // borders (compatible with most systems)
-	        opt.bFullScreen = false;
+	        opt.bFullScreen = false;  // full-screen support is not complete in v0.1.2
         	opt.nColorBits = 24;
         	opt.nDepthBits = 8;
         	opt.nStencilBits = 0;
