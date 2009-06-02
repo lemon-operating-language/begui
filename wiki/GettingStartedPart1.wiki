@@ -70,8 +70,13 @@
 	        if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE, &opt))
 		       return false;
 
+                // Enable sync rendering if you want your app to render new frames on
+                // idle time. Disable it if you want your app to perform rendering only
+                // when it receives WM_PAINT messages from Windows.
+                Application::inst()->setSyncRendering(true);
+
                 // Start the application's message loop
-		return Application::inst()->run("BeGUI test app", 800, 600);
+		return Application::inst()->run();
 	}
 }}}
 
