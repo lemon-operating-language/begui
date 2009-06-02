@@ -1,30 +1,25 @@
 #summary A Getting Started guide for a Windows app using beGUI
 #labels Phase-Deploy,Featured
 
-= WARNING: THIS PAGE NEEDS TO BE UPDATED =
-
 = Creating a new application using BeGUI =
 
 <h2>Part 2: Creating a menu</h2>
-<p>The menu will be created during the initialization of our application. To do that, we should override the method `initialize()` of `BaseApp_Win`:</p>
+<p>The menu will be created during the initialization of our application. To do that, we should override the method `onCreate()` of `BaseApp_Win`, to include any additional initialization code (`onCreate` is called at the end of `Application::initialize(...)`):</p>
 {{{
 	class Application : public BaseApp_Win {
 		...
 	public:
-		virtual bool initialize();
+		virtual bool onCreate();
 		...
 	};
 }}}
 
-<p>In the `Application.cpp` file, we create the menu by making `initialize()` look as following:</p>
+<p>In the `Application.cpp` file, we create the menu by making `onCreate()` look as following:</p>
 {{{
-	bool Application::initialize()
+	bool Application::onCreate()
 	{
-		if (!BaseApp_Win::initialize())
-			return false;
-
 		// Get a reference to the menu of the main window
-		Menu &menu = FrameWindow::inst()->getMenu();
+		Menu &menu = *FrameWindow::inst()->createMainMenu();
 
 		// Create a new drop down menu
 		Menu *pFileMenu = menu.addMenuItem("File", 1, makeFunctor(*this, &Application::onMenu));
@@ -64,6 +59,9 @@
 		switch (id)
 		{
 			// handle menu events here
+                case 101:
+                        // Open was clicked. Do something.
+                        break;
 			...
 		}
 	}
