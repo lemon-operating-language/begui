@@ -55,8 +55,11 @@ bool BaseApp_Win::initialize(const std::string &title, size_t width, size_t heig
 
 	// Create Our OpenGL Window
 	FrameWindow::createInstance();
+	std::string wnd_style = "std_framewnd";
+	if (opt.windowStyleName.length() > 0)
+		wnd_style = opt.windowStyleName;
 	try {
-		FrameWindow::inst()->create(0, 0, (int)width, (int)height, title, &opt);
+		FrameWindow::inst()->create(0, 0, (int)width, (int)height, title, &opt, wnd_style);
 	}
 	catch (std::exception &e) {
 		Console::error("Failed to create main window: %s\n", e.what());

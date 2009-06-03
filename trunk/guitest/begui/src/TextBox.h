@@ -60,6 +60,7 @@ public:
 	bool		isMultiline() const					{ return m_text.isMultiLine(); }
 	std::string	getSelectedText() const;
 	std::string getText() const						{ return m_text.getText(); }
+	void		setText(const std::string &text)	{ m_text.setText(text); }
 
 };
 
