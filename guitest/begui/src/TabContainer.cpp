@@ -194,7 +194,7 @@ void TabContainer::frameRender()
 
 		// save tab coords (local coords)
 		m_tabs[i]->m_headerLeft = tab_x - getLeft();
-		m_tabs[i]->m_headerRight = tab_x+tab_w - getTop();
+		m_tabs[i]->m_headerRight = tab_x+tab_w - getLeft();
 
 		if (i == m_curTab) {
 			glColor4f(1,1,1,1);
