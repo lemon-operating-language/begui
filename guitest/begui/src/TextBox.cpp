@@ -53,7 +53,6 @@ void TextBox::create(int x, int y, int width, int height, bool bEditable, bool b
 	// create the text object
 	m_text.create(m_textPadding.left, m_textPadding.top, width-m_textPadding.right, bMultiline, bEditable);
 	m_text.setTextColor(m_textColor, (bEditable)?0.9f:0.5f);
-	m_text.setText("aa aaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
 }
 
 void TextBox::onUpdate()

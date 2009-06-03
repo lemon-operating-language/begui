@@ -242,7 +242,7 @@ void TabContainer::onRender()
 		Vector2i wpos = m_tabs[m_curTab]->localToWorld(Vector2i(0,0));
 		display::pushMask(wpos.x, wpos.y, getWidth(), getHeight());
 
-		m_tabs[m_curTab]->setPos(getLeft(), getTop()+m_tabActiveArea.getHeight());
+		m_tabs[m_curTab]->setPos(0, m_tabActiveArea.getHeight());
 		m_tabs[m_curTab]->frameRender();
 		
 		// unmask the client area

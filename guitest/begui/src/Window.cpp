@@ -184,8 +184,9 @@ void Window::frameUpdate()
 	int title_w = FontManager::getCurFont()->stringLength(m_title);
 	if (m_captionBarWidth < title_w + 2*m_captionTextPadLeft)
 		m_captionBarWidth = title_w + 2*m_captionTextPadLeft;
-	if (m_captionBarWidth > m_windowActiveArea.getWidth())
-		m_captionBarWidth = m_windowActiveArea.getWidth();
+	int wnd_real_width = getWidth() - getInactiveBorders().left - getInactiveBorders().right; 
+	if (m_captionBarWidth > wnd_real_width)
+		m_captionBarWidth = wnd_real_width;
 
 	// update the positions of the buttons
 	int cw = m_closeBtn.getWidth();

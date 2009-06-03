@@ -38,6 +38,7 @@ void ChildWnd1::onCreate()
 
 	// create a textbox
 	m_textbox.create(230, 160, 130, 180, true, true);
+	m_textbox.setText("aa aaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
 	m_tabs.addComponent(&m_textbox, 0);
 	
 	m_listbox.create(20, 140, 200, 200, ListBox::MULTI_SELECT_SINGLECLICK);
@@ -134,6 +135,7 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	opt.nColorBits = 24;
 	opt.nDepthBits = 8;
 	opt.nStencilBits = 0;
+	//opt.windowStyleName = "std_transparent";
 	if (!Application::inst()->initialize("beGUI test", 800, 600, FrameWindow::MULTIPLE, &opt))
 		return false;
 

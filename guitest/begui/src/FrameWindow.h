@@ -60,6 +60,7 @@ public:
 		int	nColorBits;
 		int nDepthBits;
 		int nStencilBits;
+		std::string windowStyleName;
 	};
 
 public:

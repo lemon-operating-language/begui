@@ -107,6 +107,20 @@ class Window {
 		
 		rect border_size = 2,2,2,2	#width of the window border for each of the 4 sides
 	}
+	
+	style std_transparent {
+		image window_bg = 481,5,507,23, gui2_wnd_texture.png
+		rect window_active_area = 0,0,26,18			#active area relative to the top left corner of the face
+		rect window_resizable_area = 8,8,17,9		#resizable area relative to the top left corner of the face
+		
+		image caption = 0,25,438,74, gui2_wnd_texture.png
+		rect caption_resizable_area = 23,30,412,30
+		rect caption_active_area = 17,12,419,35
+		int caption_y_pos = 16
+		color caption_text_color = 220,220,220
+		
+		rect border_size = 2,2,2,2	#width of the window border for each of the 4 sides
+	}
 }
 
 ##############################################################
