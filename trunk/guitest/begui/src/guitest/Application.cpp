@@ -6,7 +6,7 @@ Application *Application::m_pInst = NULL;
 void ChildWnd1::onCreate()
 {
 	// create the tabs
-	m_tabs.create(8, 8, 400, 360);
+	m_tabs.create(8, 80, 400, 360);
 	m_tabs.addTab("tab 1");
 	m_tabs.addTab("tab 2");
 	addComponent(&m_tabs);

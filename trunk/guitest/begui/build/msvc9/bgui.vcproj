@@ -430,6 +430,10 @@
 				RelativePath="..\..\src\Window.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\WindowBuffered.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
