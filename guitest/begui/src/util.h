@@ -60,7 +60,7 @@ namespace display
 	// Mask the screen except this given rectangle. Any
 	// rendering after this call will be restricted only within
 	// this rectangle
-	void pushMask(int x, int y, int w, int h);
+	void pushMask(int x, int y, int w, int h, bool ignoreParent = false);
 
 	// Remove any previous masks. Rendering can be done anywhere
 	// on the screen after this call.
@@ -69,6 +69,11 @@ namespace display
 	int getWidth();
 	int getHeight();
 	void setSize(int w, int h);
+
+	// display reference frame (should be the rectangle corresponding to the
+	// active rendering surface)
+	void pushRefFrame(int x, int y, int w, int h);
+	void popRefFrame();
 };
 
 namespace input

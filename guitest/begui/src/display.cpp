@@ -31,6 +31,9 @@ int g_displayHeight = 0;
 // a stack of masks for the scissor test
 std::vector<Rect<int> > g_maskStack;
 
+// a stack of reference frames for the active rendering surface
+std::vector<Rect<int> > g_refFrameStack;
+
 int display::getWidth()
 {
 	return g_displayWidth;
@@ -53,9 +56,16 @@ void display::setSize(int w, int h)
 // Mask the screen except this given rectangle. Any
 // rendering after this call will be restricted only within
 // this rectangle
-void display::pushMask(int x, int y, int w, int h)
+void display::pushMask(int x, int y, int w, int h, bool ignoreParent)
 {
 	Rect<int> rect(x, g_displayHeight-y-h+1, x+w, g_displayHeight-y+1);
+	if (g_refFrameStack.size() > 0) {
+		// use the currently set reference frame
+		Rect<int> &ref = g_refFrameStack.back();
+		x-=ref.left;
+		y-=ref.top;
+		rect = Rect<int>(x, ref.getHeight()-y-h+1, x+w, ref.getHeight()-y+1);
+	}
 	if (FrameWindow::inst()) {
 		Rect<int> fb = FrameWindow::inst()->getInactiveBorders();
 
@@ -71,7 +81,7 @@ void display::pushMask(int x, int y, int w, int h)
 	}
 
 	//crop the new mask given the previous mask in the stack
-	if (g_maskStack.size() > 0) {
+	if (g_maskStack.size() > 0 && !ignoreParent) {
 		Rect<int> &pr = g_maskStack.back();
 		if (rect.left < pr.left) rect.left = pr.left;
 		if (rect.top < pr.top) rect.top = pr.top;
@@ -100,4 +110,14 @@ void display::popMask()
 		glScissor(rect.left, rect.top, rect.getWidth(), rect.getHeight());
 		glEnable(GL_SCISSOR_TEST);
 	}
+}
+
+void display::pushRefFrame(int x, int y, int w, int h)
+{
+	g_refFrameStack.push_back(Rect<int>(x,y,x+w,y+h));
+}
+
+void display::popRefFrame()
+{
+	g_refFrameStack.pop_back();
 }

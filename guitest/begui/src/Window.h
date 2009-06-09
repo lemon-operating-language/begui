@@ -126,6 +126,8 @@ public:
 
 protected:
 	virtual void	onCaptionBtn(int id);
+	virtual void	onUserMove(int dx, int dy)							{ }
+	virtual void	onUserResize(int prevw, int prevh, int w, int h)	{ }
 
 	virtual void	calcClientArea();
 };

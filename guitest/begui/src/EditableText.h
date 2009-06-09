@@ -48,13 +48,15 @@ public:
 	void setEditable(bool b)						{ m_bEditable = b; }
 	void setTextSelectable(bool b)					{ m_bTextSelectable = b; }
 	void setMultiline(bool b)						{ m_bMultiLine = b; setText(m_text); }
+	void setTextHidden(bool b)						{ m_bTextHidden = b; }
 
 	const std::string& getText() const				{ return m_text; }
 	std::string	getSelectedText() const;
-	int getSelectionStart() const					{ return (m_selectStart < m_selectEnd)?m_selectStart:m_selectEnd; }
-	int getSelectionEnd() const					{ return (m_selectStart < m_selectEnd)?m_selectEnd:m_selectStart; }
+	int  getSelectionStart() const					{ return (m_selectStart < m_selectEnd)?m_selectStart:m_selectEnd; }
+	int  getSelectionEnd() const					{ return (m_selectStart < m_selectEnd)?m_selectEnd:m_selectStart; }
 	bool isEditable() const							{ return m_bEditable; }
 	bool isMultiLine() const						{ return m_bMultiLine; }
+	bool isTextHidden() const						{ return m_bTextHidden; }
 
 	// live variable access
 	LiveVar<std::string>&	text()	{ return m_text; }
@@ -72,6 +74,7 @@ private:
 	std::vector< Rect<int> > m_charPos;		// character positions
 	bool	m_bMultiLine;
 	bool	m_bEditable;
+	bool	m_bTextHidden;					// used for password fields (characters are replaced by * if true)
 	bool	m_bRenderCursor;
 	bool	m_bTextSelectable;
 	Color	m_textColor, m_selectionColor;
@@ -80,7 +83,7 @@ private:
 	int		m_cursorX, m_cursorY, m_cursorH;
 	int		m_cursorPos;			// cursor position in the string
 	TimeSeries<float> m_cursorAlpha;
-	int m_selectStart, m_selectEnd;
+	int		m_selectStart, m_selectEnd;
 
 	void setCursorPos(int cursorPos);
 	void getStringPos(int x, int y, int *cursorX, int *cursorY, int *cursorH, int *char_pos) const;

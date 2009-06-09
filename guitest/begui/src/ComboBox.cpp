@@ -25,7 +25,7 @@
 
 using namespace begui;
 
-ComboBox::ComboBox() : m_bIsOpen(false), m_bEditable(false), m_curItem(0), 
+ComboBox::ComboBox() : m_bIsOpen(false), m_bEditable(false), m_curItem(-1), 
 	m_textPos(0,0), m_textColor(255,255,255)
 {
 }
@@ -66,10 +66,8 @@ void ComboBox::create(int x, int y, int width, int list_height, const std::strin
 	m_listbox.setAutoHeight(true);
 	m_listbox.handleOnItemSelect(makeFunctor(*this, &ComboBox::onItemClick));
 	m_bIsOpen = false;
-	m_curItem = 0;
-	
-	Font *pFont = FontManager::getCurFont();
-	ASSERT(pFont);
+
+	m_curItem = -1;
 	m_text = "<select>";
 }
 
@@ -176,4 +174,12 @@ void ComboBox::onItemClick(int i)
 	// close the listbox
 	m_bIsOpen = false;
 	remComponent(&m_listbox);
+}
+
+void ComboBox::setCurrentItem(int i)
+{
+	ASSERT(i>=-1 && i<m_listbox.itemsNum());
+	m_curItem = i;
+	if (i > -1)
+		m_text = m_listbox.itemText(i);
 }

@@ -47,6 +47,7 @@ public:
 
 	virtual void create(int x, int y, int width, int height, bool bEditable=true, bool bMultiline=true,
 		const std::string &style_name = "std");
+	virtual void createPasswordField(int x, int y, int width, int height, const std::string &style_name = "std");
 
 	virtual void onUpdate();
 	virtual void onRender();	
@@ -58,9 +59,12 @@ public:
 
 	bool		isEditable() const					{ return m_text.isEditable(); }
 	bool		isMultiline() const					{ return m_text.isMultiLine(); }
+	void		setEditable(bool bEnable)			{ m_text.setEditable(bEnable); }
+	void		setMultiline(bool bEnable)			{ m_text.setMultiline(bEnable); }
 	std::string	getSelectedText() const;
 	std::string getText() const						{ return m_text.getText(); }
 	void		setText(const std::string &text)	{ m_text.setText(text); }
+	void		hideText(bool bHide)				{ m_text.setTextHidden(bHide); }
 
 };
 

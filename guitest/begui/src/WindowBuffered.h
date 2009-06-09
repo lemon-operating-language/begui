@@ -27,6 +27,8 @@
 #include "Window.h"
 #include "../../bcore/src/RenderPass.h"
 
+namespace begui {
+
 /**
  * WindowBuffered: A window that can render its contents to a texture instead of
  *		directly on the screen. This allows 2d and 3d deformations of the rendered
@@ -49,14 +51,18 @@ public:
 	virtual void frameUpdate();
 	virtual void frameRender();
 
+protected:
+	virtual void onUserMove(int dx, int dy);
+
 private:
-	RenderPass m_frameRenderPass;
+	RenderPass m_renderPass;
 	static Texture *m_pSharedRenderTarget;
+	static int		m_SRTRefCount;	// ref counter for the shared render target pointer
+	bool	m_bSharedRenderBuffer;	// the render buffer where the contents of this window are rendered to is shared
+									// between multiple buffered window instances.
 
 	bool	m_bFixedContentWhileFX;	// do not update the contents of this window while displaying a transition effect
 	bool	m_bSelectiveUpdate;		// update only dirty areas
-	bool	m_bSharedRenderBuffer;	// the render buffer where the contents of this window are rendered to is shared
-									// between multiple buffered window instances.
 	bool	m_fxOnMove;
 	bool	m_fxOnResize;
 	bool	m_fxOnStateChange;		// when the window is minimized/maximized/restored
@@ -66,6 +72,11 @@ private:
 									// the window "hinges" are detached, and wind is enabled, to blow the window away
 									// as it collides with 3d volumes defined for the rest of the windows on screen :)
 									// If disabled, a predefined animation is performed.
+
+	unsigned long	m_prevMoveStepTime;
+	Vector2			m_moveSpeed;
+};
+
 };
 
 #endif

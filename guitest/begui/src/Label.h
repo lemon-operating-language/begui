@@ -26,6 +26,7 @@
 
 #include "common.h"
 #include "Component.h"
+#include "Font.h"
 
 namespace begui {
 
@@ -34,11 +35,15 @@ class Label : public Component
 private:
 	std::string	m_text;
 	Color		m_textColor;
+	bool		m_bMultiLine;
+	int			m_maxWidth;
+	Font		*m_pFont;
 
 public:
 	Label();
 
 	void create(int x, int y, const std::string& text);
+	void createMultiline(int x, int y, int max_width, const std::string& text);
 
 	virtual void onUpdate();
 	virtual void onRender();
@@ -49,8 +54,8 @@ public:
 	virtual void onKeyUp(int key);
 	virtual bool isPtInside(int x, int y);
 
-	inline void	setText(const std::string& text)	{ m_text = text; }
-	inline void setTextColor(const Color &cl)		{ m_textColor = cl; }
+	virtual void setText(const std::string& text);
+	virtual	void setTextColor(const Color &cl)		{ m_textColor = cl; }
 };
 
 };
