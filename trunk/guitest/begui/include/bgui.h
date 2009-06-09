@@ -48,5 +48,6 @@
 #include "../src/ListBox.h"
 #include "../src/ComboBox.h"
 #include "../src/TabContainer.h"
+#include "../src/WindowBuffered.h"
 
 #endif

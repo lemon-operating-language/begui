@@ -75,7 +75,7 @@ public:
 	void		remItem(int pos)					{ m_listbox.remItem(pos); }
 	void		remAllItems()						{ m_listbox.remAllItems(); }
 	int			getCurrentItem() const				{ return m_curItem; }
-	void		setCurrentItem(int i)				{ ASSERT(i>=0 && i<m_listbox.itemsNum()); m_curItem = i; }
+	void		setCurrentItem(int i);
 	void		enableItem(size_t i)				{ m_listbox.enableItem(i); }
 	void		disableItem(size_t i)				{ m_listbox.disableItem(i); }
 

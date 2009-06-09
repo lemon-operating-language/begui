@@ -11,7 +11,8 @@ EditableText::EditableText() : m_bMultiLine(true), m_cursorX(0), m_cursorY(0),
 	m_bTextSelectable(true),
 	m_textColor(0,0,0), m_textAlpha(0.7f),
 	m_selectionColor(1.0f, 0.7f, 0.2f), m_selectionAlpha(0.7f),
-	m_cursorColor(0,0,0)
+	m_cursorColor(0,0,0),
+	m_bTextHidden(false)
 {
 	m_text = "";
 
@@ -88,15 +89,21 @@ void EditableText::renderString()
 		glEnd();
 	}
 
+	// if text should be hidden (password field) replace text with *
+	std::string text = m_text;
+	if (m_bTextHidden) {
+		text = std::string(text.length(), '*');	// if multiline is enabled, strange wrapping might occur - not expected usage scenario though
+	}
+
 	// now render the string
 	// TODO: render each character separately if text has been changed, otherwise
 	// use a display list to speed things up
 	m_charPos.clear();
 	glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, m_textAlpha);
 	if (m_bMultiLine)
-		FontManager::getCurFont()->renderStringMultiline(m_x, m_y+lineHeight, m_lineWidth, m_text, &m_charPos, true);
+		FontManager::getCurFont()->renderStringMultiline(m_x, m_y+lineHeight, m_lineWidth, text, &m_charPos, true);
 	else
-		FontManager::getCurFont()->renderString(m_x, m_y+lineHeight, m_text, &m_charPos, true);
+		FontManager::getCurFont()->renderString(m_x, m_y+lineHeight, text, &m_charPos, true);
 
 	// render the cursor
 	if (m_bEditable && m_bRenderCursor)
@@ -254,7 +261,7 @@ void EditableText::onKeyDown(int key)
 		if (m_bEditable)
 		{
 			// if a printable character, add it to the cursor position
-			if (key < 256 && ( isprint(key) || key==' ' || key == '\t' || key==KEY_ENTER ))
+			if (key < 256 && ( isprint(key) || key==' ' || key == '\t' || (m_bMultiLine && key==KEY_ENTER) ))
 			{
 				// if there is selected text, remove it (to be replaced by the new character)
 				if (m_selectStart != m_selectEnd && m_bTextSelectable) {

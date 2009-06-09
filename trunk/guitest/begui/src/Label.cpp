@@ -24,17 +24,60 @@
 
 using namespace begui;
 
-Label::Label() : m_textColor(0.3f,0.3f,0.3f)
+Label::Label() : m_textColor(0.3f,0.3f,0.3f), m_pFont(0), m_bMultiLine(false)
 {
 }
 
 void Label::create(int x, int y, const std::string& text)
 {
 	m_text = text;
-	m_left = x;
-	m_right = x + Font::stringLength(text);
-	m_top = y;
-	m_bottom = y+10;
+	m_bMultiLine = false;
+
+	m_pFont = FontManager::getCurFont();
+	ASSERT(m_pFont);
+
+	setPos(x,y);
+	setSize(m_pFont->stringLength(text), m_pFont->getLineHeight());
+}
+
+void Label::createMultiline(int x, int y, int max_width, const std::string &text)
+{
+	m_text = text;
+	m_maxWidth = max_width;
+	m_bMultiLine = true;
+
+	m_pFont = FontManager::getCurFont();
+	ASSERT(m_pFont);
+
+	// measure the display size of the string to set the label dimensions correctly
+	int height = m_pFont->getLineHeight();
+	if (m_text.length() > 0) {
+		std::vector<Rect<int> > rects;
+		m_pFont->renderStringMultiline(0, m_pFont->getLineHeight(), m_maxWidth, m_text, &rects, false); // does NOT render the string
+		height = rects.back().bottom;
+	}
+
+	setPos(x,y);
+	setSize(m_maxWidth, height);
+}
+
+void Label::setText(const std::string &text)
+{
+	m_text = text;
+
+	if (m_bMultiLine) {
+		// measure the display size of the string to set the label dimensions correctly
+		int height = m_pFont->getLineHeight();
+		if (m_text.length() > 0)
+		{
+			std::vector<Rect<int> > rects;
+			m_pFont->renderStringMultiline(0, m_pFont->getLineHeight(), m_maxWidth, m_text, &rects, false); // does NOT render the string
+			height = rects.back().bottom;
+		}
+
+		// update the label size
+		setSize(m_maxWidth, height);
+	}
 }
 
 void Label::onUpdate()
@@ -43,8 +86,19 @@ void Label::onUpdate()
 
 void Label::onRender()
 {	
-	glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, 0.8f);
-	Font::renderString(0, getHeight(), m_text);
+	ASSERT(m_pFont);
+
+	// set the text color
+	if (isEnabled())
+		glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, 0.8f);
+	else
+		glColor4f(m_textColor.r, m_textColor.g, m_textColor.b, 0.5f);
+
+	// render the string
+	if (m_bMultiLine)
+		m_pFont->renderStringMultiline(0, m_pFont->getLineHeight(), m_maxWidth, m_text);
+	else
+		m_pFont->renderString(0, m_pFont->getLineHeight(), m_text);
 }
 
 bool Label::onMouseDown(int x, int y, int button)

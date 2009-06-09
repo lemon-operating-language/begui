@@ -55,6 +55,12 @@ void TextBox::create(int x, int y, int width, int height, bool bEditable, bool b
 	m_text.setTextColor(m_textColor, (bEditable)?0.9f:0.5f);
 }
 
+void TextBox::createPasswordField(int x, int y, int width, int height, const std::string &style_name)
+{
+	create(x, y, width, height, true, false, style_name);
+	hideText(true);
+}
+
 void TextBox::onUpdate()
 {
 	m_text.update();

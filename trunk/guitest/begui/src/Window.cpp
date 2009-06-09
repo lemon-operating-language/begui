@@ -317,6 +317,7 @@ bool Window::onMouseMove(int x, int y, int prevx, int prevy)
 	{
 		// Drag window around:
 		setPos(m_left + (x-prevx), m_top + (y-prevy));
+		onUserMove(x-prevx, y-prevy);
 		return true;
 	}
 

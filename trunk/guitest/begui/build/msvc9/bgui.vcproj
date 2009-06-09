@@ -292,6 +292,10 @@
 				RelativePath="..\..\src\Window.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\WindowBuffered.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
