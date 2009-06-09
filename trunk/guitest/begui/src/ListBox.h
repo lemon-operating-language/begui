@@ -104,8 +104,10 @@ public:
 	void		remItem(size_t pos)					{ m_items.erase(m_items.begin()+pos); }
 	void		remAllItems()						{ m_items.clear(); m_curItem = 0; m_prevItem = -1; }
 	int			getCurrent() const					{ return m_curItem; }
+	void		setCurrentItem(int i)				{ m_curItem = i; }
 	void		enableItem(size_t i)				{ m_items[i].m_bEnabled = true; }
 	void		disableItem(size_t i)				{ m_items[i].m_bEnabled = false; }
+	void		selectItem(size_t i, bool bSel)		{ m_items[i].m_bSelected = bSel; }
 	void		setHighlightOnMouseOver(bool b)		{ m_bHighlightMouseOver = b; }
 
 	void	handleOnItemSelect(Functor1<int> &f)		{ m_onItemSelect = f; }

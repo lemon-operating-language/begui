@@ -179,7 +179,19 @@ void ComboBox::onItemClick(int i)
 void ComboBox::setCurrentItem(int i)
 {
 	ASSERT(i>=-1 && i<m_listbox.itemsNum());
+
+	// set the current item
 	m_curItem = i;
+
+	// make this item current in the listbox
+	m_listbox.setCurrentItem(i);
+
+	// deselect all items, select i, in the listbox
+	for (int j=0; j<m_listbox.itemsNum(); ++j)
+		m_listbox.selectItem(j, false);
+	m_listbox.selectItem(i, true);
+
+	// set the text of the combobox
 	if (i > -1)
 		m_text = m_listbox.itemText(i);
 }
