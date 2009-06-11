@@ -103,7 +103,7 @@ public:
 	bool		itemSelected(size_t i) const		{ return m_items[i].m_bSelected; }
 	void		remItem(size_t pos)					{ m_items.erase(m_items.begin()+pos); }
 	void		remAllItems()						{ m_items.clear(); m_curItem = 0; m_prevItem = -1; }
-	int			getCurrent() const					{ return m_curItem; }
+	int			getCurrentItem() const				{ return m_curItem; }
 	void		setCurrentItem(int i)				{ m_curItem = i; }
 	void		enableItem(size_t i)				{ m_items[i].m_bEnabled = true; }
 	void		disableItem(size_t i)				{ m_items[i].m_bEnabled = false; }

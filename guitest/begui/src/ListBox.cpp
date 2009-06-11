@@ -169,7 +169,7 @@ void ListBox::onRender()
 					bgCl = Color(1,1,1);
 				else
 					bgCl = Color(0.83f, 0.90f, 0.95f);
-				bgAlpha = 1;
+				bgAlpha = 0.5f;
 				break;
 			case STYLE_BUTTONS:
 				if (!m_items[i].m_bEnabled) {

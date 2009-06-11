@@ -74,42 +74,6 @@ void TextBox::onRender()
 	int w = getWidth();
 	int h = getHeight();
 
-	// render the textbox background
-	/*glBegin(GL_QUADS);
-		for (int ln=0; ln<=(m_bottom - m_top)/pFont->getLineHeight(); ++ln)
-		{
-			if (m_text.isEditable())
-			{
-				if (ln%2 == 0)
-					glColor4f(0.93, 0.97, 1, 1);
-				else
-					glColor4f(1,1,1,1);
-			}
-			else
-				glColor4f(0,0,0,0.1);
-			
-			int bottom = (ln+1)*pFont->getLineHeight();
-			if (bottom > h)
-				bottom = h;
-			glVertex3f(0, ln*pFont->getLineHeight(), 0);
-			glVertex3f(w, ln*pFont->getLineHeight(), 0);
-			glVertex3f(w, bottom, 0);
-			glVertex3f(0, bottom, 0);
-		}
-	glEnd();
-	
-	glColor4f(0.2, 0.2, 0.2, 0.5);
-	glBegin(GL_LINES);
-		glVertex2f(0, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, 0);
-		glVertex2f(w, h);
-		glVertex2f(w, h);
-		glVertex2f(0, h);
-		glVertex2f(0, h);
-		glVertex2f(0, 0);
-	glEnd();*/
-
 	// render the background
 	glEnable(GL_BLEND);
 	glColor4f(1,1,1,1);
@@ -118,6 +82,7 @@ void TextBox::onRender()
 		getHeight()+m_activeArea.top + (m_bg.m_height-m_activeArea.bottom), 
 		m_resizableArea);
 
+	// mask the inactive area
 	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
 	display::pushMask(wpos.x, wpos.y, getWidth(), getHeight());
 
@@ -128,6 +93,7 @@ void TextBox::onRender()
 		glColor4f(m_textColor.r*255, m_textColor.g*255, m_textColor.b*255, 0.2f);
 	m_text.renderString();
 
+	// unmask
 	display::popMask();
 }
 

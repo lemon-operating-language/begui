@@ -51,6 +51,10 @@ void ChildWnd1::onCreate()
 		m_listbox.addItem("item");
 	m_listbox.addItem("last item");
 	m_listbox.disableItem(1);
+	int t1 = m_listbox.getCurrentItem();
+	m_listbox.setCurrentItem(3);
+	int t2 = m_listbox.getCurrentItem();
+	Console::print("%d %d\n", t1,t2);
 	m_tabs.addComponent(&m_listbox, 0);
 
 	m_combobox.create(230, 140, 80, 200);
@@ -59,6 +63,7 @@ void ChildWnd1::onCreate()
 	m_combobox.addItem("item 3");
 	m_combobox.addItem("item 4");
 	m_combobox.disableItem(2);
+	m_combobox.setCurrentItem(1);
 	m_tabs.addComponent(&m_combobox, 0);
 
 	// create a test viewport
