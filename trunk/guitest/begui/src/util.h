@@ -74,6 +74,22 @@ namespace display
 	// active rendering surface)
 	void pushRefFrame(int x, int y, int w, int h);
 	void popRefFrame();
+
+	enum PrimitiveType {
+		POINTS,
+		LINES,
+		TRIANGLES,
+		QUADS
+	};
+	// rendering commands
+	void clear();	// clears the screen
+	void startBatch(PrimitiveType prim);
+	void endBatch();
+	void vertex(const Vector2& pos, const Vector2 *uv = 0, const Color *color = 0);
+	void setColor(float r, float g, float b, float a);
+	void setColor(const Color &cl, float a);
+	void enableBlending(bool bEnable);
+	void enableTexture(int texlevel, bool bEnable);
 };
 
 namespace input
