@@ -12,7 +12,7 @@ private:
 	Slider m_slider;
 	TextBox m_textbox;
 	ListBox m_listbox;
-	ComboBox m_combobox;
+	ComboBox m_combobox, m_combobox2;
 	TabContainer m_tabs;
 	CheckBox	m_checkbox;
 	ViewportComponent m_vp;

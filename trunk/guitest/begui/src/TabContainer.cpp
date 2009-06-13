@@ -258,7 +258,7 @@ bool TabContainer::onMouseDown(int x, int y, int button)
 	if (lP.y<m_tabActiveArea.getHeight()) {
 		for (size_t i=0; i<m_tabs.size(); ++i) {
 			if (lP.x>=m_tabs[i]->m_headerLeft && lP.x<=m_tabs[i]->m_headerRight) {
-				m_curTab = i;
+				m_curTab = (int)i;
 				return true;
 			}
 		}

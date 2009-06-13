@@ -71,7 +71,7 @@ void WindowBuffered::frameUpdate()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glTranslatef(-getLeft(), -getTop(), 0);
+	glTranslatef(-(float)getLeft(), -(float)getTop(), 0);
 
 	display::pushRefFrame(getLeft()+border.left, getTop()+border.top, rw, rh);
 	
@@ -95,18 +95,18 @@ void WindowBuffered::frameRender()
 	m_renderPass.getFrameData()->set();
 	int ww = getWidth() + border.left + border.right;
 	int hh = getHeight() + border.top + border.bottom;
-	float rh = m_renderPass.getFrameData()->getHeight();
-	float rw = m_renderPass.getFrameData()->getWidth();
+	float rh = (float)m_renderPass.getFrameData()->getHeight();
+	float rw = (float)m_renderPass.getFrameData()->getWidth();
 	float tx = 0;
 	float ty = 0;
 	float tw = (float)ww/rw;
 	float th = (float)hh/rh;
 	float dx = -m_moveSpeed.x*50;
 	glBegin(GL_QUADS);
-		glTexCoord2f(tx,rh-ty);	glVertex2f(getLeft(), getTop());
-		glTexCoord2f(tx+tw,rh-ty);	glVertex2f(getLeft()+ww, getTop());
-		glTexCoord2f(tx+tw,rh-th-ty);	glVertex2f(getLeft()+ww+dx, getTop()+hh);
-		glTexCoord2f(tx,rh-th-ty);	glVertex2f(getLeft()+dx, getTop()+hh);
+		glTexCoord2f(tx,rh-ty);	glVertex2f((float)getLeft(), (float)getTop());
+		glTexCoord2f(tx+tw,rh-ty);	glVertex2f((float)getLeft()+ww, (float)getTop());
+		glTexCoord2f(tx+tw,rh-th-ty);	glVertex2f((float)getLeft()+ww+dx, (float)getTop()+hh);
+		glTexCoord2f(tx,rh-th-ty);	glVertex2f((float)getLeft()+dx, (float)getTop()+hh);
 	glEnd();
 }
 
