@@ -1,6 +1,6 @@
 
 Font:
-	- the fonts fall back to using GLUT when no font is loaded. In that case,
+	REMOVED- the fonts fall back to using GLUT when no font is loaded. In that case,
 	the output of the positions of the rendered fonts (std::vector< Rect<int> > *char_pos_out)
 	doesnt work.
 		solve: probably remove GLUT fallback alltogether.

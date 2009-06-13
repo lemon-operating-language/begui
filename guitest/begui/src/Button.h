@@ -62,9 +62,9 @@ private:
 	ResourceManager::ImageRef	m_faces[STATES_NUM];	// the faces corresponding to each state of the button
 	ResourceManager::ImageRef	m_icon;
 	int							m_iconSzX, m_iconSzY;
-
-	IconPlacement	m_iconPlacement;
-	Rect<int>		m_activeArea, m_resizableArea;
+	IconPlacement				m_iconPlacement;
+	Rect<int>					m_activeArea, m_resizableArea;
+	Color						m_textColor, m_inactiveTextColor, m_btnColor;
 
 public:
 	Button();
@@ -86,14 +86,17 @@ public:
 	void	handleButtonUp(Functor2<int, const Vector2i&> &callback)	{ m_onButtonUp = callback; }
 	void	handleDrag(Functor2<int, const Vector2i&> &callback)		{ m_onButtonDrag = callback; }
 
-	void	setState(State state)										{ m_status = state; }
-	State	getState() const											{ return m_status; }
-	void	setTitle(const std::string& title)							{ m_title = title; }
-	void	setFace(State state, const ResourceManager::ImageRef &img);
-	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
-	void	setResizableArea(const Rect<int> &resizable_area);
-	void	setCanDrag(bool bDrag)										{ m_bCanDrag = bDrag; }
-	bool	canDrag() const												{ return m_bCanDrag; }
+	virtual	void	setState(State state)										{ m_status = state; }
+	virtual	State	getState() const											{ return m_status; }
+	virtual	void	setTitle(const std::string& title)							{ m_title = title; }
+	virtual	void	setFace(State state, const ResourceManager::ImageRef &img);
+	virtual	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
+	virtual	void	setResizableArea(const Rect<int> &resizable_area);
+	virtual	void	setCanDrag(bool bDrag)										{ m_bCanDrag = bDrag; }
+	virtual	bool	canDrag() const												{ return m_bCanDrag; }
+	virtual	void	setColor(const Color &cl)									{ m_btnColor = cl; }
+	virtual	void	setTextColor(const Color &cl)								{ m_textColor = cl; }
+	virtual	void	setInactiveTextColor(const Color &cl)						{ m_inactiveTextColor = cl; }
 	
 	Rect<int>	getActiveBorders() const	{ return Rect<int>(m_activeArea.left, m_activeArea.top, m_faces[UP].m_width-m_activeArea.right, m_faces[UP].m_height-m_activeArea.bottom); }
 
@@ -104,6 +107,8 @@ public:
 	virtual void onKeyUp(int key);
 
 	virtual bool isPtInside(int x, int y);
+	virtual void disable();
+	virtual void enable();
 
 };
 
