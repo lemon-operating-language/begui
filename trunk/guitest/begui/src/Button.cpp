@@ -66,7 +66,7 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 	if (style.hasProp("face_down"))
 		setFace(DOWN, ResourceManager::inst()->loadImage(style.get_img("face_down")));
 	ASSERT(style.hasProp("resizable_area"));
-	setResizableArea(style.get_rect("resizable_area"));
+	m_resizableArea = style.get_rect("resizable_area");
 	
 	// get the button's active area
 	if (style.hasProp("active_area"))
@@ -264,25 +264,26 @@ void Button::setIcon(const ResourceManager::ImageRef &icon, IconPlacement place,
 	m_iconPlacement = place;
 }
 
-void Button::setFace(State state, const ResourceManager::ImageRef &img)
+void Button::setFace(State state, const ResourceManager::ImageRef &img,
+					 const Rect<int> *active_area, const Rect<int> *resizeable_area)
 {
 	m_faces[(size_t)state] = img;
 
-	// no resizable area known about this face
-	m_resizableArea = Rect<int>(0,0,0,0);
-}
+	// update the area that gets stretched when the button resizes
+	if (resizeable_area)
+		m_resizableArea = *resizeable_area;
+	else
+		m_resizableArea = Rect<int>(img.m_width/3,img.m_height/3,2*img.m_width/3,2*img.m_height/3);
 
-void Button::setResizableArea(const Rect<int> &resizable_area)
-{
-	m_resizableArea = resizable_area;
-}
+	// update the active area of this button
+	if (active_area)
+		m_activeArea = *active_area;
+	else
+		m_activeArea = Rect<int>(0,0, img.m_width, img.m_height);
 
-/*Rect<int> Button::getActiveArea() const
-{
-	return Rect<int>(getLeft(), getTop(),
-		getRight() - (m_faces[UP].m_width-m_activeArea.right) - m_activeArea.left,
-		getBottom() - (m_faces[UP].m_height-m_activeArea.bottom) - m_activeArea.top);
-}*/
+	// update the size of the button
+	setSize(img.m_width, img.m_height);
+}
 
 bool Button::isPtInside(int x, int y)
 {
