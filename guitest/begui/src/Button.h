@@ -89,9 +89,10 @@ public:
 	virtual	void	setState(State state)										{ m_status = state; }
 	virtual	State	getState() const											{ return m_status; }
 	virtual	void	setTitle(const std::string& title)							{ m_title = title; }
-	virtual	void	setFace(State state, const ResourceManager::ImageRef &img);
+	virtual	void	setFace(State state, const ResourceManager::ImageRef &img, 
+							const Rect<int> *active_area = 0, const Rect<int> *resizeable_area = 0);
 	virtual	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
-	virtual	void	setResizableArea(const Rect<int> &resizable_area);
+	//virtual	void	setResizableArea(const Rect<int> &resizable_area);
 	virtual	void	setCanDrag(bool bDrag)										{ m_bCanDrag = bDrag; }
 	virtual	bool	canDrag() const												{ return m_bCanDrag; }
 	virtual	void	setColor(const Color &cl)									{ m_btnColor = cl; }
