@@ -31,7 +31,7 @@ Component::Component() : m_left(0), m_right(0), m_top(0), m_bottom(0),
 	m_bHasMouseFocus(false),
 	m_bHasKeybFocus(false),
 	m_bActive(false),
-	m_bFixedZOrder(true),
+	m_bFixedZOrder(false),
 	m_bEnabled(true)
 {
 }

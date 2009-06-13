@@ -91,7 +91,14 @@ public:
 
 	virtual void create(int left, int top, int width, int height, const std::string &title, 
 						const std::string &style_name = "std");
-	virtual void addComponent(Component* pC)	{ m_contents.addComponent(pC); }
+
+	// redirect methods inherited from container to the m_container
+	virtual void		addComponent(Component* pC)	{ m_contents.addComponent(pC); }
+	virtual int			getChildrenNum() const		{ return m_contents.getChildrenNum(); }
+	virtual Component*	getChild(int pos)			{ return m_contents.getChild(pos); }
+	virtual void		remComponent(Component *pC)	{ m_contents.remComponent(pC); }
+	virtual bool		contains(Component *pC)		{ return m_contents.contains(pC); }
+	virtual void		bringToFront(Component *pC)	{ m_contents.bringToFront(pC); }
 
 	virtual void setMovable(bool bMovable)		{ m_bMovable = bMovable; }
 	virtual void setResizable(bool bResizable)	{ m_bResizable = bResizable; }

@@ -205,6 +205,13 @@ void Container::onKeyUp(int key)
 	}
 }
 
+void Container::bringToFront(Component *pC)
+{
+	ASSERT(pC);
+	int id = findChildId(pC);
+	bringChildToFront(id);
+}
+
 void Container::bringChildToFront(int id)
 {
 	ASSERT(id >= 0 && id < (int)m_children.size());
@@ -272,4 +279,15 @@ bool Container::contains(Component *pC)
 		}
 	}
 	return false;
+}
+
+int Container::findChildId(begui::Component *pC)
+{
+	ASSERT(pC);
+	for (size_t i=0; i<m_children.size(); ++i) {
+		if (m_children[i] == pC) {
+			return (int)i;
+		}
+	}
+	return -1;
 }

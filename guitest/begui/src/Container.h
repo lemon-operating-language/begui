@@ -46,6 +46,7 @@ public:
 	virtual Component*	getChild(int pos)		{ return m_children[pos]; }
 	virtual void		remComponent(Component *pC);
 	virtual bool		contains(Component *pC);
+	virtual void		bringToFront(Component *pC);
 
 	// overridables
 	virtual void onMouseDownEx(int x, int y) { };
@@ -63,7 +64,8 @@ public:
 	virtual bool onMouseUp(int x, int y, int button);
 
 protected:
-	void bringChildToFront(int id);
+	void	bringChildToFront(int id);
+	int		findChildId(Component *pC);
 };
 
 };
