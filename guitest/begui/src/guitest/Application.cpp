@@ -65,9 +65,9 @@ void ChildWnd1::onCreate()
 	m_combobox.addItem("item 4");
 	m_combobox.disableItem(2);
 	m_combobox.setCurrentItem(1);
-	m_combobox2.create(230, 120, 80, 200);
+	/*m_combobox2.create(230, 120, 80, 200);
 	m_combobox2.addItem("item 1");
-	m_tabs.addComponent(&m_combobox2, 0);
+	m_tabs.addComponent(&m_combobox2, 0);*/
 	m_tabs.addComponent(&m_combobox, 0);
 
 	// create a test viewport
