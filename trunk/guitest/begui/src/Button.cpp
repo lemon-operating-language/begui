@@ -34,7 +34,10 @@ Button::Button() :
 	m_iconPlacement(NEAR_LEFT),
 	m_activeArea(0,0,0,0),
 	m_resizableArea(0,0,0,0),
-	m_bCanDrag(false)
+	m_bCanDrag(false),
+	m_btnColor(1,1,1),
+	m_textColor(1,1,1),
+	m_inactiveTextColor(0.3f, 0.3f, 0.3f)
 {
 }
 
@@ -144,11 +147,11 @@ void Button::onRender()
 
 	float offs = 0.0f;
 	if (m_status == Button::INACTIVE)
-		glColor4f(1,1,1, 0.5);
+		glColor4f(m_btnColor.r, m_btnColor.g, m_btnColor.b, 0.5);
 	else if (m_status == Button::MOUSE_OVER && !m_faces[m_status].m_texture)
-		glColor4f(1,1,1,0.8f);
+		glColor4f(m_btnColor.r, m_btnColor.g, m_btnColor.b, 0.8f);
 	else
-		glColor4f(1,1,1,1);
+		glColor4f(m_btnColor.r, m_btnColor.g, m_btnColor.b, 1);
 	if (m_status == Button::DOWN && !m_faces[m_status].m_texture)
 		offs = 1.0f;
 
@@ -186,15 +189,15 @@ void Button::onRender()
 
 	// render the text
 	if (m_status == Button::INACTIVE)
-		glColor3f(0.3f, 0.3f, 0.3f);
+		glColor3f(m_inactiveTextColor.r, m_inactiveTextColor.g, m_inactiveTextColor.b);
 	else
-		glColor3f(1,1,1);
+		glColor3f(m_textColor.r, m_textColor.g, m_textColor.b);
 	Font::renderString(centerx - title_w/2 + iw/2, centery+4, m_title);
 }
 
 bool Button::onMouseDown(int x, int y, int button)
 {
-	if (m_status != Button::INACTIVE) {
+	if (isEnabled()) {
 		m_status = Button::DOWN;
 		m_onButtonDown(m_id, Vector2i(x,y));
 	}
@@ -203,23 +206,25 @@ bool Button::onMouseDown(int x, int y, int button)
 
 bool Button::onMouseMove(int x, int y, int prevx, int prevy)
 {
-	if (m_status != Button::DOWN || !isPtInside(x,y)) {
-		if (m_status != Button::INACTIVE && isPtInside(x,y))
-			m_status = Button::MOUSE_OVER;
-		else {
-			m_status = Button::UP;
-			m_onButtonUp(m_id, Vector2i(x,y));
+	if (isEnabled()) {
+		if (m_status != Button::DOWN || !isPtInside(x,y)) {
+			if (m_status != Button::INACTIVE && isPtInside(x,y))
+				m_status = Button::MOUSE_OVER;
+			else {
+				m_status = Button::UP;
+				m_onButtonUp(m_id, Vector2i(x,y));
+			}
 		}
-	}
-	else if (m_status == Button::DOWN && canDrag()) {
-		m_onButtonDrag(m_id, Vector2i(x-prevx, y-prevy));
+		else if (m_status == Button::DOWN && canDrag()) {
+			m_onButtonDrag(m_id, Vector2i(x-prevx, y-prevy));
+		}
 	}
 	return true;
 }
 
 bool Button::onMouseUp(int x, int y, int button)
 {
-	if (m_status != Button::INACTIVE)
+	if (isEnabled())
 	{
 		if (m_status == Button::DOWN)
 			m_onClick(m_id);
@@ -283,4 +288,16 @@ bool Button::isPtInside(int x, int y)
 {
 //	return getActiveArea().contains(x,y);
 	return Component::isPtInside(x,y);
+}
+
+void Button::disable()
+{
+	Component::disable();
+	m_status = Button::INACTIVE;
+}
+
+void Button::enable()
+{
+	m_status = Button::UP;
+	Component::enable();
 }
