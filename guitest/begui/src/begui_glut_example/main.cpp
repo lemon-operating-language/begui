@@ -8,6 +8,11 @@ ListBox myList1;
 int width = 0;
 int height = 0;
 
+Dialog myModalDlg;
+Button myDlgBtn1;
+
+Container mainContainer;
+
 float material_diffuse[4]={1,1,1,1};
 float lightpos[] = {0, 1, 1, .0f};
 float lightdiffuse[] = {1,1,1,1};
@@ -77,8 +82,10 @@ void renderScene(void)
 	display::setSize(width, height);
 
 	// render the window
-	myWindow.frameUpdate();
-	myWindow.frameRender();
+	//myWindow.frameUpdate();
+	//myWindow.frameRender();
+	mainContainer.frameUpdate();
+	mainContainer.frameRender();
 	
 	glutSwapBuffers();
 	
@@ -89,6 +96,7 @@ void changeSize(int w, int h) {
 
 	width = w;
 	height = h;
+	mainContainer.setSize(w,h);
 }
 
 int prevx = 0, prevy = 0;
@@ -97,20 +105,20 @@ void processMouse(int button, int state, int x, int y)
 {
 	if (state == GLUT_DOWN) {
 		input::mouseButtonDown(x, y, MOUSE_BUTTON_LEFT);
-		myWindow.onMouseDown(x, y, MOUSE_BUTTON_LEFT);
+		mainContainer.onMouseDown(x, y, MOUSE_BUTTON_LEFT);
 		prevx = x;
 		prevy = y;
 	}
 	else if (state == GLUT_UP) {
 		input::mouseButtonUp(x, y, MOUSE_BUTTON_LEFT);
-		myWindow.onMouseUp(x, y, MOUSE_BUTTON_LEFT);
+		mainContainer.onMouseUp(x, y, MOUSE_BUTTON_LEFT);
 	}
 }
 
 void processMouseActiveMotion(int x, int y)
 {
 	input::mousePos(x,y);
-	myWindow.onMouseMove(x, y, prevx, prevy);
+	mainContainer.onMouseMove(x, y, prevx, prevy);
 	prevx = x;
 	prevy = y;
 }
@@ -118,7 +126,7 @@ void processMouseActiveMotion(int x, int y)
 void processMousePassiveMotion(int x, int y)
 {
 	input::mousePos(x,y);
-	myWindow.onMouseMove(x, y, prevx, prevy);
+	mainContainer.onMouseMove(x, y, prevx, prevy);
 	prevx = x;
 	prevy = y;
 }
@@ -128,9 +136,10 @@ void onButtonClick(int id)
 	// id: the id of the control generating this event
 	if (id == 101) // if it was from our button
 	{
-		lightdiffuse[0] = (float)rand()/RAND_MAX;
-		lightdiffuse[1] = (float)rand()/RAND_MAX;
-		lightdiffuse[2] = (float)rand()/RAND_MAX;
+	//	lightdiffuse[0] = (float)rand()/RAND_MAX;
+	//	lightdiffuse[1] = (float)rand()/RAND_MAX;
+	//	lightdiffuse[2] = (float)rand()/RAND_MAX;
+		mainContainer.showModal(&myModalDlg);
 	}
 }
 
@@ -148,6 +157,10 @@ void onListSelect(int sel) {
 		case 6: lightdiffuse[0]=1;lightdiffuse[1]=0;lightdiffuse[2]=1; break;
 		case 7: lightdiffuse[0]=0.5f;lightdiffuse[1]=0.5f;lightdiffuse[2]=0.5f; break;
 	}
+}
+
+void onCloseDlg(int id) {
+	mainContainer.hideModal();
 }
 
 void initBeGUI()
@@ -201,7 +214,7 @@ int main(int argc, char *argv[])
 
 	// create the beGUI window
 	myWindow.create(20, 20, 200, 200, "test");
-	myBtn1.create(20, 20, "Button 1", 101, makeFunctor((Functor1<int>*)0, &onButtonClick));
+	myBtn1.create(20, 20, "Show Modal Dialog", 101, makeFunctor((Functor1<int>*)0, &onButtonClick));
 	myWindow.addComponent(&myBtn1);
 	myList1.create(20, 50, 160, 100, ListBox::SINGLE_SELECT);
 	myList1.handleOnItemSelect(makeFunctor((Functor1<int>*)0, &onListSelect));
@@ -214,6 +227,16 @@ int main(int argc, char *argv[])
 	myList1.addItem("Purple");
 	myList1.addItem("Grey");
 	myWindow.addComponent(&myList1);
+
+	// create a container to hold all beGUI components
+	mainContainer.setPos(0,0);
+	mainContainer.setSize(800, 600);
+	mainContainer.addComponent(&myWindow);
+
+	// create a modal dialog
+	myModalDlg.create(100, 100, 300, 300, "Modal Dialog");
+	myDlgBtn1.create(30, 30, "Close Dialog", 10001, makeFunctor((Functor1<int>*)0, &onCloseDlg));
+	myModalDlg.addComponent(&myDlgBtn1);
 
 	// start the main loop
 	glutMainLoop();

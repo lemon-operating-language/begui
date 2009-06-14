@@ -36,6 +36,7 @@ protected:
 	// component is the last in the list)
 	std::vector<Component*>	m_children;
 	Component				*m_pActiveComponent;
+	Component				*m_pModalComponent;
 
 public:
 	Container();
@@ -47,6 +48,8 @@ public:
 	virtual void		remComponent(Component *pC);
 	virtual bool		contains(Component *pC);
 	virtual void		bringToFront(Component *pC);
+	virtual void		showModal(Component *pC);
+	virtual void		hideModal();
 
 	// overridables
 	virtual void onMouseDownEx(int x, int y) { };

@@ -26,10 +26,20 @@ using namespace begui;
 
 void Dialog::showModal()
 {
-	FrameWindow::inst()->showModalDialog(this);
+	if (FrameWindow::inst())
+		FrameWindow::inst()->showModal(this);
+	else {
+		ASSERT(0);
+		// Use Container::showModal for your top-level container, instead of this method
+	}
 }
 
 void Dialog::close()
 {
-	FrameWindow::inst()->closeModalDialog();
+	if (FrameWindow::inst())
+		FrameWindow::inst()->hideModal();
+	else {
+		ASSERT(0);
+		// Use Container::showModal for your top-level container, instead of this method
+	}
 }
