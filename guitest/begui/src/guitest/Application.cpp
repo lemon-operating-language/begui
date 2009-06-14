@@ -158,7 +158,7 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	ResourceManager::inst()->setResourceDir("../resources/");
 
 	FrameWindow::Options opt;
-	opt.bOwnDraw = false;
+	opt.bOwnDraw = true;
 	opt.bFullScreen = false;
 	opt.nColorBits = 24;
 	opt.nDepthBits = 8;
