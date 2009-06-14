@@ -9,6 +9,9 @@ void ChildWnd1::onCreate()
 	m_tabs.create(8, 8, 400, 360);
 	m_tabs.addTab("tab 1");
 	m_tabs.addTab("tab 2");
+	m_tabs.addTab("Buttons");
+	m_tabs.addTab("Radio Buttons");
+	m_tabs.addTab("Comboboxes");
 	addComponent(&m_tabs);
 
 	// create a simple push button
@@ -18,8 +21,24 @@ void ChildWnd1::onCreate()
 	//m_button1.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
 	m_tabs.addComponent(&m_button1, 0);
 
-	m_checkbox.create(260, 70, "check here", 102);
-	m_tabs.addComponent(&m_checkbox, 0);
+	m_button2.create(40, 70, "Button2", 201);
+	m_button2.disable();
+	m_button3.create(40, 100, "Button3", 202);
+	m_button4.create(40, 130, "Button4", 203);
+	m_button4.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
+	m_button4.setTextColor(Color(0.2f, 0.2f, 0.2f));
+	m_button5.create(240, 130, "Button5", 203);
+	m_button5.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
+	m_button5.setSize(100, 20);
+	m_button5.setTextColor(Color(0.2f, 0.2f, 0.2f));
+	//m_tabs.addComponent(&m_button1, 2);
+	m_tabs.addComponent(&m_button2, 2);
+	m_tabs.addComponent(&m_button3, 2);
+	m_tabs.addComponent(&m_button4, 2);
+	m_tabs.addComponent(&m_button5, 2);
+
+	m_checkbox1.create(260, 70, "check here", 102);
+	m_tabs.addComponent(&m_checkbox1, 0);
 
 	// create a group of radio buttons
 	m_radio1.create(20, 20, "Radio Button 1", 2);
@@ -41,34 +60,34 @@ void ChildWnd1::onCreate()
 	m_textbox.setText("aa aaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
 	m_tabs.addComponent(&m_textbox, 0);
 	
-	m_listbox.create(20, 140, 200, 200, ListBox::MULTI_SELECT_SINGLECLICK);
-	m_listbox.addItem("item 1");
-	m_listbox.addItem("disabled item 2");
-	m_listbox.addItem("item 3");
-	m_listbox.addItem("item 4");
-	m_listbox.addItem("item 5");
+	m_listbox1.create(20, 140, 200, 200, ListBox::MULTI_SELECT_SINGLECLICK);
+	m_listbox1.addItem("item 1");
+	m_listbox1.addItem("disabled item 2");
+	m_listbox1.addItem("item 3");
+	m_listbox1.addItem("item 4");
+	m_listbox1.addItem("item 5");
 	for (size_t i=0; i<20; ++i)
-		m_listbox.addItem("item");
-	m_listbox.addItem("last item");
-	m_listbox.disableItem(1);
-	int t1 = m_listbox.getCurrentItem();
-	m_listbox.setCurrentItem(3);
-	m_listbox.selectItem(2, true);
-	int t2 = m_listbox.getCurrentItem();
+		m_listbox1.addItem("item");
+	m_listbox1.addItem("last item");
+	m_listbox1.disableItem(1);
+	int t1 = m_listbox1.getCurrentItem();
+	m_listbox1.setCurrentItem(3);
+	m_listbox1.selectItem(2, true);
+	int t2 = m_listbox1.getCurrentItem();
 	Console::print("%d %d\n", t1,t2);
-	m_tabs.addComponent(&m_listbox, 0);
+	m_tabs.addComponent(&m_listbox1, 0);
 
-	m_combobox.create(230, 140, 80, 200);
-	m_combobox.addItem("item 1");
-	m_combobox.addItem("item 2");
-	m_combobox.addItem("item 3");
-	m_combobox.addItem("item 4");
-	m_combobox.disableItem(2);
-	m_combobox.setCurrentItem(1);
+	m_combobox1.create(230, 140, 80, 200);
+	m_combobox1.addItem("item 1");
+	m_combobox1.addItem("item 2");
+	m_combobox1.addItem("item 3");
+	m_combobox1.addItem("item 4");
+	m_combobox1.disableItem(2);
+	m_combobox1.setCurrentItem(1);
 	/*m_combobox2.create(230, 120, 80, 200);
 	m_combobox2.addItem("item 1");
 	m_tabs.addComponent(&m_combobox2, 0);*/
-	m_tabs.addComponent(&m_combobox, 0);
+	m_tabs.addComponent(&m_combobox1, 0);
 
 	// create a test viewport
 	Viewport vp;

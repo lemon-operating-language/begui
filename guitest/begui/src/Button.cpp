@@ -21,6 +21,7 @@
 
 #include "Button.h"
 #include "Font.h"
+#include "util.h"
 
 using namespace begui;
 
@@ -241,10 +242,21 @@ bool Button::onMouseUp(int x, int y, int button)
 
 void Button::onKeyDown(int key)
 {
+	if (isEnabled()) {
+		if (key == KEY_ENTER) {
+			m_status = Button::DOWN;
+		}
+	}
 }
 
 void Button::onKeyUp(int key)
 {
+	if (isEnabled()) {
+		if (key == KEY_ENTER) {
+			m_status = Button::UP;
+			m_onClick(m_id);
+		}
+	}
 }
 
 void Button::setIcon(const ResourceManager::ImageRef &icon, IconPlacement place, int x_sz, int y_sz)
@@ -272,17 +284,18 @@ void Button::setFace(State state, const ResourceManager::ImageRef &img,
 	// update the area that gets stretched when the button resizes
 	if (resizeable_area)
 		m_resizableArea = *resizeable_area;
-	else
-		m_resizableArea = Rect<int>(img.m_width/3,img.m_height/3,2*img.m_width/3,2*img.m_height/3);
+	else if (state == Button::UP)
+		m_resizableArea = Rect<int>(0, 0, img.m_width, img.m_height);
 
 	// update the active area of this button
 	if (active_area)
 		m_activeArea = *active_area;
-	else
+	else if (state == Button::UP)
 		m_activeArea = Rect<int>(0,0, img.m_width, img.m_height);
 
 	// update the size of the button
-	setSize(img.m_width, img.m_height);
+	if (state == Button::UP)
+		setSize(img.m_width, img.m_height);
 }
 
 bool Button::isPtInside(int x, int y)

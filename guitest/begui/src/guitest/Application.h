@@ -5,16 +5,17 @@
 class ChildWnd1 : public Window
 {
 private:
-	Button	m_button1;
+	Button	m_button1, m_button2, m_button3, m_button4, m_button5;
 	RadioButton m_radio1;
 	RadioButton m_radio2;
+	RadioButton m_radio3;
 	Group m_group;
 	Slider m_slider;
 	TextBox m_textbox;
-	ListBox m_listbox;
-	ComboBox m_combobox, m_combobox2;
+	ListBox m_listbox1, m_listbox2, m_listbox3, m_listbox4;
+	ComboBox m_combobox1, m_combobox2, m_combobox3;
 	TabContainer m_tabs;
-	CheckBox	m_checkbox;
+	CheckBox	m_checkbox1, m_checkbox2;
 	ViewportComponent m_vp;
 
 	// example: a live variable

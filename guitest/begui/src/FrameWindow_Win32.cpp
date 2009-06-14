@@ -398,7 +398,7 @@ LRESULT FrameWindow_Win32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 		case WM_KEYUP:
 		{
-			int key = -1;
+			int key = (int)wParam;
 			switch (wParam) 
             { 
                 case VK_LEFT: key = KEY_LEFT; break;
