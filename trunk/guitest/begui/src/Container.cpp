@@ -23,7 +23,7 @@
 
 using namespace begui;
 
-Container::Container() : m_pActiveComponent(0)
+Container::Container() : m_pActiveComponent(0), m_pModalComponent(0)
 {
 }
 
@@ -38,6 +38,9 @@ void Container::frameUpdate()
 	// update children too
 	for (size_t i=0; i<m_children.size(); ++i)
 		m_children[i]->frameUpdate();
+
+	if (m_pModalComponent && m_pModalComponent->isVisible())
+		m_pModalComponent->frameUpdate();
 }
 
 void Container::frameRender()
@@ -60,6 +63,21 @@ void Container::frameRender()
 		}
 	}
 
+	// show the modal component, if any
+	if (m_pModalComponent && m_pModalComponent->isVisible())
+	{
+		glEnable(GL_BLEND);
+		glColor4f(0,0,0, 0.5f);
+		glBegin(GL_QUADS);
+			glVertex2f(0, 0);
+			glVertex2f((float)getWidth(), 0);
+			glVertex2f((float)getWidth(), (float)getHeight());
+			glVertex2f(0, (float)getHeight());
+		glEnd();
+
+		m_pModalComponent->frameRender();
+	}
+
 	// Reset the coordinate system
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
@@ -69,6 +87,11 @@ bool Container::onMouseDown(int x, int y, int button)
 {
 	// Transform coordinates.
 	Vector2i lP = parentToLocal(Vector2i(x,y));
+
+	// handle modal components
+	if (m_pModalComponent && m_pModalComponent->isVisible()) {
+		return m_pModalComponent->onMouseDown(lP.x, lP.y, button);
+	}
 
 	// select active component
 	// traversal is done in z-order (starting from the end of the
@@ -132,6 +155,11 @@ bool Container::onMouseMove(int x, int y, int prevx, int prevy)
 
 	bool bHandled = false;
 
+	// handle modal components
+	if (m_pModalComponent && m_pModalComponent->isVisible()) {
+		return m_pModalComponent->onMouseMove(lP.x, lP.y, lPrevP.x, lPrevP.y);
+	}
+
 	// call mouseMove of active component
 	// (without updating the active component)
 	if (m_pActiveComponent)
@@ -167,6 +195,11 @@ bool Container::onMouseUp(int x, int y, int button)
 {
 	Vector2i lP = parentToLocal(Vector2i(x,y));
 
+	// handle modal components
+	if (m_pModalComponent && m_pModalComponent->isVisible()) {
+		return m_pModalComponent->onMouseUp(lP.x, lP.y, button);
+	}
+
 	// call mouseUp of active component
 	// (without updating the active component)
 	if (m_pActiveComponent)
@@ -187,6 +220,12 @@ bool Container::onMouseUp(int x, int y, int button)
 
 void Container::onKeyDown(int key)
 {
+	// handle modal components
+	if (m_pModalComponent && m_pModalComponent->isVisible()) {
+		m_pModalComponent->onKeyDown(key);
+		return;
+	}
+
 	// if key is tab, change the active component
 	// to the next in the tab order
 	//TODO
@@ -199,6 +238,12 @@ void Container::onKeyDown(int key)
 
 void Container::onKeyUp(int key)
 {
+	// handle modal components
+	if (m_pModalComponent && m_pModalComponent->isVisible()) {
+		m_pModalComponent->onKeyUp(key);
+		return;
+	}
+
 	if (m_pActiveComponent)
 	{
 		m_pActiveComponent->onKeyUp(key);
@@ -237,6 +282,10 @@ void Container::bringChildToFront(int id)
 void Container::addComponent(Component *pC)
 {
 	ASSERT(pC);
+
+	// check if the component is already added to this container
+	if (contains(pC))
+		return;
 
 	// top child is the last in the array. Respect alwaysOnTop
 	// flags when adding the child
@@ -290,4 +339,18 @@ int Container::findChildId(begui::Component *pC)
 		}
 	}
 	return -1;
+}
+
+void Container::showModal(begui::Component *pC)
+{
+	ASSERT(pC);
+	m_pModalComponent = pC;
+	pC->setVisible(true);
+}
+
+void Container::hideModal()
+{
+	if (m_pModalComponent) {
+		m_pModalComponent = 0;
+	}
 }

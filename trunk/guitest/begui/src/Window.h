@@ -99,6 +99,8 @@ public:
 	virtual void		remComponent(Component *pC)	{ m_contents.remComponent(pC); }
 	virtual bool		contains(Component *pC)		{ return m_contents.contains(pC); }
 	virtual void		bringToFront(Component *pC)	{ m_contents.bringToFront(pC); }
+	virtual void		showModal(Component *pC)	{ m_contents.showModal(pC); }
+	virtual void		hideModal()					{ m_contents.hideModal(); }
 
 	virtual void setMovable(bool bMovable)		{ m_bMovable = bMovable; }
 	virtual void setResizable(bool bResizable)	{ m_bResizable = bResizable; }

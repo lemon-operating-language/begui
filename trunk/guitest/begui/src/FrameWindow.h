@@ -89,9 +89,6 @@ public:
 	virtual bool onMouseUp(int x, int y, int button);
 	virtual void onKeyDown(int key);
 	virtual void onKeyUp(int key);
-
-	virtual void showModalDialog(Dialog*);
-	virtual void closeModalDialog();
 	
 protected:
 	FrameWindow();
@@ -107,9 +104,6 @@ protected:
 	bool	m_bSyncRendering;
 
 	static FrameWindow *m_pInst;
-
-	// TEMP
-	Dialog	*m_pModalDialog;
 
 private:
 	// hide some Window methods

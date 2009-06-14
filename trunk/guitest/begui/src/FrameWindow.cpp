@@ -35,7 +35,7 @@ FrameWindow *FrameWindow::m_pInst = 0;
 int g_lastXPos = 0;
 int g_lastYPos = 0;
 
-FrameWindow::FrameWindow() : m_pModalDialog(0)
+FrameWindow::FrameWindow()
 {
 	// default style for a frame window
 	setStyle(Window::MULTIPLE);
@@ -102,21 +102,6 @@ void FrameWindow::frameRender()
 	resetViewport();
 
 	Window::frameRender();
-
-	// TEMP
-	if (m_pModalDialog) {
-		glEnable(GL_BLEND);
-		glColor4f(0,0,0, 0.5f);
-		glBegin(GL_QUADS);
-			glVertex2f(m_clientArea.left, m_clientArea.top);
-			glVertex2f(m_clientArea.right, m_clientArea.top);
-			glVertex2f(m_clientArea.right, m_clientArea.bottom);
-			glVertex2f(m_clientArea.left, m_clientArea.bottom);
-		glEnd();
-
-		m_pModalDialog->frameUpdate();
-		m_pModalDialog->frameRender();
-	}
 }
 
 void FrameWindow::setPos(int x, int y)
@@ -153,16 +138,6 @@ void FrameWindow::resetViewport()
 	}
 }
 
-void FrameWindow::showModalDialog(begui::Dialog *dlg)
-{
-	m_pModalDialog = dlg;
-}
-
-void FrameWindow::closeModalDialog()
-{
-	m_pModalDialog = 0;
-}
-
 bool FrameWindow::onMouseDown(int x, int y, int button)
 {
 	if (m_options.bOwnDraw) {
@@ -171,9 +146,6 @@ bool FrameWindow::onMouseDown(int x, int y, int button)
 		g_lastXPos = x;
 		g_lastYPos = y;
 	}
-	// TEMP
-	if (m_pModalDialog)
-		return m_pModalDialog->onMouseDown(x,y,button);
 	return Window::onMouseDown(x,y,button);
 }
 
@@ -187,9 +159,6 @@ bool FrameWindow::onMouseMove(int x, int y, int prevx, int prevy)
 		g_lastXPos = x;
 		g_lastYPos = y;
 	}
-	// TEMP
-	if (m_pModalDialog)
-		return m_pModalDialog->onMouseMove(x,y,prevx,prevy);
 	return Window::onMouseMove(x,y,prevx,prevy);
 }
 
@@ -199,29 +168,16 @@ bool FrameWindow::onMouseUp(int x, int y, int button)
 		x += m_left;
 		y += m_top;
 	}
-	// TEMP
-	if (m_pModalDialog)
-		return m_pModalDialog->onMouseUp(x,y,button);
 	return Window::onMouseUp(x,y,button);
 }
 
 void FrameWindow::onKeyDown(int key)
 {
-	// TEMP
-	if (m_pModalDialog) {
-		m_pModalDialog->onKeyDown(key);
-		return;
-	}
 	Window::onKeyDown(key);
 }
 
 void FrameWindow::onKeyUp(int key)
 {
-	// TEMP
-	if (m_pModalDialog) {
-		m_pModalDialog->onKeyUp(key);
-		return;
-	}
 	Window::onKeyUp(key);
 }
 
