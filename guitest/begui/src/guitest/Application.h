@@ -29,7 +29,9 @@ public:
 class Application : public BaseApp_Win
 {
 private:
-	ChildWnd1 m_wnd1;
+	ChildWnd1	m_wnd1;
+	Dialog		m_dlg1;
+	Button		m_dlgBtn1;
 
 	static Application	*m_pInst;
 

@@ -158,7 +158,7 @@ int WINAPI WinMain(HINSTANCE hInstance, // Instance
 	ResourceManager::inst()->setResourceDir("../resources/");
 
 	FrameWindow::Options opt;
-	opt.bOwnDraw = true;
+	opt.bOwnDraw = false;
 	opt.bFullScreen = false;
 	opt.nColorBits = 24;
 	opt.nDepthBits = 8;
@@ -176,6 +176,15 @@ void Application::onMenu(int id)
 {
 	switch (id)
 	{
+	case 101:
+		m_dlg1.create(30, 30, 300, 300, "test_dialog");
+		m_dlgBtn1.create(30, 30, "Close", 10001, makeFunctor(*this, &Application::onMenu));
+		m_dlg1.addComponent(&m_dlgBtn1);
+		m_dlg1.showModal();
+		break;
+	case 10001:
+		m_dlg1.close();
+		break;
 	case 106:
 		exit(0);
 		break;
