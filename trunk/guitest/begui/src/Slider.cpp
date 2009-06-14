@@ -134,7 +134,7 @@ void Slider::onRender()
 	int r_text_x = w - 2;
 	
 	char curValStr[64] = {0};
-	sprintf(curValStr, "%.3f", m_curValue);
+	sprintf(curValStr, m_valuePrintFormat.c_str(), m_curValue);
 
 	// render the label bg
 	glColor4f(1,1,1,1);

@@ -377,6 +377,7 @@ void Window::onCaptionBtn(int id)
 	switch (id) {
 		case 101:
 			setVisible(false);
+			// TODO: if modal, should remove itself from the appropriate container - works the way it is too, though
 			break;
 		case 102:
 			if (m_state == MAXIMIZED) {
