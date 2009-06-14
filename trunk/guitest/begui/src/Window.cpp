@@ -375,6 +375,9 @@ void Window::onKeyUp(int key)
 void Window::onCaptionBtn(int id)
 {
 	switch (id) {
+		case 101:
+			setVisible(false);
+			break;
 		case 102:
 			if (m_state == MAXIMIZED) {
 				restore();
