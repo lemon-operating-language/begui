@@ -17,6 +17,7 @@ private:
 	TabContainer m_tabs;
 	CheckBox	m_checkbox1, m_checkbox2;
 	ViewportComponent m_vp;
+	Label m_label1;
 
 	// example: a live variable
 	double m_sliderPos;

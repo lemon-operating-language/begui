@@ -88,7 +88,6 @@ void Font::renderString_i(int x, int y, const std::string &str,
 	m_texture.set();
 
 	glEnable(GL_BLEND);
-//	glColor4f(1,1,1,1);
 
 	glBegin(GL_QUADS);
 	int xpos = x;
@@ -103,9 +102,10 @@ void Font::renderString_i(int x, int y, const std::string &str,
 			continue;
 		}
 
-		if (str[i] < m_startChar || str[i] > 255)
+		unsigned char cc = str[i];
+		if (cc < m_startChar || cc > 255)
 			continue;
-		Character& charInfo = m_character[str[i] - m_startChar];
+		Character& charInfo = m_character[cc - m_startChar];
 
 		// get character metrics
 		int fw = charInfo.m_right-charInfo.m_left; // font width
@@ -153,20 +153,23 @@ void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string 
 		// scan the remaining string until the first non-space, measuring width
 		for (; i<str.length(); ++i)
 		{
-			if (!isspace(str[i]))//isprint(str[i]))
+			unsigned char cc = str[i];
+
+			if (!isspace(cc))//isprint(str[i]))
 				break;
 
-			if (str[i] == '\n' || (str[i] >= m_startChar && 
-				curLinePos + m_character[str[i] - m_startChar].m_horiAdvance > lineWidth))
+			if (cc == '\n' || (cc >= m_startChar && 
+				curLinePos + m_character[cc - m_startChar].m_horiAdvance > lineWidth))
 			{
 				if (char_pos_out)
 					char_pos_out->push_back(Rect<int>(x+curLinePos, ypos, x+curLinePos, ypos));	// a zero rect indicates a line break
 				ypos += m_lineHeight;
 				curLinePos = 0;
 				++i;
+				cc = str[i];
 				break;
 			}
-			if (str[i] == '\t') {
+			if (cc == '\t') {
 				if (char_pos_out)
 					char_pos_out->push_back(Rect<int>(x+curLinePos,  
 											ypos-m_lineHeight, 
@@ -179,18 +182,19 @@ void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string 
 				if (char_pos_out)
 					char_pos_out->push_back(Rect<int>(x+curLinePos, ypos-m_lineHeight, x+curLinePos, ypos));
 
-				if (str[i] - m_startChar < 0)
+				if (cc - m_startChar < 0)
 					continue;
-				curLinePos += m_character[str[i] - m_startChar].m_horiAdvance;
+				curLinePos += m_character[cc - m_startChar].m_horiAdvance;
 			}
 		}
 		// find the next word
 		std::string word = "";
 		for (; i<str.length(); ++i)
 		{
-			if (isspace(str[i]) )//!isprint(str[i]))
+			unsigned char cc = str[i];
+			if (isspace(cc) )//!isprint(str[i]))
 				break;
-			word += str[i];
+			word += cc;
 		}
 		// get the length of the word
 		int wordLen = stringLength(word);
@@ -218,9 +222,10 @@ int Font::stringLength(const std::string &str)
 	ASSERT(curFont);
 	for (size_t i=0; i<str.length(); ++i)
 	{
-		if (str[i] < curFont->m_startChar || str[i] > 255)
+		unsigned char cc = str[i];
+		if (cc < curFont->m_startChar || cc > 255)
 			continue;
-		Character& charInfo = curFont->m_character[str[i] - curFont->m_startChar];
+		Character& charInfo = curFont->m_character[cc - curFont->m_startChar];
 		len += charInfo.m_horiAdvance;
 	}
 	return len;

@@ -40,6 +40,9 @@ void ChildWnd1::onCreate()
 	m_checkbox1.create(260, 70, "check here", 102);
 	m_tabs.addComponent(&m_checkbox1, 0);
 
+	m_label1.create(260, 90, "eò á !@#$%^&*()");
+	m_tabs.addComponent(&m_label1, 0);
+
 	// create a group of radio buttons
 	m_radio1.create(20, 20, "Radio Button 1", 2);
 	m_radio2.create(20, 40, "Radio Button 2", 3);
@@ -57,7 +60,7 @@ void ChildWnd1::onCreate()
 
 	// create a textbox
 	m_textbox.create(230, 160, 130, 180, true, true);
-	m_textbox.setText("aa aaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
+	m_textbox.setText("aáòfffa abaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
 	m_tabs.addComponent(&m_textbox, 0);
 	
 	m_listbox1.create(20, 140, 200, 200, ListBox::MULTI_SELECT_SINGLECLICK);

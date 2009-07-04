@@ -106,6 +106,9 @@ public:
 	virtual void setResizable(bool bResizable)	{ m_bResizable = bResizable; }
 	virtual void setStyle(Style style)			{ m_style = style; }
 	virtual void setClientAreaSize(int w, int h);
+	virtual void enableMinimize(bool b);
+	virtual void enableMaximize(bool b);
+	virtual void enableClose(bool b);
 	
 	virtual void onCreate() { };
 	virtual void frameUpdate();
