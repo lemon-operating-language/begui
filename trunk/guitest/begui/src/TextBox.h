@@ -42,6 +42,9 @@ private:
 	Rect<int>					m_textPadding;
 	Color						m_textColor;
 
+	ResourceManager::ImageRef	m_frame;
+	Rect<int>					m_frameResizableArea, m_frameOffs;
+
 public:
 	TextBox();
 

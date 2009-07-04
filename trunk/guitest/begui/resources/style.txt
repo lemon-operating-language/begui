@@ -241,3 +241,11 @@ class CheckBox {
 		rect active_area = 2,2,14,14
 	}
 }
+
+class Component {
+	style std {
+		image active_frame = 448,1,498,45, gui2_widgets.png
+		rect frame_resizable_area = 11,12,38,33
+		rect frame_offs = 7,7,8,9
+	}
+}
