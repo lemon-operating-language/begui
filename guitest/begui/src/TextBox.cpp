@@ -50,6 +50,11 @@ void TextBox::create(int x, int y, int width, int height, bool bEditable, bool b
 	if (style.hasProp("text_color"))
 		m_textColor = style.get_c("text_color");
 
+	ResourceManager::Style style2 = ResourceManager::inst()->getClassDef("Component").style("std");
+	m_frame = ResourceManager::inst()->loadImage(style2.get_img("active_frame"));
+	m_frameResizableArea = style2.get_rect("frame_resizable_area");
+	m_frameOffs = style2.get_rect("frame_offs");
+
 	// create the text object
 	m_text.create(m_textPadding.left, m_textPadding.top, width-m_textPadding.right, bMultiline, bEditable);
 	m_text.setTextColor(m_textColor, (bEditable)?0.9f:0.5f);
@@ -82,9 +87,20 @@ void TextBox::onRender()
 		getHeight()+m_activeArea.top + (m_bg.m_height-m_activeArea.bottom), 
 		m_resizableArea);
 
+	// render an active frame
+	if (isActive()) {
+		Component::drawImageWtBorders(m_frame, -m_frameOffs.left, -m_frameOffs.top, 
+			getWidth()+m_frameOffs.left+m_frameOffs.right, 
+			getHeight()+m_frameOffs.top+m_frameOffs.bottom,
+			m_frameResizableArea);
+	}
+
 	// mask the inactive area
 	Vector2i wpos = Component::localToWorld(Vector2i(0, 0));
 	display::pushMask(wpos.x, wpos.y, getWidth(), getHeight());
+
+	// toggle cursor display on/off
+	m_text.setCursorVisible(isActive());
 
 	// render the text
 	if (m_text.isEditable())
