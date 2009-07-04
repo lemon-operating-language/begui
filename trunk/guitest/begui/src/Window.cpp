@@ -99,18 +99,18 @@ void Window::create(int left, int top, int width, int height, const std::string 
 	calcClientArea();
 	
 	// create the window caption buttons
+	m_closeBtn.create(300, 0, "", 101, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_close_btn");
+	m_maxBtn.create(300, 0, "", 102, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_max_btn");
+	m_minBtn.create(300, 0, "", 103, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_min_btn");
 	if (m_bHasCaption) {
 		if (m_bCanClose) {
-			m_closeBtn.create(300, 0, "", 101, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_close_btn");
 			Container::addComponent(&m_closeBtn);
 		}
 		if (m_bResizable) {
 			if (m_bCanMaximize) {
-				m_maxBtn.create(300, 0, "", 102, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_max_btn");
 				Container::addComponent(&m_maxBtn);
 			}
 			if (m_bCanMinimize) {
-				m_minBtn.create(300, 0, "", 103, makeFunctor(*this, &Window::onCaptionBtn), "std_wnd_min_btn");
 				Container::addComponent(&m_minBtn);
 			}
 		}
@@ -419,4 +419,37 @@ Rect<int> Window::getInactiveBorders() const
 	return Rect<int>(m_windowActiveArea.left, m_windowActiveArea.top, 
 		m_windowFace.m_width-m_windowActiveArea.right,
 		m_windowFace.m_height-m_windowActiveArea.bottom);
+}
+
+void Window::enableClose(bool b)
+{
+	m_bCanClose = b;
+	if (b) {
+		Container::addComponent(&m_closeBtn);
+	}
+	else {
+		Container::remComponent(&m_closeBtn);
+	}
+}
+
+void Window::enableMinimize(bool b)
+{
+	m_bCanMinimize = b;
+	if (b) {
+		Container::addComponent(&m_maxBtn);
+	}
+	else {
+		Container::remComponent(&m_maxBtn);
+	}
+}
+
+void Window::enableMaximize(bool b)
+{
+	m_bCanMaximize = b;
+	if (b) {
+		Container::addComponent(&m_minBtn);
+	}
+	else {
+		Container::remComponent(&m_minBtn);
+	}
 }

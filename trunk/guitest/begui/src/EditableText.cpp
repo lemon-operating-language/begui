@@ -160,6 +160,9 @@ bool EditableText::onMouseUp(int x, int y, int button)
 
 void EditableText::onKeyDown(int key)
 {
+	//TODO: done to use ascii>127. find a better fix for that...
+	if (key < 0) key = 256+key;
+
 	switch (key)
 	{
 	// take care of backspace and navigation keys
@@ -261,7 +264,7 @@ void EditableText::onKeyDown(int key)
 		if (m_bEditable)
 		{
 			// if a printable character, add it to the cursor position
-			if (key < 256 && ( isprint(key) || key==' ' || key == '\t' || (m_bMultiLine && key==KEY_ENTER) ))
+			if (key < 256 && ( /*isprint(key)*/key>' ' || key==' ' || key == '\t' || (m_bMultiLine && key==KEY_ENTER) ))
 			{
 				// if there is selected text, remove it (to be replaced by the new character)
 				if (m_selectStart != m_selectEnd && m_bTextSelectable) {
