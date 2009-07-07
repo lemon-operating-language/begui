@@ -175,6 +175,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\edgedetection.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Image.cpp"
 				>
 			</File>
