@@ -2,6 +2,8 @@
 #include "util.h"
 #include "Font.h"
 
+#ifdef _WIN32
+
 using namespace begui;
 
 LRESULT	CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -580,3 +582,5 @@ void FrameWindow_Win32::restore()
 	m_state = VISIBLE;
 	ShowWindow(m_hWnd, SW_RESTORE);
 }
+
+#endif
