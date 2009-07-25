@@ -29,7 +29,9 @@
 #include "../../bcore/src/RenderPass.h"
 
 //#define NOMINMAX	// turn off the generation of min/max macros, so as not to clash with std::min/std::max
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 
 namespace begui {

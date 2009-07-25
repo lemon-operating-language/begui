@@ -24,5 +24,5 @@
 
 unsigned long begui::system::current_time()	// returns time in msec
 {
-	return time(0);
+	return 1000*clock()/CLOCKS_PER_SEC;
 }
