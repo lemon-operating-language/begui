@@ -193,7 +193,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\display.cpp"
+				RelativePath="..\..\src\Display.cpp"
 				>
 			</File>
 			<File
@@ -225,7 +225,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\InputSub.cpp"
+				RelativePath="..\..\src\Input.cpp"
 				>
 			</File>
 			<File
@@ -269,7 +269,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\SystemSub.cpp"
+				RelativePath="..\..\src\System.cpp"
 				>
 			</File>
 			<File
@@ -343,6 +343,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Display.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\EditableText.h"
 				>
 			</File>
@@ -364,6 +368,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\ImageBox.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Input.h"
 				>
 			</File>
 			<File
@@ -408,6 +416,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Slider.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\System.h"
 				>
 			</File>
 			<File
