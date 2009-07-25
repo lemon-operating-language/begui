@@ -94,15 +94,16 @@ namespace display
 
 namespace input
 {
-	bool isMouseButtonDown(int mouseButton);
-	bool isKeyDown(int key);
-	void mouseButtonDown(int x, int y, int mouseButton);
-	void mouseButtonUp(int x, int y, int mouseButton);
-	void mousePos(int x, int y);
+	void	mouseButtonDown(int x, int y, int mouseButton);
+	void	mouseButtonUp(int x, int y, int mouseButton);
+	void	mousePos(int x, int y);
+	bool	isMouseButtonDown(int mouseButton);
+	bool	isDoubleClick(int mouseButton);
+	Vector2i lastMousePos();
+	
 	void keyDown(int key);
 	void keyUp(int key);
-	bool isDoubleClick(int mouseButton);
-	Vector2i lastMousePos();
+	bool isKeyDown(int key);
 
 	void setMouseClickRepeatInterv(unsigned int msec);
 	void setKeybRepeatInterv(unsigned int msec);

@@ -221,7 +221,7 @@ void TimeSeries<T>::update(double time)
 template <class T>
 void TimeSeries<T>::start(double delay)
 {
-	m_timeOffset = (double)(time(0) / 1000.0);
+	m_timeOffset = (double)(1000*clock()/CLOCKS_PER_SEC / 1000.0);
 }
 
 template <class T>
