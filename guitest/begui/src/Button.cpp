@@ -41,7 +41,7 @@ Button::Button() :
 	m_inactiveTextColor(0.3f, 0.3f, 0.3f),
 	m_bRepeatClick(false),
 	m_lastClickTime(0),
-	m_repeatClickInterval(30)
+	m_repeatClickInterval(-1)
 {
 }
 
@@ -58,7 +58,6 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 	m_onClick = callback;
 	m_id = id;
 	m_status = Button::UP;
-	m_repeatClickInterval = input::getMouseClickRepeatInterv();
 
 	m_left = x;
 	m_top = y;
@@ -126,7 +125,10 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 void Button::onUpdate()
 {
 	if (m_bRepeatClick && m_status == Button::DOWN) {
-		if (system::current_time() - m_lastClickTime > m_repeatClickInterval) {
+		int interval = m_repeatClickInterval;
+		if (interval < 0)
+			interval = (int)input::getMouseClickRepeatInterv();
+		if (system::current_time() - m_lastClickTime > (unsigned int)interval) {
 			m_onClick(m_id);
 			m_onButtonDown(m_id, m_lastClickPos);
 			m_lastClickTime = system::current_time();
