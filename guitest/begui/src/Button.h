@@ -58,6 +58,10 @@ private:
 	State			m_status;
 	bool			m_bAutoSzX, m_bAutoSzY;				// true to determine the button size automatically
 	bool			m_bCanDrag;							// true if the button can be dragged around with the mouse
+	bool			m_bRepeatClick;						// true to generated repeatitive onClick events when button is held down
+	Vector2i		m_lastClickPos;
+	unsigned long	m_lastClickTime;
+	unsigned int	m_repeatClickInterval;				// the interval between repeated onClick events, when the button is held down
 
 	ResourceManager::ImageRef	m_faces[STATES_NUM];	// the faces corresponding to each state of the button
 	ResourceManager::ImageRef	m_icon;
@@ -92,12 +96,17 @@ public:
 	virtual	void	setFace(State state, const ResourceManager::ImageRef &img, 
 							const Rect<int> *active_area = 0, const Rect<int> *resizeable_area = 0);
 	virtual	void	setIcon(const ResourceManager::ImageRef &icon, IconPlacement place = NEAR_LEFT, int x_sz=0, int y_sz=0);
-	//virtual	void	setResizableArea(const Rect<int> &resizable_area);
 	virtual	void	setCanDrag(bool bDrag)										{ m_bCanDrag = bDrag; }
 	virtual	bool	canDrag() const												{ return m_bCanDrag; }
 	virtual	void	setColor(const Color &cl)									{ m_btnColor = cl; }
 	virtual	void	setTextColor(const Color &cl)								{ m_textColor = cl; }
 	virtual	void	setInactiveTextColor(const Color &cl)						{ m_inactiveTextColor = cl; }
+
+	// if true, when the button is held down, multiple onClick events will be generated. The
+	// rate is defined by the frame rate for synchronous apps, and by the click repeat rate
+	// for asynchronous apps. The default is false.
+	virtual void	repeatClickOnHold(bool bEnable)								{ m_bRepeatClick = bEnable; }
+	virtual void	setRepeatClickInterval(unsigned int interv)					{ m_repeatClickInterval = interv; }
 	
 	Rect<int>	getActiveBorders() const	{ return Rect<int>(m_activeArea.left, m_activeArea.top, m_faces[UP].m_width-m_activeArea.right, m_faces[UP].m_height-m_activeArea.bottom); }
 

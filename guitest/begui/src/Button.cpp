@@ -38,7 +38,10 @@ Button::Button() :
 	m_bCanDrag(false),
 	m_btnColor(1,1,1),
 	m_textColor(1,1,1),
-	m_inactiveTextColor(0.3f, 0.3f, 0.3f)
+	m_inactiveTextColor(0.3f, 0.3f, 0.3f),
+	m_bRepeatClick(false),
+	m_lastClickTime(0),
+	m_repeatClickInterval(30)
 {
 }
 
@@ -55,6 +58,7 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 	m_onClick = callback;
 	m_id = id;
 	m_status = Button::UP;
+	m_repeatClickInterval = input::getMouseClickRepeatInterv();
 
 	m_left = x;
 	m_top = y;
@@ -121,6 +125,13 @@ void Button::create(int x, int y, int w, int h, const std::string &title, int id
 
 void Button::onUpdate()
 {
+	if (m_bRepeatClick && m_status == Button::DOWN) {
+		if (system::current_time() - m_lastClickTime > m_repeatClickInterval) {
+			m_onClick(m_id);
+			m_onButtonDown(m_id, m_lastClickPos);
+			m_lastClickTime = system::current_time();
+		}
+	}
 }
 
 void Button::onRender()
@@ -201,6 +212,9 @@ bool Button::onMouseDown(int x, int y, int button)
 	if (isEnabled()) {
 		m_status = Button::DOWN;
 		m_onButtonDown(m_id, Vector2i(x,y));
+		m_onClick(m_id);
+		m_lastClickPos = Vector2i(x,y);
+		m_lastClickTime = system::current_time();
 	}
 	return true;
 }
@@ -216,8 +230,13 @@ bool Button::onMouseMove(int x, int y, int prevx, int prevy)
 				m_onButtonUp(m_id, Vector2i(x,y));
 			}
 		}
-		else if (m_status == Button::DOWN && canDrag()) {
-			m_onButtonDrag(m_id, Vector2i(x-prevx, y-prevy));
+		else if (m_status == Button::DOWN)
+		{
+			m_onClick(m_id);
+			m_lastClickPos = Vector2i(x,y);
+			if (canDrag()) {
+				m_onButtonDrag(m_id, Vector2i(x-prevx, y-prevy));
+			}
 		}
 	}
 	return true;

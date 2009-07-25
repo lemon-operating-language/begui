@@ -24,6 +24,8 @@ void ChildWnd1::onCreate()
 	m_button2.create(40, 70, "Button2", 201);
 	m_button2.disable();
 	m_button3.create(40, 100, "Button3", 202);
+	m_button3.repeatClickOnHold(true);
+	m_button3.handleButtonDown(makeFunctor(*Application::inst(), &Application::onButtonDown));
 	m_button4.create(40, 130, "Button4", 203);
 	m_button4.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
 	m_button4.setTextColor(Color(0.2f, 0.2f, 0.2f));
@@ -41,7 +43,7 @@ void ChildWnd1::onCreate()
 	m_tabs.addComponent(&m_checkbox1, 0);
 
 	m_label1.create(260, 90, "eò á !@#$%^&*()");
-	m_tabs.addComponent(&m_label1, 0);
+//	m_tabs.addComponent(&m_label1, 0);
 
 	// create a group of radio buttons
 	m_radio1.create(20, 20, "Radio Button 1", 2);
@@ -60,7 +62,7 @@ void ChildWnd1::onCreate()
 
 	// create a textbox
 	m_textbox.create(230, 160, 130, 180, true, true);
-	m_textbox.setText("aáòfffa abaaaaaaaa aaaaaaaaaaa\naagbdf\ndgdrh");
+	m_textbox.setText("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
 	m_tabs.addComponent(&m_textbox, 0);
 	
 	m_listbox1.create(20, 140, 200, 200, ListBox::MULTI_SELECT_SINGLECLICK);
@@ -190,6 +192,16 @@ void Application::onMenu(int id)
 		break;
 	case 106:
 		exit(0);
+		break;
+	}
+}
+
+void Application::onButtonDown(int id, const Vector2i &pos)
+{
+	switch (id)
+	{
+	case 202:
+		Console::print("click\n");
 		break;
 	}
 }

@@ -22,8 +22,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Console.h"
+#include <windows.h>
 
-HANDLE Console::m_hConsole = INVALID_HANDLE_VALUE;
+HANDLE g_hConsole = INVALID_HANDLE_VALUE;
 
 bool Console::create()
 {
@@ -33,11 +34,11 @@ bool Console::create()
 		return false;
 
 	// Create the actual console
-	m_hConsole = CreateFile(TEXT("CONOUT$"), GENERIC_WRITE|GENERIC_READ, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
-	if (m_hConsole == INVALID_HANDLE_VALUE)
+	g_hConsole = CreateFile(TEXT("CONOUT$"), GENERIC_WRITE|GENERIC_READ, FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
+	if (g_hConsole == INVALID_HANDLE_VALUE)
 		return false;
 	
-	if (SetConsoleMode(m_hConsole, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT ) == 0)
+	if (SetConsoleMode(g_hConsole, ENABLE_PROCESSED_OUTPUT | ENABLE_WRAP_AT_EOL_OUTPUT ) == 0)
 		return false;
 
 	return true;
@@ -45,15 +46,15 @@ bool Console::create()
 
 void Console::free()
 {
-	if (m_hConsole != INVALID_HANDLE_VALUE) {
+	if (g_hConsole != INVALID_HANDLE_VALUE) {
 		FreeConsole();
-		m_hConsole = INVALID_HANDLE_VALUE;
+		g_hConsole = INVALID_HANDLE_VALUE;
 	}
 }
 
 void Console::print(char* str, ...)
 {
-	if (m_hConsole != INVALID_HANDLE_VALUE)
+	if (g_hConsole != INVALID_HANDLE_VALUE)
 	{
 		char buf[1024];
 		
@@ -68,7 +69,7 @@ void Console::print(char* str, ...)
 		for (DWORD i=0; i<strLen; ++i)
 			mbtowc(&bufw[i], &buf[i], 1);
 		DWORD dwN;
-		WriteConsole(m_hConsole, bufw, strLen, &dwN, 0);
+		WriteConsole(g_hConsole, bufw, strLen, &dwN, 0);
 #else
 		DWORD strLen = (DWORD)strlen(buf);
 		WriteConsole(m_hConsole, buf, (DWORD)strlen(buf), &dwN, 0);
@@ -90,7 +91,7 @@ void Console::print(const std::string &s)
 
 void Console::error(char* str, ...)
 {
-	if (m_hConsole != INVALID_HANDLE_VALUE)
+	if (g_hConsole != INVALID_HANDLE_VALUE)
 	{
 		char buf[1024];
 		
@@ -105,7 +106,7 @@ void Console::error(char* str, ...)
 		for (DWORD i=0; i<strLen; ++i)
 			mbtowc(&bufw[i], &buf[i], 1);
 		DWORD dwN;
-		WriteConsole(m_hConsole, bufw, strLen, &dwN, 0);
+		WriteConsole(g_hConsole, bufw, strLen, &dwN, 0);
 #else
 		DWORD strLen = (DWORD)strlen(buf);
 		WriteConsole(m_hConsole, buf, (DWORD)strlen(buf), &dwN, 0);

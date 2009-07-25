@@ -20,8 +20,9 @@
 */
 
 #include "util.h"
+#include <ctime>
 
 unsigned long begui::system::current_time()	// returns time in msec
 {
-	return timeGetTime();
+	return time(0);
 }

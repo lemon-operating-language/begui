@@ -48,6 +48,9 @@ false, false, false, false, false, false, false, false, false, false, false, fal
 false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, \
 false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 
+unsigned int g_mouseClickRepeatInterv = 30;	// msec
+unsigned int g_keybRepeatInterv = 30;		// msec
+unsigned long g_lastKeyDownTime = 0;
 
 bool input::isMouseButtonDown(int mouseButton)
 {
@@ -133,4 +136,24 @@ void input::keyUp(int key)
 Vector2i input::lastMousePos()
 {
 	return Vector2i(g_mousePosX, g_mousePosY);
+}
+
+void input::setMouseClickRepeatInterv(unsigned int msec)
+{
+	g_mouseClickRepeatInterv = msec;
+}
+
+void input::setKeybRepeatInterv(unsigned int msec)
+{
+	g_keybRepeatInterv = msec;
+}
+
+unsigned int input::getMouseClickRepeatInterv()
+{
+	return g_mouseClickRepeatInterv;
+}
+
+unsigned int input::getKeybRepeatInterv()
+{
+	return g_keybRepeatInterv;
 }

@@ -39,6 +39,7 @@ private:
 public:
 	virtual bool onCreate();
 	void onMenu(int id);
+	void onButtonDown(int id, const Vector2i& pos);
 	void onRenderVp();
 
 	static Application* inst()	{ if (!m_pInst) m_pInst = new Application(); return m_pInst; }

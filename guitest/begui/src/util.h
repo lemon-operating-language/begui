@@ -103,6 +103,11 @@ namespace input
 	void keyUp(int key);
 	bool isDoubleClick(int mouseButton);
 	Vector2i lastMousePos();
+
+	void setMouseClickRepeatInterv(unsigned int msec);
+	void setKeybRepeatInterv(unsigned int msec);
+	unsigned int getMouseClickRepeatInterv();
+	unsigned int getKeybRepeatInterv();
 };
 
 namespace system

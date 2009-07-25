@@ -26,6 +26,7 @@
 
 #include <vector>
 #include <list>
+#include <ctime>
 
 class Updateable {
 public:
@@ -220,7 +221,7 @@ void TimeSeries<T>::update(double time)
 template <class T>
 void TimeSeries<T>::start(double delay)
 {
-	m_timeOffset = (double)(timeGetTime() / 1000.0);
+	m_timeOffset = (double)(time(0) / 1000.0);
 }
 
 template <class T>
