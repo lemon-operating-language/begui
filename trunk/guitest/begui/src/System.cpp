@@ -19,12 +19,10 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _UTIL_H42631_INCLUDED_
-#define _UTIL_H42631_INCLUDED_
-#pragma once
+#include "util.h"
+#include <ctime>
 
-#include "System.h"
-#include "Input.h"
-#include "Display.h"
-
-#endif
+unsigned long begui::system::current_time()	// returns time in msec
+{
+	return 1000*clock()/CLOCKS_PER_SEC;
+}
