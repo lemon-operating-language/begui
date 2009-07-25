@@ -22,6 +22,8 @@
 #ifndef _FRAMEWINDOW_WIN32_H42631_INCLUDED_
 #define _FRAMEWINDOW_WIN32_H42631_INCLUDED_
 
+#ifdef _WIN32			// this is a Windows-only class!
+
 #pragma once
 
 #include "Window.h"
@@ -77,5 +79,7 @@ protected:
 };
 
 };
+
+#endif
 
 #endif
