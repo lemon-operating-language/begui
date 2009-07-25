@@ -24,15 +24,11 @@
 
 #pragma once
 
-//#define NOMINMAX
-#include <windows.h>
 #include <string>
 
 class Console
 {
 private:
-	static HANDLE m_hConsole;
-
 	Console() { };
 
 public:
