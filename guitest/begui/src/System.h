@@ -1,5 +1,5 @@
 /* 
-// Copyright 2007 Alexandros Panagopoulos
+// Copyright 2008 Alexandros Panagopoulos
 //
 // This software is distributed under the terms of the GNU Lesser General Public Licence
 //
@@ -19,12 +19,17 @@
 //    along with BeGUI.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _UTIL_H42631_INCLUDED_
-#define _UTIL_H42631_INCLUDED_
+#ifndef _SYSTEM_H42631_INCLUDED_
+#define _SYSTEM_H42631_INCLUDED_
 #pragma once
 
-#include "System.h"
-#include "Input.h"
-#include "Display.h"
+namespace begui {
+
+namespace system
+{
+	unsigned long current_time();	// returns time in msec
+};
+
+};
 
 #endif
