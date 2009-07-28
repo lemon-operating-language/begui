@@ -26,7 +26,7 @@ void ChildWnd1::onCreate()
 	m_button3.create(40, 100, "Button3", 202);
 	m_button3.repeatClickOnHold(true);
 	m_button3.handleButtonDown(makeFunctor(*Application::inst(), &Application::onButtonDown));
-	m_button4.create(40, 130, "Button4", 203);
+	m_button4.create(40, 130, "Button4", 203, makeFunctor(*Application::inst(), &Application::onClick));
 	m_button4.setFace(Button::UP, ResourceManager::inst()->loadImage("gears.png"));
 	m_button4.setTextColor(Color(0.2f, 0.2f, 0.2f));
 	m_button5.create(240, 130, "Button5", 203);
@@ -202,6 +202,16 @@ void Application::onButtonDown(int id, const Vector2i &pos)
 	{
 	case 202:
 		Console::print("click\n");
+		break;
+	}
+}
+
+void Application::onClick(int id)
+{
+	switch (id)
+	{
+	case 203:
+		Console::print("button 203 : onClick\n");
 		break;
 	}
 }
