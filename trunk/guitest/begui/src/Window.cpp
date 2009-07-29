@@ -356,7 +356,8 @@ bool Window::isPtInside(int x, int y)
 		return false;
 	if (yy < m_top || yy > m_bottom)
 		return false;
-	if (yy < m_captionActiveArea.getHeight() && xx > m_captionBarWidth)
+	// exclude the rect next to the caption bar
+	if (yy-m_top < m_captionActiveArea.getHeight() && xx-m_left > m_captionBarWidth)
 		return false;
 	return true;
 }
