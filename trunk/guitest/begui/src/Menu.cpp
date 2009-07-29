@@ -66,6 +66,10 @@ void Menu::createMainMenu(const std::string &style_name)
 	ASSERT(style.hasProp("menubar_face"));
 	m_menuFace = ResourceManager::inst()->loadImage(style.get_img("menubar_face"));
 	m_menuFaceResizableArea = style.get_rect("resizable_area");
+	if (style.hasProp("active_area"))
+		m_menuFaceActiveArea = style.get_rect("active_area");
+	else
+		m_menuFaceActiveArea = Rect<int>(0, 0, m_menuFace.m_width, m_menuFace.m_height);
 	if (style.hasProp("mainmenu_text_color"))
 		m_textColor = style.get_c("mainmenu_text_color");
 }
@@ -392,9 +396,9 @@ bool Menu::isPtInside(int x, int y)
 
 	if (m_isMainMenu)
 	{
-		if (x < m_left || x > m_right)
+		if (x < m_left+m_menuFaceActiveArea.left || x > m_right-(m_menuFace.m_width-m_menuFaceActiveArea.getWidth()))
 			return false;
-		if (y < m_top || y > m_bottom)
+		if (y < m_top+m_menuFaceActiveArea.top || y > m_bottom-(m_menuFace.m_height-m_menuFaceActiveArea.getHeight()))
 			return false;
 		return true;
 	}

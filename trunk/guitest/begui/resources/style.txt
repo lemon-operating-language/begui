@@ -128,6 +128,7 @@ class Menu {
 	style std {
 		image menubar_face = 1,1,56,26, gui2_wnd_texture.png
 		rect resizable_area = 4,0,51,0
+		rect active_area = 0,0,56,17
 		color mainmenu_text_color = 230,230,230
 	}
 }
