@@ -50,6 +50,7 @@ private:
 
 	ResourceManager::ImageRef	m_menuFace;
 	Rect<int>					m_menuFaceResizableArea;
+	Rect<int>					m_menuFaceActiveArea;
 	Color						m_textColor;
 
 public:
