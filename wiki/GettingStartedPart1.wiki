@@ -91,8 +91,13 @@
 <li>`glew32.lib`</li>
 <li>`bgui.lib`</li>
 </ul>
-To do so, in Visual Studio, add the above in the field `Project Properties->Linker->Input->Additional Dependencies`. Good. Let's compile and run this simple program, shall we? Before you run it, make sure that the OpenGL, GLEW and FreeType dlls are reachable (e.g. in the application folder). If everything went well, you should see an empty window after the program starts.</p>
+To do so, in Visual Studio, add the above in the field `Project Properties->Linker->Input->Additional Dependencies`. Good. Let's compile and run this
+simple program, shall we? Before you run it, make sure that the OpenGL, GLEW and FreeType 
+dlls are reachable (e.g. in the application folder). If everything went well, you should 
+see an empty window after the program starts.</p>
 
-<p>Yay! You just made your first application based on beGUI. Doesn't look all that exciting though, does it? We should add some things to it. Let's say, a menu, a couple of windows and a bunch of controls.</p>
+<p>Yay! You just made your first application based on beGUI. Doesn't look all that 
+exciting though, does it? We should add some things to it. Let's say, a menu, a couple of 
+windows and a bunch of controls.</p>
 
 <a href="http://code.google.com/p/begui/wiki/GettingStartedPart2">continue to Part 2</a>
