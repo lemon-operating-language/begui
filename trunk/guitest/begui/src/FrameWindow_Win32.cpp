@@ -247,6 +247,9 @@ void FrameWindow_Win32::createGLWindow(int left, int top, int width, int height,
 		SetFocus(m_hWnd);
 	}
 	catch (std::exception e) {
+		char str_msg[1024];
+		sprintf(str_msg, "Failed to create main window, with error:\n%s", e.what());
+		MessageBox(0, str_msg, "Error creating main window...", MB_OK);
 		freeGLWindow();
 		throw e;
 	}
