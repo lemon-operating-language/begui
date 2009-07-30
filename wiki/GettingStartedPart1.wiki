@@ -87,7 +87,7 @@
 
 <p>Link your application with:
 <ul>
-<li>`freetype235MT.lib`</li>
+<li>`freetype???MT.lib` where '???' is the appropriate version number (eg 239 for the latest Freetype release)</li>
 <li>`glew32.lib`</li>
 <li>`bgui.lib`</li>
 </ul>
