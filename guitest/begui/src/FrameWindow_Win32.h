@@ -22,9 +22,9 @@
 #ifndef _FRAMEWINDOW_WIN32_H42631_INCLUDED_
 #define _FRAMEWINDOW_WIN32_H42631_INCLUDED_
 
-#ifdef _WIN32			// this is a Windows-only class!
-
 #pragma once
+
+#ifdef _WIN32			// this is a Windows-only class!
 
 #include "Window.h"
 #include "FrameWindow.h"
