@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\Dockable.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\EditableText.cpp"
 				>
 			</File>
@@ -344,6 +348,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\Display.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\Dockable.h"
 				>
 			</File>
 			<File
