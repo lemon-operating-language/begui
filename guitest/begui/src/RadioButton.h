@@ -51,14 +51,17 @@ private:
 	ResourceManager::ImageRef	m_faces[STATES_NUM];
 	Rect<int>					m_activeArea;
 
+	bool		m_bTextClickable;	// if true, the user can click on the text too to change the radiobutton state (default: true)
+
 public:
 	RadioButton();
 
-	void create(int x, int y, const std::string &title, int id=0, void (*callback)(int) = 0, 
-				const std::string &style_name = "std", bool bIsRadio = true);
-	void setState(State state)	{ m_state = state; }
-	State getState() const		{ return m_state; }
-	void setCaption(const std::string& title)	{ m_title = title; }
+	void	create(int x, int y, const std::string &title, int id=0, void (*callback)(int) = 0, 
+					const std::string &style_name = "std", bool bIsRadio = true);
+	void	setState(State state)					{ m_state = state; }
+	State	getState() const						{ return m_state; }
+	void	setCaption(const std::string& title)	{ m_title = title; }
+	//void	setTextClickable(bool bClickable)		{ m_bTextClickable = bClickable; }
 
 	virtual void onUpdate();
 	virtual void onRender();

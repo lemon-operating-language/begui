@@ -28,7 +28,8 @@ using namespace begui;
 
 RadioButton::RadioButton() : m_state(RadioButton::NOT_SELECTED), m_pCallback(0), m_bHover(false),
 	m_id(-1), m_bIsRadio(true),
-	m_activeArea(0,0,0,0)
+	m_activeArea(0,0,0,0),
+	m_bTextClickable(true)
 {
 }
 
@@ -53,8 +54,8 @@ void RadioButton::create(int x, int y, const std::string &title, int id, void (*
 		m_activeArea = Rect<int>(0,0,m_faces[SELECTED].m_width, m_faces[SELECTED].m_height);
 
 	setPos(x,y);
-	m_right = x + m_faces[SELECTED].m_width/2 + Font::stringLength(title);
-	m_bottom = y + m_faces[SELECTED].m_height;
+	m_right = x + m_activeArea.getWidth() + 6 + Font::stringLength(title);
+	m_bottom = y + m_activeArea.getHeight();
 	m_bIsRadio = bIsRadio;
 }
 
@@ -146,9 +147,16 @@ void RadioButton::onKeyUp(int key)
 
 bool RadioButton::isPtInside(int x, int y)
 {
-	if (x<m_left || x>m_left+m_activeArea.getWidth())
-		return false;
-	if (y<m_top || y>m_top+m_activeArea.getHeight())
-		return false;
-	return true;
+	if (m_bTextClickable) {
+		return Component::isPtInside(x,y);
+	}
+	else
+	{
+		if (x<m_left || x>m_left+m_activeArea.getWidth())
+			return false;
+		if (y<m_top || y>m_top+m_activeArea.getHeight())
+			return false;
+		return true;
+	}
+	return false;
 }
