@@ -167,8 +167,10 @@ bool Image::loadPPM(const std::string &fname)
 		fgets(str,1024,fp);
 
 	// read image dimensions 
-	int w, h;
+	int w, h=-1;
 	sscanf(str,"%d %d", &w, &h);
+	if (h == -1)
+		fscanf(fp,"%d", &h);
 
 	// read the next line into dummy variable
 	fgets(str,1024,fp);
