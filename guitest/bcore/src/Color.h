@@ -85,6 +85,11 @@ public:
 		max = (max>b)?max:b;//MAX( r, g, b );
 		*v = max;				// v
 		delta = max - min;
+		if (delta == 0) {
+			*s = 0;
+			*h = 0;
+			return;
+		}
 		if( max != 0 )
 			*s = delta / max;		// s
 		else {
