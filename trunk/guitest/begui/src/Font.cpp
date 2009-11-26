@@ -84,8 +84,7 @@ void Font::renderString_i(int x, int y, const std::string &str,
 						  std::vector< Rect<int> > *char_pos_out,
 						  bool bRender)
 {
-	// set the texture with the font
-	m_texture.set();
+	Texture *pCurTex = 0;
 
 	glEnable(GL_BLEND);
 
@@ -106,14 +105,25 @@ void Font::renderString_i(int x, int y, const std::string &str,
 		if (cc < m_startChar || cc > 255)
 			continue;
 		Character& charInfo = m_character[cc - m_startChar];
+		ASSERT(charInfo.m_pTexture);
+
+		// set the texture on which this character can be found
+		if (charInfo.m_pTexture != pCurTex) {
+			// make sure that we dont change texture while inside
+			// the glBegin/glEnd block.
+			glEnd();
+			pCurTex = charInfo.m_pTexture;
+			pCurTex->set();
+			glBegin(GL_QUADS);
+		}
 
 		// get character metrics
 		int fw = charInfo.m_right-charInfo.m_left; // font width
 		int fh = charInfo.m_bottom-charInfo.m_top; // font height
-		float tx = (float)charInfo.m_left/m_texture.getWidth();
-		float ty = (float)(charInfo.m_top)/m_texture.getHeight();
-		float tw = (float)fw/m_texture.getWidth();
-		float th = (float)fh/m_texture.getHeight();
+		float tx = (float)charInfo.m_left/pCurTex->getWidth();
+		float ty = (float)(charInfo.m_top)/pCurTex->getHeight();
+		float tw = (float)fw/pCurTex->getWidth();
+		float th = (float)fh/pCurTex->getHeight();
 
 		// render the character
 		int left = xpos+charInfo.m_horiBearingX;
@@ -138,7 +148,6 @@ void Font::renderString_i(int x, int y, const std::string &str,
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-glEnable(GL_BLEND);
 }
 
 void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string &str,
@@ -258,14 +267,9 @@ bool Font::createFont(const std::string &font_file, int font_size)
 								0, /* horizontal device resolution (0 for default 72dpi) */
 								0 ); /* vertical device resolution (0 for default 72dpi) */
 
-	// create the texture with the fonts
-	int texW = 512;
-	int texH = 512;
-	std::vector<unsigned char> pixels(texW*texH*4, 0);
+	// tell the font manager to start font caching
+	FontManager::beginFontCaching();
 
-	int xpos = 2;
-	int ypos = 2;
-	int maxH = 0;
 	int maxHFont = 0;
 	m_character.clear();
 	m_startChar = 20;
@@ -279,65 +283,52 @@ bool Font::createFont(const std::string &font_file, int font_size)
 			continue; /* ignore errors */
 		FT_GlyphSlot slot = face->glyph;
 
-		// check where we should draw the new character
-		if (xpos + slot->bitmap.width+1 > texW-1)
-		{
-			xpos = 2;
-			ypos += maxH;
-			maxH = 0;
-		}
+		// get the glyph's dimensions
+		int chW = slot->bitmap.width;
+		int chH = slot->bitmap.rows;
+		if (char_id == ' ')
+			chW = int(font_size/2.6);
+		
+		// Get a drawing area from the font manager
+		Font::Character charInfo = FontManager::allocCharacterDrawingArea(chW, chH);
+
+		// fill up the rest of the charInfo fields:
+		charInfo.m_char = char_id;
+		charInfo.m_horiBearingX = face->glyph->metrics.horiBearingX/64;
+		charInfo.m_horiBearingY = face->glyph->metrics.horiBearingY/64;
+		charInfo.m_horiAdvance  = face->glyph->metrics.horiAdvance/64;
+
+		// store the character
+		m_character.push_back(charInfo);
 		
 		// now, draw to our target surface
 		int bitmapPos = 0;
 		for (int dy=0; dy<slot->bitmap.rows; ++dy) {
 			for (int dx=0; dx<slot->bitmap.width; ++dx)
 			{
-				int x = xpos + dx;
-				int y = ypos + (slot->bitmap.rows - dy - 1);
-				pixels[4*(y*texW + x)  ] = 255;//slot->bitmap.buffer[bitmapPos + dx];
-				pixels[4*(y*texW + x)+1] = 255;//slot->bitmap.buffer[bitmapPos + dx];
-				pixels[4*(y*texW + x)+2] = 255;//slot->bitmap.buffer[bitmapPos + dx];
-				pixels[4*(y*texW + x)+3] = slot->bitmap.buffer[bitmapPos + dx];//0;
+				int x = charInfo.m_left + dx;
+				int y = charInfo.m_top + (chH - dy - 1);
+				charInfo.m_pDrawingBuffer[4*(y*charInfo.m_drawingBufferPitch + x)  ] = 255;
+				charInfo.m_pDrawingBuffer[4*(y*charInfo.m_drawingBufferPitch + x)+1] = 255;
+				charInfo.m_pDrawingBuffer[4*(y*charInfo.m_drawingBufferPitch + x)+2] = 255;
+				charInfo.m_pDrawingBuffer[4*(y*charInfo.m_drawingBufferPitch + x)+3] = slot->bitmap.buffer[bitmapPos + dx];
 			}
 			bitmapPos += abs(slot->bitmap.pitch);
 		}
 		
-		Font::Character charInfo;
-		charInfo.m_char = char_id;
-		charInfo.m_left = xpos;
-		charInfo.m_right = xpos + slot->bitmap.width;
-		if (char_id == ' ')
-			charInfo.m_right = xpos + int(font_size/2.6);
-		charInfo.m_horiBearingX = face->glyph->metrics.horiBearingX/64;
-		charInfo.m_horiBearingY = face->glyph->metrics.horiBearingY/64;
-		charInfo.m_horiAdvance  = face->glyph->metrics.horiAdvance/64;
-		charInfo.m_top = ypos;
-		charInfo.m_bottom = ypos + slot->bitmap.rows;
-		m_character.push_back(charInfo);
-		
-		// increment rendering position
-		xpos += slot->bitmap.width + 1;
-		if ((slot->bitmap.rows+1) > maxH)
-			maxH = slot->bitmap.rows+1;
-		if (maxH > maxHFont)
-			maxHFont = maxH;
+		if (chH+1 > maxHFont)
+			maxHFont = chH+1;
 	}
 	
-	m_texture.create(texW, texH, GL_RGBA, &pixels[0]);
+	// end font caching and create all textures
+	FontManager::endFontCaching();
 
-	// DEBUG
-/*	Image img;
-	img.create(texW, texH, 3);
-	for (size_t i=0; i<texW; ++i)
-		for (size_t j=0; j<texH; ++j)
-			img(i,j)[0] = img(i,j)[1] = img(i,j)[2] = pixels[4*(j*texW + i) + 3];
-	img.savePPM("font_debug.ppm");
-	FILE *fp = fopen("font_debug.txt", "w+");
-	for (size_t i=0; i<m_character.size(); ++i)
-		fprintf(fp, "%d - %d %d %d %d\n", i, m_character[i].m_left, m_character[i].m_top, m_character[i].m_right, m_character[i].m_bottom);
-	fclose(fp);*/
-
+	m_fontFileName = font_file;
+	m_fontSize = font_size;
 	m_lineHeight = maxHFont;
+
+	// we are done with this face
+	FT_Done_Face(face);
 
 	return true;
 }

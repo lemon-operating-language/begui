@@ -26,6 +26,7 @@
 
 #include "common.h"
 #include "../../bcore/src/Rect.h"
+#include "ResourceManager.h"
 
 // FreeType
 extern "C" {
@@ -36,23 +37,30 @@ extern "C" {
 
 namespace begui {
 
+/******************************************************************************
+ * Font:
+ *
+ ******************************************************************************/
 class Font
 {
-private:
+	friend class FontManager;
+
 	class Character {
 	public:
-		int m_char;
-		int m_left, m_right, m_top, m_bottom;
-		int m_horiBearingX;
-		int m_horiBearingY;
-		int m_horiAdvance;
-	};
+		int				m_char;
+		int				m_left, m_right, m_top, m_bottom;
+		int				m_horiBearingX;
+		int				m_horiBearingY;
+		int				m_horiAdvance;
+		Texture			*m_pTexture;
+		unsigned char	*m_pDrawingBuffer;	// not guaranteed to be valid after FontManager::endFontCaching is called
+		int				m_drawingBufferPitch;
 
-	Texture				m_texture;
-	std::vector<Character> m_character;
-	int					m_startChar;	// the first char in the letters
-	int					m_lineHeight;
-	int					m_tabSize;	// size of tabs in spaces (not pixels)
+	public:
+		Character() : m_char(0), m_left(0), m_right(0), m_top(0), m_bottom(0), 
+			m_horiBearingX(0), m_horiBearingY(0), m_horiAdvance(0),
+			m_pTexture(0), m_pDrawingBuffer(0), m_drawingBufferPitch(0) { }
+	};
 
 public:
 	Font();
@@ -64,39 +72,71 @@ public:
 							int vpWidth=-1, int vpHeight=-1);
 	static int	stringLength(const std::string& str);
 	
-	bool createFont(const std::string &font_file, int font_size);
 	void renderStringMultiline(int x, int y, int lineWidth, const std::string& str,
 							std::vector< Rect<int> > *char_pos_out = 0, bool bRender = true);
-	void renderChar(const Rect<int> &rect, wchar_t c);
 
-	int	getLineHeight() const	{ return m_lineHeight; }
-	Character*	getChar(int c)	{ if (c<m_startChar || c>=(int)m_character.size()) return 0; return &m_character[c - m_startChar]; }
+	const std::string&	getFontFileName() const		{ return m_fontFileName; }
+	int					getFontSize() const			{ return m_fontSize; }
+	int					getLineHeight() const		{ return m_lineHeight; }
+	Character*			getChar(int c)				{ if (c<m_startChar || c>=(int)m_character.size()) return 0; return &m_character[c - m_startChar]; }
 
-	//temp:
-	Texture* getTexture() { return &m_texture; }
+protected:
+	bool createFont(const std::string &font_file, int font_size);	// use FontManager to create a font!
 
 private:
+	std::vector<Character>	m_character;
+	int						m_startChar;	// the first char in the letters
+	int						m_lineHeight;
+	int						m_tabSize;		// size of tabs in spaces (not pixels)
+	std::string				m_fontFileName;
+	int						m_fontSize;
+
 	void renderString_i(int x, int y, const std::string& str, std::vector< Rect<int> > *char_pos_out, bool bRender);
 };
 
+/******************************************************************************
+ * FontManager:
+ *
+ ******************************************************************************/
 class FontManager
 {
 	friend class Font;
+
 private:
-	static std::vector<Font> m_fonts;
-	static int			m_curFont;
-	static FT_Library	m_freetype;
-	static bool			m_ftInitialized;
+	static std::vector<Font*> m_fonts;
+	static int				m_curFont;						// the currently selected font
+	static FT_Library		m_freetype;						// Handle to the freetype library
+	static bool				m_ftInitialized;				// true if freetype has been initialized already
+
+	static std::vector<Texture*>		m_textureList;		// the textures where the characters are stored
+	static std::vector<unsigned char*>	m_fontDrawingMem;	// system memory to draw font faces before copying them to the textures
+	static int	m_lastCharRight, m_lastCharTop, m_lastCharBottom; // the last coordinates where a character was drawn (to be replaced by a quad tree)
+	static int	m_texWidth, m_texHeight;					// the dimensions of the allocated textures
 
 public:
 	static bool initialize();
+	static void clear();
 	static bool isInitialized()	{ return m_ftInitialized; }
 
 	static bool setFont(const std::string &font_name, int font_size);
-	static Font* getCurFont()	{ if (m_curFont < 0) return NULL; return &m_fonts[m_curFont]; }
+	static Font* getCurFont()	{ if (m_curFont < 0) return NULL; return m_fonts[m_curFont]; }
+
+	// set the size of the texture pages used to cache fonts
+	static void setCachePageSize(int w, int h)		{ m_texWidth = w; m_texHeight = h; }
 
 protected:
 	static FT_Library	getFTLib()	{ return m_freetype; }
+
+	// starts font caching (drawing font faces into textures)
+	static void beginFontCaching();
+
+	// ends font caching. In this step, the textures are created
+	// from the temporary images in system memory (so this call can be costly)
+	static void endFontCaching();
+
+	// Get the drawing area for a character. The drawing area includes a pointer to the
+	// corresponding texture, as well as the coordinates of the area
+	static Font::Character allocCharacterDrawingArea(int width, int height);
 };
 
 };
