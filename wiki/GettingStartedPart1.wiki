@@ -111,7 +111,7 @@ windows and a bunch of controls.</p>
 <a href="http://code.google.com/p/begui/wiki/GettingStartedPart2">continue to Part 2</a>
 
 <h2>Troubleshooting</h2>
-<p>Currently, there are certain issues with the alpha-blended windows, especially on ATI graphics cards. If you experience very slow performance, artifacts, or a message box saying that your GPU doesnt support alpha-blended layered windows, set</p>
+<p>Currently, there are certain issues with OpenGL rendering on layered windows (used to get the semi-transparent window borders),  especially on ATI graphics cards. If you experience very slow performance, artifacts, or a message box saying that your GPU doesnt support alpha-blended layered windows, set</p>
 {{{
         	opt.bOwnDraw = false;
 }}}
