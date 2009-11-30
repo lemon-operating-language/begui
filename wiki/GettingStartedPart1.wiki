@@ -11,7 +11,7 @@
 </ul>
 </p>
 
-<h2>Part 1: An empty application window</h2>
+<h2>Creating an empty application window</h2>
 <p>Open Visual Studio and start a new, empty Win32 project:</p>
 <ul>
 		<li>File -> New -> Project</li>
