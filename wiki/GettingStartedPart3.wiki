@@ -1,10 +1,18 @@
-#summary A Getting Started guide for a Windows app using beGUI
+#summary Creating a child window
 #labels Phase-Deploy,Featured
 
-= Creating a new application using BeGUI =
+=Creating child windows and adding controls=
 
-<h2>Part 3: Creating a child window</h2>
-<p>Creating a new child window inside the frame window can be pretty simple. For a generic window, you could just write:</p>
+<h2>The BeGUI object model</h2>
+BeGUI follows a simple model, which defines how components are displayed, updated and how they influence each other. The are two important base classes:
+<ul>
+<li>`Component`: every component in BeGUI, that is every class that implements an entity that is visible and/or interacts with the user, inherits the class `Component`. `Component` provides all the core functionality shared between all visible entities in BeGUI.</li>
+<li>`Container`: every component that can contain other components must inherit the class `Container`. `Container` provides functionality to forward messages to each children, change between coordinate systems, keep track of mouse and keyboard focus etc. `Container` inherits the class `Component`. A container may contain only objects that have `Component` as a base class (therefore, it can also contain other containers, creating a hierarchy).</li>
+</ul>
+Classes like `Window` and `GroupBox` inherit the class `Container`, since they act as containers of other components. Classes like `Button`, `Slider` etc. inherit the class `Component`. The base `Container` class can be directly used to transparently batch controls together, which is especially useful when the BeGUI application framework is not used.
+
+<h2>Creating a child window</h2>
+<p>Creating a new child window inside the frame window can be pretty simple. For a generic window, we could just write:</p>
 {{{
 	Window wnd;
 	...
@@ -14,7 +22,7 @@
 
 <p>(Of course, make sure that the window object is not going to be destroyed, as might not be so obvious in the example above, after the call to `addComponent()`)</p>
 
-<p>However, in most cases we might want to have a derived class for a window in our application. In that case, just derive the base `begui::Window` class, and override methods (like `initialize()`) to change the window behavior. Let's see an example:</p>
+<p>However, in most cases we might want to have a derived class for a window in our application. In that case, just derive the base `begui::Window` class, and override methods (like `onCreate()`) to change the window behavior. Let's see an example:</p>
 
 {{{
 	// header file:
