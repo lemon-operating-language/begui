@@ -2,6 +2,7 @@
 #labels Phase-Design
 
 = Latest source =
+  * improved the font management system, fixing various bugs and extending functionality
   * added support for windows that render to texture (BufferedWindow)
   * added password field support to text boxes
   * re-enabled modal dialog support
