@@ -7,7 +7,7 @@
 <p>BeGUI can be used in two main ways:
 <ul>
 <li>Using the BeGUI application framework: You can take advantage of the provided application framework classes (`BaseApp_Win` for Windows, more framework classes to come in the near future) to quickly setup an application, without caring about event routing etc. We will show an example of this approach in the rest of this page.</li>
-<li>Using your own framework: BeGUI has been designed so that components can be taken in relative isolation and thrown into existing applications. In this case, you have to take care of feeding the BeGUI components with events etc. An example of how to use BeGUI in another application framework is given <a href="http://code.google.com/p/begui/wiki/tutorial_beGUI_in_GLUT_apps">here (BeGUI on GLUT)</a>.</li>
+<li>Using your own framework: BeGUI has been designed so that components can be taken in relative isolation and thrown into existing applications. In this case, you have to take care of feeding the BeGUI components with events etc. An example of how to use BeGUI in another application framework is given <a href="http://code.google.com/p/begui/wiki/tutorial_beGUI_in_GLUT_apps">here (BeGUI on GLUT)</a>. An understanding of the role of `Container` and `Component` classes is important to use BeGUI components in isolation (see <a href="http://code.google.com/p/begui/wiki/GettingStartedPart3">Part 3</a> of this series).</li>
 </ul>
 </p>
 
