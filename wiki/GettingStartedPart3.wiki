@@ -7,7 +7,7 @@
 BeGUI follows a simple model, which defines how components are displayed, updated and how they influence each other. The are two important base classes:
 <ul>
 <li>`Component`: every component in BeGUI, that is every class that implements an entity that is visible and/or interacts with the user, inherits the class `Component`. `Component` provides all the core functionality shared between all visible entities in BeGUI.</li>
-<li>`Container`: every component that can contain other components must inherit the class `Container`. `Container` provides functionality to forward messages to each children, change between coordinate systems, keep track of mouse and keyboard focus etc. `Container` inherits the class `Component`. A container may contain only objects that have `Component` as a base class (therefore, it can also contain other containers, creating a hierarchy).</li>
+<li>`Container`: every component that can contain other components must inherit the class `Container`. `Container` provides functionality to forward messages to its children, change between coordinate systems, keep track of mouse and keyboard focus etc. `Container` inherits the class `Component`. A container may contain only objects that have `Component` as a base class (therefore, it can also contain other containers, creating a hierarchy).</li>
 </ul>
 Classes like `Window` and `GroupBox` inherit the class `Container`, since they act as containers of other components. Classes like `Button`, `Slider` etc. inherit the class `Component`. The base `Container` class can be directly used to transparently batch controls together, which is especially useful when the BeGUI application framework is not used.
 
