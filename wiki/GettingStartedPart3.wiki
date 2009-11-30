@@ -1,4 +1,4 @@
-#summary Creating a child window
+#summary Creating child windows and adding controls
 #labels Phase-Deploy,Featured
 
 =Creating child windows and adding controls=
