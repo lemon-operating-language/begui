@@ -109,3 +109,10 @@ exciting though, does it? We should add some things to it. Let's say, a menu, a 
 windows and a bunch of controls.</p>
 
 <a href="http://code.google.com/p/begui/wiki/GettingStartedPart2">continue to Part 2</a>
+
+<h2>Troubleshooting</h2>
+<p>Currently, there are certain issues with the alpha-blended windows, especially on ATI graphics cards. If you experience very slow performance, artifacts, or a message box saying that your GPU doesnt support alpha-blended layered windows, set</p>
+{{{
+        	opt.bOwnDraw = false;
+}}}
+to use the standard windows provided by the OS. I am working on fixing these problems (until recently I didnt have an ATI card to test on).
