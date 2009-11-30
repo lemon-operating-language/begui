@@ -5,11 +5,18 @@
 
 <h2>The BeGUI object model</h2>
 BeGUI follows a simple model, which defines how components are displayed, updated and how they influence each other. The are two important base classes:
+
 <ul>
 <li>`Component`: every component in BeGUI, that is every class that implements an entity that is visible and/or interacts with the user, inherits the class `Component`. `Component` provides all the core functionality shared between all visible entities in BeGUI.</li>
 <li>`Container`: every component that can contain other components must inherit the class `Container`. `Container` provides functionality to forward messages to its children, change between coordinate systems, keep track of mouse and keyboard focus etc. `Container` inherits the class `Component`. A container may contain only objects that have `Component` as a base class (therefore, it can also contain other containers, creating a hierarchy).</li>
 </ul>
-Classes like `Window` and `GroupBox` inherit the class `Container`, since they act as containers of other components. Classes like `Button`, `Slider` etc. inherit the class `Component`. The base `Container` class can be directly used to transparently batch controls together, which is especially useful when the BeGUI application framework is not used.
+
+<p>Classes like `Window` and `GroupBox` inherit the class `Container`, since they act as containers of other components. Classes like `Button`, `Slider` etc. inherit the class `Component`. The base `Container` class can be directly used to transparently batch controls together, which is especially useful when the BeGUI application framework is not used.</p>
+
+<p>Components are added to a container using the `Container::addComponent(...)` method. This method takes a pointer to the component to be added. After adding a component A to a container B, A will be displayed whenever B is displayed, and A will receive messages sent to B, if they are applicable to A.</p>
+
+<p>Each container maintains a z-ordering of the components it contains, as well as pointers to the active component, and the ones with mouse and keyboard focus (usually all three are the same). The z-ordering of components changes when the user clicks on a component, bringing it to the top. A component can have a fixed z-ordering if this behavior is not desired. The order of components with fixed z-ordering in a container is determined by the order of the respective `addComponent` calls.</p>
+
 
 <h2>Creating a child window</h2>
 <p>Creating a new child window inside the frame window can be pretty simple. For a generic window, we could just write:</p>
