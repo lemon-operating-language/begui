@@ -99,6 +99,14 @@ public:
 	template <class T, class M>
 	friend Matrix<T> operator / (const Matrix<T>& m, const M f);
 
+	// unary multiplication and division by scalar
+	Matrix<T>& operator *= (T f);
+	Matrix<T>& operator /= (T f);
+
+	// unary operations with matrices
+	Matrix<T>& operator += (const Matrix<T>& m);
+	Matrix<T>& operator -= (const Matrix<T>& m);
+
 	// access elements
 	__forceinline		T& operator () (size_t i, size_t j)			{ ASSERT(i>=0&&i<numCols()&&j>=0&&j<numRows()); return m_elems[j*m_nCols + i]; }
 	__forceinline const T& operator () (size_t i, size_t j) const	{ ASSERT(i>=0&&i<numCols()&&j>=0&&j<numRows()); return m_elems[j*m_nCols + i]; }
@@ -121,6 +129,42 @@ Matrix<T>& Matrix<T>::operator = (const Matrix<T>& mat) {
 	m_elems=new T[m_nRows*m_nCols];
 //	memcpy(m_elems, mat.m_elems, sizeof(T)*m_nRows*m_nCols); // Dont use memcpy in case we have complex classes that need deep copy as T
 	for (size_t i=0; i<m_nRows*m_nCols; ++i) m_elems[i] = mat.m_elems[i];
+	return *this;
+}
+
+template <class T>
+Matrix<T>& Matrix<T>::operator *= (T f) {
+	int nElems = m_nRows*m_nCols;
+	for (int i=0; i<nElems; ++i)
+		m_elems[i] *= f;
+	return *this;
+}
+
+template <class T>
+Matrix<T>& Matrix<T>::operator /= (T f) {
+	int nElems = m_nRows*m_nCols;
+	for (int i=0; i<nElems; ++i)
+		m_elems[i] /= f;
+	return *this;
+}
+
+template <class T>
+Matrix<T>& Matrix<T>::operator += (const Matrix<T> &m) {
+	ASSERT(m.numRows() == numRows());
+	ASSERT(m.numCols() == numCols());
+	int nElems = m_nRows*m_nCols;
+	for (int i=0; i<nElems; ++i)
+		m_elems[i] += m.m_elems[i];
+	return *this;
+}
+
+template <class T>
+Matrix<T>& Matrix<T>::operator -= (const Matrix<T> &m) {
+	ASSERT(m.numRows() == numRows());
+	ASSERT(m.numCols() == numCols());
+	int nElems = m_nRows*m_nCols;
+	for (int i=0; i<nElems; ++i)
+		m_elems[i] -= m.m_elems[i];
 	return *this;
 }
 
