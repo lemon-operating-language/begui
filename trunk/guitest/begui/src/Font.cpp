@@ -86,7 +86,9 @@ void Font::renderString_i(int x, int y, const std::string &str,
 {
 	Texture *pCurTex = 0;
 
+	glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT);
 	glEnable(GL_BLEND);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glBegin(GL_QUADS);
 	int xpos = x;
@@ -147,7 +149,8 @@ void Font::renderString_i(int x, int y, const std::string &str,
 	}
 	glEnd();
 
-	glDisable(GL_TEXTURE_2D);
+	// restore texture/blending states
+	glPopAttrib();
 }
 
 void Font::renderStringMultiline(int x, int y, int lineWidth, const std::string &str,
