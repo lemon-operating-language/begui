@@ -54,6 +54,8 @@ void EditableText::setText(const std::string &text)
 {
 	m_text = text;
 	int lineHeight = FontManager::getCurFont()->getLineHeight();
+	if (m_cursorPos > text.length())
+		setCursorPos((int)text.length());
 
 	// call Font::renderString once WITHOUT rendering, to determine the
 	// positions of all characters
