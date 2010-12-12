@@ -139,6 +139,36 @@ protected:
 	static Font::Character allocCharacterDrawingArea(int width, int height);
 };
 
+
+/******************************************************************************
+ * Text:
+ *
+ ******************************************************************************/
+class Text {
+public:
+	struct Appearance {
+		Font	*m_pFont;
+		double	m_xScale, m_yScale;	// font scaling in x and y
+		int		m_xOffs, m_yOffs;	// offsets in the x and y positioning of the font
+		int		m_xAdvanceOffs;		// offset for advancing the cursor after this character
+		double	m_rotation;			// rotation in degrees
+		Color	m_color;
+	};
+
+public:
+	static void		setCursorPos(int x, int y);
+	static Vector2i getCursorPos()					{ return Vector2i(m_cursorX, m_cursorY); }
+	static void		display(const std::string& text, bool bMultiline, const std::vector<Appearance>* format = 0, 
+							std::vector< Rect<int> > *char_pos_out = 0);
+	static void		getCharPositions(const std::string& text, bool bMultiline, const std::vector<Appearance>* format, 
+							std::vector< Rect<int> > *char_pos_out);
+	static int		getStringLength(const std::string& text, const std::vector<Appearance>* format = 0);
+
+private:
+	static int	m_cursorX, m_cursorY;
+
+};
+
 };
 
 #endif
